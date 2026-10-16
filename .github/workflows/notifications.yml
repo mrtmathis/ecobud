@@ -3,7 +3,8 @@ name: Notifications
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    # Off the round minutes, when GitHub is busiest and may drop scheduled runs
+    - cron: '7,22,37,52 * * * *'
   # Lets you run it by hand from the Actions tab
   workflow_dispatch:
 
