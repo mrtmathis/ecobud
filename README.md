@@ -2,6 +2,8 @@
 
 > Application web de gestion de budget pour étudiants : noter ses dépenses en quelques secondes, fixer un budget mensuel et voir en un coup d'œil ce qu'il reste à dépenser.
 
+**Site en ligne : [ecobud-app.vercel.app](https://ecobud-app.vercel.app)**
+
 ![Statut](https://img.shields.io/badge/statut-en%20développement-orange)
 ![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js&logoColor=white)
@@ -98,7 +100,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 
 ### MVP
 
-- [ ] Inscription et connexion (authentification JWT)
+- [x] Inscription, connexion, déconnexion et mot de passe oublié
 - [ ] Interface en français et en anglais
 - [ ] Responsive : téléphone, tablette et ordinateur
 - [ ] Ajout, modification et suppression de dépenses et de revenus
@@ -134,6 +136,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | Base de données | PostgreSQL, Prisma (ORM) |
 | Authentification | JWT dans un cookie httpOnly, bcrypt |
 | Sécurité | Helmet, Zod (validation), express-rate-limit |
+| E-mails | Brevo (réinitialisation du mot de passe) |
 | Déploiement | Vercel (front et API), Neon (PostgreSQL hébergé) |
 | Outils | Git, GitHub, Figma |
 
@@ -168,7 +171,10 @@ La sécurité est traitée dès la première ligne de code :
 
 | Risque | Protection |
 | --- | --- |
-| Vol de mots de passe | Hachage bcrypt, jamais stockés ni renvoyés en clair |
+| Vol de mots de passe | Hachage bcrypt (coût 12), jamais stockés ni renvoyés en clair ; 12 caractères minimum avec minuscule, majuscule, chiffre et symbole |
+| Comptes devinables | Même réponse pour un e-mail inconnu et un mauvais mot de passe, même réponse à « mot de passe oublié » que le compte existe ou non |
+| Lien de réinitialisation volé | Valable 30 minutes, à usage unique, seule son empreinte SHA-256 est stockée |
+| Requêtes venant d'un autre site (CSRF) | Cookie `SameSite=Lax` et refus des requêtes dont l'origine n'est pas le site |
 | Vol de session (XSS) | JWT dans un cookie `httpOnly`, `Secure`, `SameSite` ; React échappe tout le contenu affiché |
 | Accès aux données d'un autre utilisateur | Chaque requête en base est filtrée par l'utilisateur connecté |
 | Injection SQL | Requêtes paramétrées par Prisma, aucun SQL écrit à la main |
@@ -254,6 +260,9 @@ Variables d'environnement (`server/.env`) :
 ```env
 DATABASE_URL="postgresql://utilisateur:motdepasse@localhost:5432/ecobud"
 JWT_SECRET="une_chaine_secrete_longue"
+APP_URL="http://localhost:5173"
+BREVO_API_KEY=""        # vide en local : les e-mails s'affichent dans le terminal
+MAIL_FROM="EcoBud <ton.adresse@exemple.fr>"
 VAPID_PUBLIC_KEY="..."
 VAPID_PRIVATE_KEY="..."
 VAPID_SUBJECT="mailto:contact@exemple.fr"
@@ -273,7 +282,11 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | Méthode | Route | Description |
 | --- | --- | --- |
 | `POST` | `/api/auth/register` | Créer un compte |
-| `POST` | `/api/auth/login` | Se connecter (renvoie un JWT) |
+| `POST` | `/api/auth/login` | Se connecter (pose un cookie de session de 30 jours) |
+| `POST` | `/api/auth/logout` | Se déconnecter |
+| `GET` | `/api/auth/me` | Utilisateur connecté |
+| `POST` | `/api/auth/forgot-password` | Recevoir un lien de réinitialisation par e-mail (valable 30 min) |
+| `POST` | `/api/auth/reset-password` | Choisir un nouveau mot de passe (déconnecte toutes les sessions) |
 | `GET` | `/api/transactions` | Lister les transactions (filtres : `month`, `category`, `q`) |
 | `POST` | `/api/transactions` | Ajouter une transaction |
 | `PUT` | `/api/transactions/:id` | Modifier une transaction |

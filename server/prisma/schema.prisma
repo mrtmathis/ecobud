@@ -20,25 +20,39 @@ enum TransactionType {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  passwordHash  String
-  language      Language @default(fr)
+  id                String   @id @default(uuid())
+  name              String
+  email             String   @unique
+  passwordHash      String
+  language          Language @default(fr)
   // Reminder time is local to the user's time zone (HH:MM)
-  timezone      String   @default("Europe/Paris")
-  reminderOn    Boolean  @default(true)
-  reminderTime  String   @default("21:00")
+  timezone          String   @default("Europe/Paris")
+  reminderOn        Boolean  @default(true)
+  reminderTime      String   @default("21:00")
   // ISO weekdays: 1 = Monday ... 7 = Sunday
-  reminderDays  Int[]    @default([1, 2, 3, 4, 5, 6, 7])
-  alertsOn      Boolean  @default(true)
-  createdAt     DateTime @default(now())
+  reminderDays      Int[]    @default([1, 2, 3, 4, 5, 6, 7])
+  alertsOn          Boolean  @default(true)
+  // Sessions issued before this date are rejected (set on password change)
+  passwordChangedAt DateTime @default(now())
+  createdAt         DateTime @default(now())
 
-  transactions      Transaction[]
-  recurrences       Recurrence[]
-  budgets           Budget[]
-  pushSubscriptions PushSubscription[]
-  dayChecks         DayCheck[]
+  passwordResetTokens PasswordResetToken[]
+  transactions        Transaction[]
+  recurrences         Recurrence[]
+  budgets             Budget[]
+  pushSubscriptions   PushSubscription[]
+  dayChecks           DayCheck[]
+}
+
+// Only a hash of the token is stored, so a database leak cannot be used to reset passwords
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Fixed list seeded by the site; the id is also the translation key

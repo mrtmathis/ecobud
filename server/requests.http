@@ -1,4 +1,5 @@
 # Test requests for the VS Code "REST Client" extension
+# The session cookie from register/login is reused automatically by REST Client
 
 @api = http://localhost:4000/api
 
@@ -7,3 +8,33 @@ GET {{api}}/health
 
 ### Unknown route, expects 404
 GET {{api}}/does-not-exist
+
+### Register
+POST {{api}}/auth/register
+Content-Type: application/json
+
+{ "name": "Léa", "email": "lea@exemple.fr", "password": "Correct-Horse-9!", "language": "fr" }
+
+### Login
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "email": "lea@exemple.fr", "password": "Correct-Horse-9!" }
+
+### Current user (needs the session cookie)
+GET {{api}}/auth/me
+
+### Logout
+POST {{api}}/auth/logout
+
+### Forgot password (the link is printed in the API terminal)
+POST {{api}}/auth/forgot-password
+Content-Type: application/json
+
+{ "email": "lea@exemple.fr" }
+
+### Reset password (paste the token from the link)
+POST {{api}}/auth/reset-password
+Content-Type: application/json
+
+{ "token": "PASTE_TOKEN_HERE", "password": "New-Password-42!" }

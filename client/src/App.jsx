@@ -1,24 +1,34 @@
-import { useEffect, useState } from 'react';
+import { BrowserRouter, Link, Route, Routes } from 'react-router';
+import { AuthProvider, GuestOnly, RequireAuth } from './auth.jsx';
+import Home from './pages/Home.jsx';
+import Register from './pages/Register.jsx';
+import Login from './pages/Login.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
+import Dashboard from './pages/Dashboard.jsx';
 
 export default function App() {
-  const [apiStatus, setApiStatus] = useState('checking');
-
-  // Shows whether the front end can reach the API
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
-      .then((data) => setApiStatus(data.status === 'ok' ? 'online' : 'offline'))
-      .catch(() => setApiStatus('offline'));
-  }, []);
-
-  const labels = { checking: 'vérification…', online: 'en ligne', offline: 'hors ligne' };
-
   return (
-    <main>
-      <h1>EcoBud</h1>
-      <p>Ton budget étudiant, sans prise de tête.</p>
-      <p>Application en cours de développement.</p>
-      <p>État de l'API : {labels[apiStatus]}</p>
-    </main>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<GuestOnly><Home /></GuestOnly>} />
+          <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
+          <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
+          <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route
+            path="*"
+            element={
+              <main>
+                <h1>Page introuvable</h1>
+                <Link to="/">Retour à l’accueil</Link>
+              </main>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
