@@ -34,6 +34,9 @@ const paths = {
   income: <path d="M12 4v12M6 10l6 6 6-6M5 20h14" />,
   close: <path d="M18 6 6 18M6 6l12 12" />,
   check: <path d="m5 12 5 5 9-10" />,
+  edit: <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />,
+  trash: <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />,
+  bell: <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0" />,
 };
 
 export default function Icon({ name, size = 22 }) {

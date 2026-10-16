@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
-import { useCategories } from '../categories.js';
+import { categoryColor, useCategories } from '../categories.js';
 import { formatCents, formatDay, formatMonth, thisMonth } from '../format.js';
 import { errorMessage } from '../messages.js';
+import Icon from '../components/Icon.jsx';
 
 export default function Transactions() {
   const { t } = useTranslation();
@@ -60,32 +61,46 @@ export default function Transactions() {
 
   return (
     <main>
-      <h1>{t('transactions.title')}</h1>
-      <p>
-        <Link to="/transactions/new">{t('common.addExpense')}</Link> ·{' '}
-        <Link to="/transactions/new?type=INCOME">{t('common.addIncome')}</Link>
-      </p>
+      <div className="page-head">
+        <h1>{t('transactions.title')}</h1>
+        <div className="page-actions">
+          <Link to="/transactions/new" className="btn">
+            <Icon name="plus" size={18} /> {t('common.addExpense')}
+          </Link>
+          <Link to="/transactions/new?type=INCOME" className="btn btn-ghost">
+            <Icon name="income" size={18} /> {t('common.addIncome')}
+          </Link>
+        </div>
+      </div>
 
-      <form role="search" onSubmit={(e) => e.preventDefault()}>
-        <label htmlFor="month">{t('common.month')}</label>{' '}
-        <input id="month" type="month" value={filters.month} onChange={(e) => setFilter('month', e.target.value)} />{' '}
-        <label htmlFor="type">{t('common.type')}</label>{' '}
-        <select id="type" value={filters.type} onChange={(e) => setFilter('type', e.target.value)}>
-          <option value="">{t('transactions.all')}</option>
-          <option value="EXPENSE">{t('transactions.expenses')}</option>
-          <option value="INCOME">{t('transactions.incomes')}</option>
-        </select>{' '}
-        <label htmlFor="category">{t('common.category')}</label>{' '}
-        <select id="category" value={filters.category} onChange={(e) => setFilter('category', e.target.value)}>
-          <option value="">{t('transactions.allCategories')}</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {t(`categories.${c.id}`)}
-            </option>
-          ))}
-        </select>{' '}
-        <label htmlFor="q">{t('transactions.search')}</label>{' '}
-        <input id="q" type="search" value={filters.q} onChange={(e) => setFilter('q', e.target.value)} />
+      <form role="search" className="card filters" onSubmit={(e) => e.preventDefault()}>
+        <div className="field">
+          <label htmlFor="month">{t('common.month')}</label>
+          <input id="month" type="month" value={filters.month} onChange={(e) => setFilter('month', e.target.value)} />
+        </div>
+        <div className="field">
+          <label htmlFor="type">{t('common.type')}</label>
+          <select id="type" value={filters.type} onChange={(e) => setFilter('type', e.target.value)}>
+            <option value="">{t('transactions.all')}</option>
+            <option value="EXPENSE">{t('transactions.expenses')}</option>
+            <option value="INCOME">{t('transactions.incomes')}</option>
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="category">{t('common.category')}</label>
+          <select id="category" value={filters.category} onChange={(e) => setFilter('category', e.target.value)}>
+            <option value="">{t('transactions.allCategories')}</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {t(`categories.${c.id}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="q">{t('transactions.search')}</label>
+          <input id="q" type="search" value={filters.q} onChange={(e) => setFilter('q', e.target.value)} />
+        </div>
       </form>
 
       {error && <p role="alert">{error}</p>}
@@ -93,32 +108,54 @@ export default function Transactions() {
 
       {data && (
         <>
-          <h2>{formatMonth(data.month)}</h2>
-          <p>
-            {t('transactions.totals', {
-              expenses: formatCents(data.totals.expenseCents),
-              incomes: formatCents(data.totals.incomeCents),
-            })}
-          </p>
-          {days.length === 0 && <p>{t('transactions.empty')}</p>}
-          {days.map((day) => (
-            <section key={day.date}>
-              <h3>{formatDay(day.date)}</h3>
-              <ul>
-                {day.items.map((tr) => (
-                  <li key={tr.id}>
-                    {tr.type === 'EXPENSE' ? '−' : '+'}
-                    {formatCents(tr.amountCents)} · {t(`categories.${tr.categoryId}`)} (
-                    {tr.type === 'EXPENSE' ? t('common.expense') : t('common.income')})
-                    {tr.note && <> · {tr.note}</>} · <Link to={`/transactions/${tr.id}/edit`}>{t('common.edit')}</Link>{' '}
-                    <button type="button" onClick={() => remove(tr)}>
-                      {t('common.delete')}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+          <div className="stats">
+            <div className="stat">
+              <span>{t('transactions.expenses')}</span>
+              <strong className="tnum">{formatCents(data.totals.expenseCents)}</strong>
+            </div>
+            <div className="stat">
+              <span>{t('transactions.incomes')}</span>
+              <strong className="tnum is-income">{formatCents(data.totals.incomeCents)}</strong>
+            </div>
+          </div>
+
+          {days.length === 0 ? (
+            <section>
+              <h2>{formatMonth(data.month)}</h2>
+              <p className="empty">{t('transactions.empty')}</p>
             </section>
-          ))}
+          ) : (
+            days.map((day) => (
+              <section key={day.date} className="day-group" aria-labelledby={`day-${day.date}`}>
+                <h2 id={`day-${day.date}`}>{formatDay(day.date)}</h2>
+                <ul className="rows">
+                  {day.items.map((tr) => (
+                    <li key={tr.id} className="row with-actions">
+                      <span className="cat-dot" style={{ '--dot': categoryColor(tr.categoryId) }} aria-hidden="true" />
+                      <span className="row-main">
+                        <strong>{tr.note || t(`categories.${tr.categoryId}`)}</strong>
+                        <small>
+                          {t(`categories.${tr.categoryId}`)}
+                        </small>
+                      </span>
+                      <span className={`row-amount tnum ${tr.type === 'EXPENSE' ? 'is-expense' : 'is-income'}`}>
+                        {tr.type === 'EXPENSE' ? '−' : '+'}
+                        {formatCents(tr.amountCents)}
+                      </span>
+                      <span className="row-actions">
+                        <Link to={`/transactions/${tr.id}/edit`} className="icon-button" aria-label={t('common.edit')}>
+                          <Icon name="edit" size={18} />
+                        </Link>
+                        <button type="button" className="icon-button danger" aria-label={t('common.delete')} onClick={() => remove(tr)}>
+                          <Icon name="trash" size={18} />
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))
+          )}
         </>
       )}
     </main>

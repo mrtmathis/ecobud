@@ -55,3 +55,10 @@ export function dayParts(day) {
   const [y, m, d] = day.split('-').map(Number);
   return { day: String(d), month: new Date(y, m - 1, d).toLocaleDateString(locale(), { month: 'short' }) };
 }
+
+// "2026-10-16" and -1 -> "2026-10-15"
+export function shiftDay(day, days) {
+  const [y, m, d] = day.split('-').map(Number);
+  const date = new Date(y, m - 1, d + days);
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}

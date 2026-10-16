@@ -2,8 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
+import { useAuth } from '../auth.jsx';
+import { categoryColor } from '../categories.js';
 import { formatCents, formatMonth, thisMonth } from '../format.js';
 import { errorMessage } from '../messages.js';
+import Icon from '../components/Icon.jsx';
+import RecapHero from '../components/RecapHero.jsx';
 
 // Last finished month, "YYYY-MM"
 function lastMonth() {
@@ -17,18 +21,20 @@ export default function Recap() {
   const month = params.get('month') || lastMonth();
 
   return (
-    <main>
-      <h1>{t('recap.title')}</h1>
-      <p>
-        <label htmlFor="month">{t('common.month')}</label>{' '}
-        <input
-          id="month"
-          type="month"
-          max={lastMonth()}
-          value={month}
-          onChange={(e) => e.target.value && setParams({ month: e.target.value })}
-        />
-      </p>
+    <main className="recap">
+      <div className="page-head">
+        <h1>{t('recap.title')}</h1>
+        <div className="field">
+          <label htmlFor="month">{t('common.month')}</label>
+          <input
+            id="month"
+            type="month"
+            max={lastMonth()}
+            value={month}
+            onChange={(e) => e.target.value && setParams({ month: e.target.value })}
+          />
+        </div>
+      </div>
       <MonthRecap key={month} month={month} />
     </main>
   );
@@ -36,6 +42,7 @@ export default function Recap() {
 
 function MonthRecap({ month }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [recap, setRecap] = useState(null);
   const [error, setError] = useState('');
 
@@ -57,69 +64,71 @@ function MonthRecap({ month }) {
   if (error) return <p role="alert">{error}</p>;
   if (!recap) return <p>{t('common.loading')}</p>;
 
-  const spent = formatCents(recap.spentCents);
-  const budget = recap.budgetCents === null ? '' : formatCents(recap.budgetCents);
   const saved = formatCents(recap.savedCents);
+  const biggest = recap.topCategories[0]?.amountCents || 1;
 
   return (
     <>
-      <h2>{formatMonth(month)}</h2>
-
-      {recap.budgetCents === null ? (
-        <p>{t('recap.noBudget', { amount: spent })}</p>
-      ) : recap.overCents > 0 ? (
-        <section aria-labelledby="result-title">
-          <h3 id="result-title">{t('recap.overTitle', { amount: formatCents(recap.overCents) })}</h3>
-          <p>{t('recap.overText', { spent, budget })}</p>
-        </section>
-      ) : (
-        <section aria-labelledby="result-title">
-          <h3 id="result-title">{t('recap.savedTitle')}</h3>
-          <p>
-            <strong style={{ fontSize: '2em' }}>{saved}</strong>
-          </p>
-          <p>{t('recap.spentOfBudget', { spent, budget })}</p>
-        </section>
+      <RecapHero recap={recap} month={month} skin={user.skin} />
+      {recap.overCents > 0 && (
+        <p className="empty">
+          {t('recap.overText', { spent: formatCents(recap.spentCents), budget: formatCents(recap.budgetCents) })}
+        </p>
       )}
 
       {recap.savedCents > 0 && (
-        <section aria-labelledby="aside-title">
-          <h3 id="aside-title">{t('recap.asideTitle')}</h3>
+        <section className="aside-card" aria-labelledby="aside-title">
+          <h2 id="aside-title">{t('recap.asideTitle')}</h2>
           {recap.answer === 'DONE' ? (
-            <p role="status">{t('recap.done', { amount: saved, month: formatMonth(month) })}</p>
+            <p className="today-done">
+              <Icon name="check" /> {t('recap.done', { amount: saved, month: formatMonth(month) })}
+            </p>
           ) : (
             <>
               <p>{t('recap.advice', { amount: saved })}</p>
               {recap.answer === 'REMIND_LATER' && <p role="status">{t('recap.remindLaterSet')}</p>}
-              <button type="button" onClick={() => answer('DONE')}>
-                {t('recap.doneButton')}
-              </button>{' '}
-              {recap.answer !== 'REMIND_LATER' && (
-                <button type="button" onClick={() => answer('REMIND_LATER')}>
-                  {t('recap.remindLater')}
+              <div className="form-actions">
+                <button type="button" className="primary" onClick={() => answer('DONE')}>
+                  <Icon name="check" size={18} /> {t('recap.doneButton')}
                 </button>
-              )}
+                {recap.answer !== 'REMIND_LATER' && (
+                  <button type="button" onClick={() => answer('REMIND_LATER')}>
+                    <Icon name="bell" size={18} /> {t('recap.remindLater')}
+                  </button>
+                )}
+              </div>
             </>
           )}
         </section>
       )}
 
       <section aria-labelledby="top-title">
-        <h3 id="top-title">{t('recap.topTitle')}</h3>
+        <h2 id="top-title">{t('recap.topTitle')}</h2>
         {recap.topCategories.length === 0 ? (
-          <p>{t('recap.noExpenses')}</p>
+          <p className="empty">{t('recap.noExpenses')}</p>
         ) : (
-          <ol>
-            {recap.topCategories.map((c) => (
-              <li key={c.categoryId}>
-                {t('recap.categoryAmount', { category: t(`categories.${c.categoryId}`), amount: formatCents(c.amountCents) })}
+          <ol className="ranking">
+            {recap.topCategories.map((c, i) => (
+              <li key={c.categoryId} style={{ '--dot': categoryColor(c.categoryId) }}>
+                <span className="rank" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <span className="ranking-main">
+                  <span className="ranking-line">
+                    <strong>{t(`categories.${c.categoryId}`)}</strong>
+                    <span className="tnum">{formatCents(c.amountCents)}</span>
+                  </span>
+                  <span className="ranking-bar" aria-hidden="true">
+                    <i style={{ width: `${Math.round((c.amountCents / biggest) * 100)}%` }} />
+                  </span>
+                </span>
               </li>
             ))}
           </ol>
         )}
+        <p className="today-income">{t('recap.income', { amount: formatCents(recap.incomeCents) })}</p>
       </section>
 
-      <p>{t('recap.income', { amount: formatCents(recap.incomeCents) })}</p>
       <p>
         <Link to={`/transactions?month=${month}`}>{t('recap.seeTransactions', { month: formatMonth(month) })}</Link>
       </p>

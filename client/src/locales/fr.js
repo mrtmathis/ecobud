@@ -20,6 +20,8 @@ export default {
     addIncome: 'Ajouter un revenu',
     backToDashboard: 'Retour au tableau de bord',
     close: 'Fermer',
+    todayLabel: 'Aujourd’hui',
+    yesterday: 'Hier',
     today: 'aujourd’hui',
     tomorrow: 'demain',
     inDays: 'dans {{count}} jours',
@@ -143,6 +145,10 @@ export default {
     continue: 'Continuer',
   },
   home: {
+    featureAdd: 'Une dépense notée en 5 secondes',
+    featureReminder: 'Un rappel le soir pour ne rien oublier',
+    featureRecap: 'Un récap chaque mois pour mettre de côté',
+    sample: 'Exemple de tableau de bord',
     tagline: 'Ton budget étudiant, sans prise de tête.',
     pitch:
       'Note tes dépenses en quelques secondes, fixe ton budget du mois et vois ce qu’il te reste. Aucune donnée bancaire demandée.',
@@ -262,6 +268,7 @@ export default {
     label: 'Budget global du mois (€)',
     placeholder: 'Ex. : 800',
     carriesOver: 'Ce montant s’applique aussi aux mois suivants, tant que tu ne le changes pas.',
+    inheritedShort: 'Repris du budget de {{from}}.',
     saved: 'Budget de {{month}} enregistré : {{amount}}.',
   },
   recurrences: {
@@ -272,6 +279,8 @@ export default {
     empty: 'Aucune récurrence pour l’instant.',
     trialEnd: 'Fin de l’essai gratuit : {{date}} ({{when}})',
     nextDebit: 'Prochain prélèvement : {{date}} ({{when}})',
+    trialEndShort: 'L’essai se termine {{when}}',
+    nextDebitShort: 'Prochain prélèvement {{when}}',
     remindDayBefore: 'Me prévenir la veille',
     remindDaysBefore: 'Me prévenir {{count}} jours avant',
     stop: 'Arrêter',
@@ -302,6 +311,7 @@ export default {
     overText:
       '{{spent}} dépensés pour un budget de {{budget}}. Regarde ce qui a le plus pesé ci-dessous pour ajuster le mois prochain.',
     savedTitle: 'Montant économisé',
+    badge: 'Bravo !',
     spentOfBudget: '{{spent}} dépensés sur un budget de {{budget}}.',
     asideTitle: 'Mets-les de côté',
     done: 'Bravo, {{amount}} mis de côté pour {{month}}.',

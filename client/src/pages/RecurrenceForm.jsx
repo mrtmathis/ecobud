@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
-import { useCategories } from '../categories.js';
+import { categoryColor, useCategories } from '../categories.js';
 import { centsToInput, parseAmount, today } from '../format.js';
 import { errorMessage } from '../messages.js';
 
@@ -84,105 +84,119 @@ export default function RecurrenceForm() {
 
   return (
     <main>
-      <h1>{id ? t('recurrenceForm.editTitle') : t('recurrenceForm.newTitle')}</h1>
-      <form onSubmit={submit}>
-        <fieldset>
+      <div className="page-head">
+        <h1>{id ? t('recurrenceForm.editTitle') : t('recurrenceForm.newTitle')}</h1>
+      </div>
+      <form onSubmit={submit} className="form-grid">
+        <fieldset className="segmented">
           <legend>{t('common.type')}</legend>
           <label>
-            <input type="radio" name="type" checked={isExpense} onChange={() => changeType('EXPENSE')} /> {t('common.expense')}
-          </label>{' '}
+            <input type="radio" name="type" checked={isExpense} onChange={() => changeType('EXPENSE')} />
+            <span>{t('common.expense')}</span>
+          </label>
           <label>
-            <input type="radio" name="type" checked={!isExpense} onChange={() => changeType('INCOME')} /> {t('common.income')}
+            <input type="radio" name="type" checked={!isExpense} onChange={() => changeType('INCOME')} />
+            <span>{t('common.income')}</span>
           </label>
         </fieldset>
 
-        <p>
-          <label htmlFor="label">{t('recurrenceForm.name')}</label>
-          <br />
-          <input
-            id="label"
-            maxLength={60}
-            required
-            placeholder={isExpense ? t('recurrenceForm.namePlaceholderExpense') : t('recurrenceForm.namePlaceholderIncome')}
-            value={form.label}
-            onChange={(e) => update('label', e.target.value)}
-          />
-        </p>
+        <div className="form-row">
+          <div className="field">
+            <label htmlFor="label">{t('recurrenceForm.name')}</label>
+            <input
+              id="label"
+              maxLength={60}
+              required
+              placeholder={isExpense ? t('recurrenceForm.namePlaceholderExpense') : t('recurrenceForm.namePlaceholderIncome')}
+              value={form.label}
+              onChange={(e) => update('label', e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="amount">{t('common.amount')}</label>
+            <div className="amount-field">
+              <input
+                id="amount"
+                inputMode="decimal"
+                placeholder={t('common.amountPlaceholder')}
+                autoComplete="off"
+                required
+                value={form.amount}
+                onChange={(e) => update('amount', e.target.value)}
+              />
+              <span aria-hidden="true">€</span>
+            </div>
+          </div>
+        </div>
 
-        <p>
-          <label htmlFor="amount">{t('common.amount')}</label>
-          <br />
-          <input
-            id="amount"
-            inputMode="decimal"
-            placeholder={t('common.amountPlaceholder')}
-            autoComplete="off"
-            required
-            value={form.amount}
-            onChange={(e) => update('amount', e.target.value)}
-          />
-        </p>
-
-        <fieldset>
+        <fieldset className="tiles">
           <legend>{t('common.category')}</legend>
           {choices.map((c) => (
-            <label key={c.id}>
-              <input type="radio" name="category" checked={form.categoryId === c.id} onChange={() => changeCategory(c.id)} />{' '}
-              {t(`categories.${c.id}`)}{' '}
+            <label key={c.id} className="tile" style={{ '--dot': categoryColor(c.id) }}>
+              <input type="radio" name="category" checked={form.categoryId === c.id} onChange={() => changeCategory(c.id)} />
+              <i aria-hidden="true" />
+              {t(`categories.${c.id}`)}
             </label>
           ))}
         </fieldset>
 
-        <p>
-          <label htmlFor="frequency">{t('recurrenceForm.frequency')}</label>
-          <br />
-          <select id="frequency" value={form.frequency} onChange={(e) => update('frequency', e.target.value)}>
-            <option value="MONTHLY">{t('frequency.MONTHLY')}</option>
-            <option value="YEARLY">{t('frequency.YEARLY')}</option>
-          </select>
-        </p>
+        <div className="form-row">
+          <div className="field">
+            <span className="field-label" id="frequency-label">
+              {t('recurrenceForm.frequency')}
+            </span>
+            <fieldset className="segmented" aria-labelledby="frequency-label">
+              <label>
+                <input type="radio" name="frequency" checked={form.frequency === 'MONTHLY'} onChange={() => update('frequency', 'MONTHLY')} />
+                <span>{t('frequency.MONTHLY')}</span>
+              </label>
+              <label>
+                <input type="radio" name="frequency" checked={form.frequency === 'YEARLY'} onChange={() => update('frequency', 'YEARLY')} />
+                <span>{t('frequency.YEARLY')}</span>
+              </label>
+            </fieldset>
+          </div>
+          <div className="field">
+            <label htmlFor="nextDate">{form.isTrial ? t('recurrenceForm.trialEnd') : t('recurrenceForm.nextDate')}</label>
+            <input id="nextDate" type="date" min={today()} required value={form.nextDate} onChange={(e) => update('nextDate', e.target.value)} />
+          </div>
+        </div>
 
         {isExpense && (
-          <p>
-            <label>
-              <input type="checkbox" checked={form.isTrial} onChange={(e) => update('isTrial', e.target.checked)} />{' '}
-              {t('recurrenceForm.isTrial')}
+          <section className="option-card" aria-labelledby="reminder-title">
+            <h2 id="reminder-title">{t('recurrenceForm.reminderTitle')}</h2>
+            <label className="switch">
+              <input type="checkbox" checked={form.isTrial} onChange={(e) => update('isTrial', e.target.checked)} />
+              <span>{t('recurrenceForm.isTrial')}</span>
             </label>
-          </p>
-        )}
-
-        <p>
-          <label htmlFor="nextDate">{form.isTrial ? t('recurrenceForm.trialEnd') : t('recurrenceForm.nextDate')}</label>
-          <br />
-          <input id="nextDate" type="date" min={today()} required value={form.nextDate} onChange={(e) => update('nextDate', e.target.value)} />
-        </p>
-
-        {isExpense && (
-          <fieldset>
-            <legend>{t('recurrenceForm.reminderTitle')}</legend>
-            <label>
-              <input type="checkbox" checked={form.remindOn} onChange={(e) => update('remindOn', e.target.checked)} />{' '}
-              {t('recurrenceForm.remindMe')}
-            </label>{' '}
-            <label htmlFor="remindDaysBefore">{t('recurrenceForm.delay')}</label>{' '}
-            <select
-              id="remindDaysBefore"
-              disabled={!form.remindOn}
-              value={form.remindDaysBefore}
-              onChange={(e) => update('remindDaysBefore', e.target.value)}
-            >
-              <option value={1}>{t('recurrenceForm.dayBefore')}</option>
-              <option value={3}>{t('recurrenceForm.daysBefore', { count: 3 })}</option>
-              <option value={7}>{t('recurrenceForm.daysBefore', { count: 7 })}</option>
-            </select>
-          </fieldset>
+            <label className="switch">
+              <input type="checkbox" checked={form.remindOn} onChange={(e) => update('remindOn', e.target.checked)} />
+              <span>{t('recurrenceForm.remindMe')}</span>
+            </label>
+            <fieldset className="segmented" disabled={!form.remindOn}>
+              <legend>{t('recurrenceForm.delay')}</legend>
+              {[1, 3, 7].map((days) => (
+                <label key={days}>
+                  <input
+                    type="radio"
+                    name="remindDaysBefore"
+                    checked={Number(form.remindDaysBefore) === days}
+                    onChange={() => update('remindDaysBefore', days)}
+                  />
+                  <span>{days === 1 ? t('recurrenceForm.dayBefore') : t('recurrenceForm.daysBefore', { count: days })}</span>
+                </label>
+              ))}
+            </fieldset>
+          </section>
         )}
 
         {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={sending}>
-          {sending ? t('common.saving') : t('common.save')}
-        </button>{' '}
-        <Link to="/recurrences">{t('common.cancel')}</Link>
+        <div className="form-actions">
+          <button type="submit" className="primary" disabled={sending}>
+            {sending ? t('common.saving') : t('common.save')}
+          </button>
+          <Link to="/recurrences">{t('common.cancel')}</Link>
+        </div>
       </form>
     </main>
   );

@@ -45,10 +45,17 @@ export default function Account() {
 
   return (
     <main>
-      <h1>{t('account.title')}</h1>
-      <p>
-        {user.name} · {user.email}
-      </p>
+      <div className="profile">
+        <span className="avatar" aria-hidden="true">
+          {user.name.charAt(0).toUpperCase()}
+        </span>
+        <div>
+          <h1>{t('account.title')}</h1>
+          <p>
+            {user.name} · {user.email}
+          </p>
+        </div>
+      </div>
 
       <section aria-labelledby="language-section">
         <h2 id="language-section">{t('account.language')}</h2>

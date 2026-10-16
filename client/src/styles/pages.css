@@ -1,0 +1,718 @@
+/* Building blocks shared by the pages: page header, segmented choice, big amount, category tiles, switches */
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+}
+
+.page-head h1 {
+  margin: 0;
+}
+
+.page-head p {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--muted);
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+
+.field > label,
+.field-label {
+  font-weight: 700;
+}
+
+.field input:not([type='checkbox'], [type='radio']),
+.field select {
+  margin-top: 0;
+}
+
+.field small {
+  display: block;
+}
+
+.form-grid {
+  display: grid;
+  gap: 18px;
+}
+
+@media (min-width: 640px) {
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-actions .primary {
+  min-width: 180px;
+}
+
+@media (max-width: 520px) {
+  .form-actions .primary {
+    flex: 1;
+  }
+}
+
+/* ---------- Segmented choice (expense or income, frequency...) ---------- */
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.segmented legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.segmented label {
+  margin: 0;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 18px;
+  margin-left: calc(-1 * max(var(--border), 1.5px));
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface-2);
+  border: max(var(--border), 1.5px) solid var(--line);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.segmented label:first-of-type span {
+  margin-left: 0;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.segmented label:last-of-type span {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.segmented input:checked + span {
+  color: var(--on-accent);
+  background: var(--accent);
+}
+
+.segmented input:focus-visible + span {
+  outline: 3px solid var(--highlight);
+  outline-offset: 2px;
+}
+
+/* ---------- Big amount ---------- */
+
+.amount-field {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 340px;
+  padding: 6px 16px;
+  background: var(--surface-2);
+  border: max(var(--border), 1.5px) solid var(--line);
+  border-radius: var(--radius-lg);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.amount-field:focus-within {
+  border-color: var(--text);
+  box-shadow: 0 0 0 3px var(--highlight);
+}
+
+.amount-field input:not([type='checkbox'], [type='radio']) {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  min-height: 0;
+  margin: 0;
+  padding: 4px 0;
+  font-family: var(--font-num);
+  font-size: 2.4rem;
+  font-weight: var(--display-weight);
+  letter-spacing: -0.02em;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.amount-field span {
+  font-family: var(--font-num);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* ---------- Category tiles ---------- */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.tiles legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.tile {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  min-height: 74px;
+  margin: 0;
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  background: var(--surface-2);
+  border: max(var(--border), 1.5px) solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.15s ease;
+}
+
+.tile:hover {
+  transform: translateY(-2px);
+}
+
+.tile input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tile i {
+  width: 14px;
+  height: 14px;
+  background: var(--dot);
+  border-radius: 50%;
+}
+
+[data-skin='ticket'] .tile i {
+  border-radius: 2px;
+}
+
+.tile:has(input:checked) {
+  color: var(--on-accent);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+.tile:has(input:checked) i {
+  box-shadow: 0 0 0 2px var(--on-accent);
+}
+
+.tile:has(input:focus-visible) {
+  outline: 3px solid var(--highlight);
+  outline-offset: 2px;
+}
+
+/* ---------- Small chips (quick dates, filters) ---------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  min-height: 34px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--surface-2);
+  border: max(var(--border), 1px) solid var(--line);
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.chip[aria-pressed='true'] {
+  color: var(--on-highlight);
+  background: var(--highlight);
+}
+
+/* ---------- On/off switch built on a checkbox ---------- */
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.switch input {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 26px;
+  margin: 0;
+  background: var(--surface-2);
+  border: max(var(--border), 1.5px) solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.switch input::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: transform 0.2s cubic-bezier(0.3, 1.4, 0.5, 1), background-color 0.2s ease;
+}
+
+.switch input:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.switch input:checked::after {
+  background: var(--on-accent);
+  transform: translateX(20px);
+}
+
+.switch input:focus-visible {
+  outline: 3px solid var(--highlight);
+  outline-offset: 2px;
+}
+
+/* ---------- Key figures ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.stat {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: var(--border) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.stat span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: var(--label-case);
+  letter-spacing: var(--label-spacing);
+}
+
+.stat strong {
+  font-family: var(--font-num);
+  font-size: 1.4rem;
+  font-weight: var(--display-weight);
+}
+
+/* ---------- Icon buttons in lists ---------- */
+
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+
+.icon-button:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.icon-button.danger:hover {
+  color: var(--danger);
+}
+
+.row-actions {
+  display: flex;
+  gap: 2px;
+}
+
+/* Lists with actions get one more column */
+.row.with-actions {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+
+/* Phones: smaller icon buttons so a row stays on one line */
+@media (max-width: 480px) {
+  .row.with-actions {
+    gap: 8px;
+  }
+  .row.with-actions .cat-dot {
+    width: 32px;
+    height: 32px;
+  }
+  .row.with-actions .cat-dot::after {
+    inset: 11px;
+  }
+  .row-actions .icon-button {
+    width: 32px;
+    min-width: 32px;
+    height: 36px;
+  }
+}
+
+/* ---------- History grouped by day ---------- */
+
+.day-group h2 {
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: var(--label-case);
+  letter-spacing: var(--label-spacing);
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.filters input:not([type='checkbox'], [type='radio']),
+.filters select {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+}
+
+.big-number {
+  margin: 0;
+  font-family: var(--font-num);
+  font-weight: var(--display-weight);
+  font-size: clamp(2.2rem, 9vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* ---------- Recurring items ---------- */
+
+.recurrence {
+  display: grid;
+  gap: 8px;
+  padding-block: 8px 12px;
+}
+
+.recurrence .row {
+  border-top: 0;
+}
+
+.recurrence-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+  padding-top: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 1px dashed var(--line);
+}
+
+.recurrence-foot .switch {
+  color: var(--text);
+}
+
+.recurrence-foot .switch span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mini-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--dot);
+  border-radius: 50%;
+}
+
+.option-card {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+.option-card h2 {
+  margin: 0;
+}
+
+.segmented:disabled {
+  opacity: 0.45;
+}
+
+/* ---------- Monthly recap ---------- */
+
+.receipt-total {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 3px double var(--line);
+}
+
+.ranking {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.ranking li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.rank {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  font-family: var(--font-num);
+  font-weight: 800;
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: var(--radius);
+}
+
+[data-skin='bocal'] .rank {
+  border-radius: 50%;
+}
+
+.ranking-main {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ranking-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ranking-bar {
+  height: 10px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+
+.ranking-bar i {
+  display: block;
+  height: 100%;
+  background: var(--dot);
+  border-radius: 999px;
+  animation: grow 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* ---------- Home page ---------- */
+
+.landing {
+  max-width: none;
+  align-items: center;
+  gap: 32px;
+}
+
+@media (min-width: 820px) {
+  .landing {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    padding-top: 24px;
+  }
+}
+
+.landing h1 {
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  margin-bottom: 16px;
+}
+
+.landing-pitch {
+  max-width: 46ch;
+  font-size: 1.05rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.features {
+  display: grid;
+  gap: 10px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.feature-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  color: var(--on-highlight);
+  background: var(--highlight);
+  border-radius: var(--radius);
+}
+
+.landing-demo {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  max-width: 420px;
+  width: 100%;
+  justify-self: center;
+  transform: rotate(-2deg);
+}
+
+.landing-demo figcaption {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- Visitor forms (login, signup, forgotten password) ---------- */
+
+.guest-body main > form p {
+  margin-bottom: 16px;
+}
+
+.guest-body main > form button[type='submit'] {
+  width: 100%;
+  min-height: 50px;
+}
+
+.guest-body main > p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------- Account ---------- */
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile h1 {
+  margin: 0;
+}
+
+.profile p {
+  margin: 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 58px;
+  height: 58px;
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-size: 1.6rem;
+  color: var(--on-highlight);
+  background: var(--highlight);
+  border: var(--border) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+[data-skin='bocal'] .avatar {
+  border-radius: 50%;
+}
+
+.landing-demo .hero-jar {
+  padding: 18px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+/* Notification settings in My account */
+.notification-settings form {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  margin-bottom: 18px;
+}
+
+.notification-settings form > * {
+  margin: 0;
+}
+
+.notification-settings h3 {
+  margin: 18px 0 6px;
+}

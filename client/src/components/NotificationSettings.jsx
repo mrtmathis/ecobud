@@ -81,7 +81,7 @@ export default function NotificationSettings() {
     }, alertsOn ? t('notifications.alertsOn') : t('notifications.alertsOff'));
 
   return (
-    <section aria-labelledby="notifications-title">
+    <section className="notification-settings" aria-labelledby="notifications-title">
       <h2 id="notifications-title">{t('notifications.title')}</h2>
 
       <h3>{t('notifications.deviceTitle')}</h3>
@@ -115,7 +115,7 @@ export default function NotificationSettings() {
             <h3>{t('notifications.reminderTitle')}</h3>
             <p>{t('notifications.reminderIntro')}</p>
             <p>
-              <label>
+              <label className="switch">
                 <input type="checkbox" checked={settings.reminderOn} onChange={(e) => update('reminderOn', e.target.checked)} />{' '}
                 {t('notifications.reminderOn')}
               </label>
@@ -149,7 +149,7 @@ export default function NotificationSettings() {
 
           <h3>{t('notifications.alertsTitle')}</h3>
           <p>
-            <label>
+            <label className="switch">
               <input type="checkbox" checked={settings.alertsOn} onChange={(e) => toggleAlerts(e.target.checked)} />{' '}
               {t('notifications.alertsLabel')}
             </label>

@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
-import { formatCents, formatDay, inDays } from '../format.js';
+import { categoryColor } from '../categories.js';
+import { dayParts, formatCents, inDays } from '../format.js';
 import { errorMessage } from '../messages.js';
+import Icon from '../components/Icon.jsx';
 
 export default function Recurrences() {
   const { t } = useTranslation();
@@ -39,45 +41,71 @@ export default function Recurrences() {
 
   return (
     <main>
-      <h1>{t('recurrences.title')}</h1>
-      <p>{t('recurrences.intro')}</p>
-      <p>
-        <Link to="/recurrences/new">{t('recurrences.add')}</Link>
-      </p>
+      <div className="page-head">
+        <h1>{t('recurrences.title')}</h1>
+        <Link to="/recurrences/new" className="btn">
+          <Icon name="plus" size={18} /> {t('recurrences.add')}
+        </Link>
+        <p>{t('recurrences.intro')}</p>
+      </div>
 
       {error && <p role="alert">{error}</p>}
       {!recurrences && !error && <p>{t('common.loading')}</p>}
-      {recurrences?.length === 0 && <p>{t('recurrences.empty')}</p>}
+      {recurrences?.length === 0 && (
+        <section>
+          <p className="empty">{t('recurrences.empty')}</p>
+        </section>
+      )}
 
-      <ul>
-        {recurrences?.map((r) => (
-          <li key={r.id}>
-            <strong>{r.label}</strong> · {r.type === 'EXPENSE' ? '−' : '+'}
-            {formatCents(r.amountCents)} · {t(`categories.${r.categoryId}`)} · {t(`frequency.${r.frequency}`)}
-            <br />
-            {t(r.isTrial ? 'recurrences.trialEnd' : 'recurrences.nextDebit', {
-              date: formatDay(r.nextDate),
-              when: inDays(r.daysUntil),
-            })}
-            {r.type === 'EXPENSE' && (
-              <>
-                <br />
-                <label>
-                  <input type="checkbox" checked={r.remindOn} onChange={() => toggleReminder(r)} />{' '}
-                  {r.remindDaysBefore === 1
-                    ? t('recurrences.remindDayBefore')
-                    : t('recurrences.remindDaysBefore', { count: r.remindDaysBefore })}
+      {recurrences?.map((r) => {
+        const date = dayParts(r.nextDate);
+        return (
+          <section key={r.id} className="recurrence" aria-label={r.label}>
+            <div className="row with-actions">
+              <span className="date-chip" aria-hidden="true">
+                <b>{date.day}</b>
+                <small>{date.month}</small>
+              </span>
+              <span className="row-main">
+                <strong>{r.label}</strong>
+                <small>
+                  <span className="mini-dot" style={{ '--dot': categoryColor(r.categoryId) }} aria-hidden="true" />{' '}
+                  {t(`categories.${r.categoryId}`)} · {t(`frequency.${r.frequency}`)}
+                </small>
+              </span>
+              <span className={`row-amount tnum ${r.type === 'EXPENSE' ? 'is-expense' : 'is-income'}`}>
+                {r.type === 'EXPENSE' ? '−' : '+'}
+                {formatCents(r.amountCents)}
+              </span>
+              <span className="row-actions">
+                <Link to={`/recurrences/${r.id}/edit`} className="icon-button" aria-label={t('common.edit')}>
+                  <Icon name="edit" size={18} />
+                </Link>
+                <button type="button" className="icon-button danger" aria-label={t('recurrences.stop')} onClick={() => remove(r)}>
+                  <Icon name="trash" size={18} />
+                </button>
+              </span>
+            </div>
+            <div className="recurrence-foot">
+              <span>
+                {r.isTrial && <span className="tag">{t('dashboard.trialEnds')}</span>}{' '}
+                {t(r.isTrial ? 'recurrences.trialEndShort' : 'recurrences.nextDebitShort', { when: inDays(r.daysUntil) })}
+              </span>
+              {r.type === 'EXPENSE' && (
+                <label className="switch">
+                  <input type="checkbox" checked={r.remindOn} onChange={() => toggleReminder(r)} />
+                  <span>
+                    <Icon name="bell" size={16} />{' '}
+                    {r.remindDaysBefore === 1
+                      ? t('recurrences.remindDayBefore')
+                      : t('recurrences.remindDaysBefore', { count: r.remindDaysBefore })}
+                  </span>
                 </label>
-              </>
-            )}
-            <br />
-            <Link to={`/recurrences/${r.id}/edit`}>{t('common.edit')}</Link>{' '}
-            <button type="button" onClick={() => remove(r)}>
-              {t('recurrences.stop')}
-            </button>
-          </li>
-        ))}
-      </ul>
+              )}
+            </div>
+          </section>
+        );
+      })}
     </main>
   );
 }

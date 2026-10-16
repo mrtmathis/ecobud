@@ -12,11 +12,13 @@ export default function Budget() {
 
   return (
     <main>
-      <h1>{t('budget.title')}</h1>
-      <p>
-        <label htmlFor="month">{t('common.month')}</label>{' '}
-        <input id="month" type="month" value={month} onChange={(e) => e.target.value && setParams({ month: e.target.value })} />
-      </p>
+      <div className="page-head">
+        <h1>{t('budget.title')}</h1>
+        <div className="field">
+          <label htmlFor="month">{t('common.month')}</label>
+          <input id="month" type="month" value={month} onChange={(e) => e.target.value && setParams({ month: e.target.value })} />
+        </div>
+      </div>
       {/* The key gives each month a fresh form */}
       <MonthBudget key={month} month={month} />
       <p>
@@ -58,42 +60,47 @@ function MonthBudget({ month }) {
 
   return (
     <>
-      {budget === undefined && !error && <p>{t('common.loading')}</p>}
-      {budget === null && <p>{t('budget.none', { month: formatMonth(month) })}</p>}
-      {budget?.inherited && (
-        <p>
-          {t('budget.inherited', {
-            month: formatMonth(month),
-            from: formatMonth(budget.month),
-            amount: formatCents(budget.amountCents),
-          })}
-        </p>
-      )}
-      {budget && !budget.inherited && (
-        <p>{t('budget.current', { month: formatMonth(month), amount: formatCents(budget.amountCents) })}</p>
-      )}
+      <section aria-labelledby="current-title">
+        <h2 id="current-title">{formatMonth(month)}</h2>
+        {budget === undefined && !error && <p>{t('common.loading')}</p>}
+        {budget === null && <p className="empty">{t('budget.none', { month: formatMonth(month) })}</p>}
+        {budget && (
+          <>
+            <p className="big-number tnum">{formatCents(budget.amountCents)}</p>
+            {budget.inherited && (
+              <p className="empty">
+                {t('budget.inheritedShort', { from: formatMonth(budget.month) })}
+              </p>
+            )}
+          </>
+        )}
+      </section>
 
-      <form onSubmit={submit}>
-        <label htmlFor="amount">{t('budget.label')}</label>
-        <br />
-        <input
-          id="amount"
-          inputMode="decimal"
-          placeholder={t('budget.placeholder')}
-          autoComplete="off"
-          required
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />{' '}
-        <button type="submit">{t('common.save')}</button>
-        <br />
-        <small>{t('budget.carriesOver')}</small>
+      <form onSubmit={submit} className="form-grid">
+        <div className="field">
+          <label htmlFor="amount">{t('budget.label')}</label>
+          <div className="amount-field">
+            <input
+              id="amount"
+              inputMode="decimal"
+              placeholder={t('budget.placeholder')}
+              autoComplete="off"
+              required
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+            <span aria-hidden="true">€</span>
+          </div>
+          <small>{t('budget.carriesOver')}</small>
+        </div>
+        <div className="form-actions">
+          <button type="submit" className="primary">
+            {t('common.save')}
+          </button>
+        </div>
+        {saved && <p role="status">{t('budget.saved', { month: formatMonth(month), amount: formatCents(saved) })}</p>}
+        {error && <p role="alert">{error}</p>}
       </form>
-
-      {saved && (
-        <p role="status">{t('budget.saved', { month: formatMonth(month), amount: formatCents(saved) })}</p>
-      )}
-      {error && <p role="alert">{error}</p>}
     </>
   );
 }

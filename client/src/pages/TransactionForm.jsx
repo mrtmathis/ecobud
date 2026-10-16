@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
-import { useCategories } from '../categories.js';
-import { centsToInput, parseAmount, today } from '../format.js';
+import { categoryColor, useCategories } from '../categories.js';
+import { centsToInput, parseAmount, shiftDay, today } from '../format.js';
 import { errorMessage } from '../messages.js';
 
 // Translation key for each field the API can reject
@@ -42,6 +42,11 @@ export default function TransactionForm() {
   const choices = categories.filter((c) => c.type === form.type);
   const selected = categories.find((c) => c.id === form.categoryId);
   const noteRequired = Boolean(selected?.requiresNote);
+  const now = today();
+  const quickDays = [
+    { day: now, label: t('common.todayLabel') },
+    { day: shiftDay(now, -1), label: t('common.yesterday') },
+  ];
 
   const changeType = (type) => setForm((f) => ({ ...f, type, categoryId: '' }));
 
@@ -73,74 +78,89 @@ export default function TransactionForm() {
 
   return (
     <main>
-      <h1>{title}</h1>
-      <form onSubmit={submit}>
-        <fieldset>
+      <div className="page-head">
+        <h1>{title}</h1>
+      </div>
+      <form onSubmit={submit} className="form-grid">
+        <fieldset className="segmented">
           <legend>{t('common.type')}</legend>
           <label>
-            <input type="radio" name="type" checked={form.type === 'EXPENSE'} onChange={() => changeType('EXPENSE')} />{' '}
-            {t('common.expense')}
-          </label>{' '}
+            <input type="radio" name="type" checked={form.type === 'EXPENSE'} onChange={() => changeType('EXPENSE')} />
+            <span>{t('common.expense')}</span>
+          </label>
           <label>
-            <input type="radio" name="type" checked={form.type === 'INCOME'} onChange={() => changeType('INCOME')} />{' '}
-            {t('common.income')}
+            <input type="radio" name="type" checked={form.type === 'INCOME'} onChange={() => changeType('INCOME')} />
+            <span>{t('common.income')}</span>
           </label>
         </fieldset>
 
-        <p>
+        <div className="field">
           <label htmlFor="amount">{t('common.amount')}</label>
-          <br />
-          <input
-            id="amount"
-            inputMode="decimal"
-            placeholder={t('common.amountPlaceholder')}
-            autoComplete="off"
-            required
-            value={form.amount}
-            onChange={(e) => update('amount', e.target.value)}
-          />
-        </p>
+          <div className="amount-field">
+            <input
+              id="amount"
+              inputMode="decimal"
+              placeholder={t('common.amountPlaceholder')}
+              autoComplete="off"
+              autoFocus={!id}
+              required
+              value={form.amount}
+              onChange={(e) => update('amount', e.target.value)}
+            />
+            <span aria-hidden="true">€</span>
+          </div>
+        </div>
 
-        <fieldset>
+        <fieldset className="tiles">
           <legend>{t('common.category')}</legend>
           {choices.map((c) => (
-            <label key={c.id}>
+            <label key={c.id} className="tile" style={{ '--dot': categoryColor(c.id) }}>
               <input
                 type="radio"
                 name="category"
                 value={c.id}
                 checked={form.categoryId === c.id}
                 onChange={() => update('categoryId', c.id)}
-              />{' '}
-              {t(`categories.${c.id}`)}{' '}
+              />
+              <i aria-hidden="true" />
+              {t(`categories.${c.id}`)}
             </label>
           ))}
         </fieldset>
 
-        <p>
-          <label htmlFor="date">{t('transactionForm.date')}</label>
-          <br />
-          <input id="date" type="date" max={today()} required value={form.date} onChange={(e) => update('date', e.target.value)} />
-        </p>
+        <div className="form-row">
+          <div className="field">
+            <label htmlFor="date">{t('transactionForm.date')}</label>
+            <input id="date" type="date" max={now} required value={form.date} onChange={(e) => update('date', e.target.value)} />
+            <div className="chips">
+              {quickDays.map((q) => (
+                <button key={q.day} type="button" className="chip" aria-pressed={form.date === q.day} onClick={() => update('date', q.day)}>
+                  {q.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <p>
-          <label htmlFor="note">{noteRequired ? t('transactionForm.noteRequired') : t('transactionForm.noteOptional')}</label>
-          <br />
-          <input
-            id="note"
-            maxLength={200}
-            required={noteRequired}
-            placeholder={noteRequired ? t('transactionForm.notePlaceholderRequired') : t('transactionForm.notePlaceholder')}
-            value={form.note}
-            onChange={(e) => update('note', e.target.value)}
-          />
-        </p>
+          <div className="field">
+            <label htmlFor="note">{noteRequired ? t('transactionForm.noteRequired') : t('transactionForm.noteOptional')}</label>
+            <input
+              id="note"
+              maxLength={200}
+              required={noteRequired}
+              placeholder={noteRequired ? t('transactionForm.notePlaceholderRequired') : t('transactionForm.notePlaceholder')}
+              value={form.note}
+              onChange={(e) => update('note', e.target.value)}
+            />
+          </div>
+        </div>
 
         {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={sending}>
-          {sending ? t('common.saving') : t('common.save')}
-        </button>{' '}
-        <Link to="/transactions">{t('common.cancel')}</Link>
+        <div className="form-actions">
+          <button type="submit" className="primary" disabled={sending}>
+            {sending ? t('common.saving') : t('common.save')}
+          </button>
+          <Link to="/transactions">{t('common.cancel')}</Link>
+        </div>
       </form>
     </main>
   );
