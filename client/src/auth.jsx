@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Navigate } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from './api.js';
 import { applyLanguage } from './i18n.js';
+import { applyTheme } from './theme.js';
 
 const AuthContext = createContext(null);
 
@@ -23,6 +24,13 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (language) applyLanguage(language);
   }, [language]);
+
+  // The theme saved on the account wins too
+  const skin = user?.skin;
+  const appearance = user?.appearance;
+  useEffect(() => {
+    if (skin && appearance) applyTheme({ skin, appearance });
+  }, [skin, appearance]);
 
   // Keeps the account time zone in line with the device, for "today" and reminder times
   const timezone = user?.timezone;
@@ -58,8 +66,12 @@ export const useAuth = () => useContext(AuthContext);
 export function RequireAuth({ children }) {
   const { user, loading } = useAuth();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   if (loading) return <p>{t('common.loading')}</p>;
-  return user ? children : <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  // The theme choice is offered once, at the first sign in
+  if (!user.themeChosen && pathname !== '/welcome') return <Navigate to="/welcome" replace />;
+  return children;
 }
 
 // Pages only for visitors (login, signup...)

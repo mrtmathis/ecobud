@@ -1,0 +1,279 @@
+/* Shared look of every page; colors, fonts and shapes all come from tokens.css */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin: 0 0 0.5em;
+}
+
+h1 {
+  font-size: clamp(1.7rem, 5vw, 2.3rem);
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+p {
+  margin: 0 0 0.75em;
+}
+
+/* Low priority so buttons that are links keep their own colors */
+:where(a) {
+  color: inherit;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+a:where(:not(.btn)):hover {
+  text-decoration-color: var(--highlight);
+}
+
+:focus-visible {
+  outline: 3px solid var(--highlight);
+  outline-offset: 2px;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+hr {
+  display: none;
+}
+
+.tnum,
+input,
+td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Page content ---------- */
+
+main {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+:where(main > section, main > form, .card) {
+  background: var(--surface);
+  border: var(--border) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+:where(main > section > h2:first-child, .card > h2:first-child) {
+  font-size: 1.05rem;
+}
+
+ul,
+ol {
+  padding-left: 1.2em;
+  margin: 0 0 0.75em;
+}
+
+li + li {
+  margin-top: 0.35em;
+}
+
+small {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+code {
+  font-family: var(--font-num);
+}
+
+/* ---------- Forms ---------- */
+
+label {
+  font-weight: 600;
+}
+
+:where(input:not([type='checkbox'], [type='radio']), select) {
+  width: 100%;
+  max-width: 420px;
+  min-height: 46px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: max(var(--border), 1.5px) solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+:where(input[type='month'], input[type='date']) {
+  width: auto;
+}
+
+:where(input:not([type='checkbox'], [type='radio']), select):focus {
+  outline: none;
+  border-color: var(--text);
+  box-shadow: 0 0 0 3px var(--highlight);
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+  vertical-align: -4px;
+}
+
+:where(fieldset) {
+  border: max(var(--border), 1.5px) dashed var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 0 0 12px;
+  min-width: 0;
+}
+
+legend {
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+:where(fieldset label) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 10px 4px 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+fieldset:disabled {
+  opacity: 0.5;
+}
+
+/* ---------- Buttons ---------- */
+
+:where(button, .btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: var(--border) solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.2s ease;
+}
+
+:where(button:not(:disabled), .btn):hover {
+  transform: translateY(-1px);
+}
+
+:where(button:not(:disabled), .btn):active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-press);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Secondary buttons: delete, cancel, show password... */
+:where(button[type='button']:not(.primary), .btn-ghost) {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+/* ---------- Messages ---------- */
+
+:where([role='alert'], [role='status']) {
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: max(var(--border), 1.5px) solid currentColor;
+  font-weight: 600;
+}
+
+:where([role='alert']) {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+}
+
+:where([role='status']) {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+}
+
+meter {
+  width: 100%;
+  max-width: 260px;
+  height: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Password input with its show or hide button on the same line */
+.password-field {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 420px;
+}
+
+.password-field input {
+  flex: 1;
+  min-width: 0;
+}
+
+.password-field button {
+  flex: none;
+}

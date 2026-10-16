@@ -19,6 +19,7 @@ export default {
     addExpense: 'Add an expense',
     addIncome: 'Add an income',
     backToDashboard: 'Back to the dashboard',
+    close: 'Close',
     today: 'today',
     tomorrow: 'tomorrow',
     inDays: 'in {{count}} days',
@@ -61,6 +62,20 @@ export default {
     alertsOn: 'Budget alerts on.',
     alertsOff: 'Budget alerts off.',
   },
+  theme: {
+    title: 'Appearance',
+    skinLabel: 'Theme',
+    modeLabel: 'Mode',
+    modes: { auto: 'Automatic', light: 'Light', dark: 'Dark' },
+    skins: {
+      ticket: { name: 'Receipt', desc: 'Each month prints like a receipt.' },
+      bocal: { name: 'The jar', desc: 'Your budget is a jar that empties.' },
+      pop: { name: 'Campus pop', desc: 'Bold colors and stickers.' },
+    },
+    welcomeTitle: 'Welcome {{name}}! Pick your style',
+    welcomeIntro: 'The content stays the same, only the look changes. You can switch any time in My account.',
+    start: 'Let’s go',
+  },
   notFound: { title: 'Page not found', back: 'Back to home' },
   nav: {
     label: 'Main navigation',
@@ -71,6 +86,9 @@ export default {
     recap: 'Recap',
     account: 'My account',
     logout: 'Log out',
+    home: 'Home',
+    history: 'History',
+    more: 'More',
   },
   errors: {
     VALIDATION_ERROR: 'Some fields are not valid.',
@@ -168,6 +186,9 @@ export default {
   },
   dashboard: {
     hello: 'Hi {{name}}',
+    hello_ticket: 'Hello {{name}}',
+    hello_bocal: 'Hi {{name}}',
+    hello_pop: 'Hey {{name}}',
     dateLine: '{{day}} · {{month}} budget',
     noRecoveryCode: 'You do not have a recovery code yet.',
     createRecoveryCode: 'Create it in My account',

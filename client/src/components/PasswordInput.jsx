@@ -7,7 +7,7 @@ export default function PasswordInput({ id, ...props }) {
   const [visible, setVisible] = useState(false);
 
   return (
-    <span>
+    <span className="password-field">
       <input id={id} type={visible ? 'text' : 'password'} autoCapitalize="none" spellCheck={false} {...props} />{' '}
       <button
         type="button"

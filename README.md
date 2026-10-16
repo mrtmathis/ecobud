@@ -57,13 +57,24 @@ L'application est disponible **en français et en anglais**. Elle est **responsi
 
 La langue suit celle du navigateur au premier lancement, puis se change à tout moment avec le bouton « English / Français » présent en haut de chaque page (aussi dans « Mon compte »). Un appui bascule toute l'interface : textes, catégories, messages d'erreur, dates et montants (`1 234,56 €` en français, `€1,234.56` en anglais). Le choix est retenu sur l'appareil et, une fois connecté, enregistré sur le compte : il est retrouvé sur tous les appareils et servira aussi pour les notifications.
 
+### Thèmes et mode sombre
+
+Chaque utilisateur choisit le look de l'application parmi trois thèmes. Le contenu et les pages restent identiques, seul l'habillage change :
+
+| Thème | Idée | Salutation |
+| --- | --- | --- |
+| Ticket de caisse (par défaut) | Chaque mois s'imprime comme un ticket : chiffres façon caisse, surligneur jaune, tampon pour les alertes | Bonjour |
+| Le bocal | Le budget est un bocal d'eau qui baisse à chaque dépense, formes douces et arrondies | Salut |
+| Pop campus | Couleurs franches, contours noirs épais, ombres décalées et stickers | Hey |
+
+Le choix est proposé à la première connexion, puis modifiable à tout moment dans « Mon compte », avec le mode : automatique (suit le téléphone), clair ou sombre. Il est enregistré sur le compte. Techniquement, la page porte deux attributs (`data-skin` et `data-mode`) et chaque thème redéfinit les mêmes variables CSS : les composants ne changent jamais. Seules les polices du thème choisi sont téléchargées, et elles sont servies par le site lui-même (aucune requête vers Google Fonts).
+
 ### Affichage selon l'appareil
 
 | Largeur d'écran | Appareil | Navigation |
 | --- | --- | --- |
-| Moins de 768 px | Téléphone | Barre en bas avec bouton « + » central |
-| 768 à 1023 px | Tablette | Barre latérale d'icônes |
-| 1024 px et plus | Ordinateur | Menu latéral complet |
+| Moins de 900 px | Téléphone, tablette en portrait | Barre en bas avec bouton « + » central et menu « Plus » |
+| 900 px et plus | Tablette en paysage, ordinateur | Menu latéral complet |
 
 L'interface est testée à partir de 320 px de large, et toutes les zones cliquables font au moins 44 px.
 
@@ -107,6 +118,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 
 - [x] Inscription, connexion, déconnexion et mot de passe oublié (code de récupération)
 - [x] Interface en français et en anglais
+- [x] Trois thèmes au choix et mode sombre, proposés à la première connexion
 - [ ] Responsive : téléphone, tablette et ordinateur
 - [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
 - [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
@@ -132,13 +144,12 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [ ] Scan de ticket
 - [ ] Statistiques mois par mois
 - [ ] Export CSV
-- [ ] Mode sombre
 
 ## Stack technique
 
 | Couche | Technologie |
 | --- | --- |
-| Front-end | React (Vite), Tailwind CSS, Chart.js |
+| Front-end | React (Vite), CSS avec variables (3 thèmes, mode sombre), graphiques SVG faits main, polices auto-hébergées (Fontsource) |
 | Traduction | react-i18next, API `Intl` du navigateur (dates et montants) |
 | PWA et notifications | service worker écrit à la main (`client/public/sw.js`), manifeste, Web Push (`web-push`), tâche planifiée GitHub Actions |
 | Back-end | Node.js, Express |
@@ -162,7 +173,7 @@ Category (liste fixe)
 
 | Table | Champs principaux |
 | --- | --- |
-| `User` | id, nom, email, mot de passe haché, heure du rappel, jours du rappel, alertes activées, langue (`fr` ou `en`), date de création |
+| `User` | id, nom, email, mot de passe haché, heure du rappel, jours du rappel, alertes activées, langue (`fr` ou `en`), thème et mode, date de création |
 | `Category` | id, clé de traduction, couleur, icône (liste fixe définie par le site, commune à tous) |
 | `Transaction` | id, montant, type (dépense / revenu), date, note (obligatoire pour « Autre »), category_id, user_id |
 | `Recurrence` | id, libellé, montant, type, fréquence (mensuelle ou annuelle), prochaine date, jour d'ancrage, fin d'essai, rappel (oui ou non, 1, 3 ou 7 jours), category_id, user_id |
@@ -316,6 +327,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `GET` | `/api/settings` | Lire les réglages des notifications |
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |
+| `PUT` | `/api/settings/theme` | Changer le thème (`ticket`, `bocal`, `pop`) et le mode (`auto`, `light`, `dark`) |
 | `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |
 | `PUT` | `/api/settings/timezone` | Mettre à jour le fuseau horaire (envoyé automatiquement par le navigateur) |
 | `GET` | `/api/push/key` | Clé publique dont le navigateur a besoin pour s'abonner |

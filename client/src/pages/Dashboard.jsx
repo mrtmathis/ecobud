@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   return (
     <main>
-      <h1>{t('dashboard.hello', { name: user.name })}</h1>
+      <h1>{t('dashboard.hello', { name: user.name, context: user.skin })}</h1>
       <p>
         {t('dashboard.dateLine', {
           day: day.charAt(0).toUpperCase() + day.slice(1),

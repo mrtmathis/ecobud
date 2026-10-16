@@ -19,6 +19,7 @@ export default {
     addExpense: 'Ajouter une dépense',
     addIncome: 'Ajouter un revenu',
     backToDashboard: 'Retour au tableau de bord',
+    close: 'Fermer',
     today: 'aujourd’hui',
     tomorrow: 'demain',
     inDays: 'dans {{count}} jours',
@@ -61,6 +62,20 @@ export default {
     alertsOn: 'Alertes de budget activées.',
     alertsOff: 'Alertes de budget désactivées.',
   },
+  theme: {
+    title: 'Apparence',
+    skinLabel: 'Thème',
+    modeLabel: 'Mode',
+    modes: { auto: 'Automatique', light: 'Clair', dark: 'Sombre' },
+    skins: {
+      ticket: { name: 'Ticket de caisse', desc: 'Chaque mois s’imprime comme un ticket.' },
+      bocal: { name: 'Le bocal', desc: 'Ton budget est un bocal qui se vide.' },
+      pop: { name: 'Pop campus', desc: 'Couleurs franches et stickers.' },
+    },
+    welcomeTitle: 'Bienvenue {{name}} ! Choisis ton style',
+    welcomeIntro: 'Le contenu reste le même, seul le look change. Tu pourras en changer quand tu veux dans Mon compte.',
+    start: 'C’est parti',
+  },
   notFound: { title: 'Page introuvable', back: 'Retour à l’accueil' },
   nav: {
     label: 'Navigation principale',
@@ -71,6 +86,9 @@ export default {
     recap: 'Récap',
     account: 'Mon compte',
     logout: 'Se déconnecter',
+    home: 'Accueil',
+    history: 'Historique',
+    more: 'Plus',
   },
   errors: {
     VALIDATION_ERROR: 'Certains champs ne sont pas valides.',
@@ -169,6 +187,9 @@ export default {
   },
   dashboard: {
     hello: 'Bonjour {{name}}',
+    hello_ticket: 'Bonjour {{name}}',
+    hello_bocal: 'Salut {{name}}',
+    hello_pop: 'Hey {{name}}',
     // "d’" before a vowel: d’avril, d’août, d’octobre
     dateLine: '{{day}} · Budget de {{month}}',
     dateLine_vowel: '{{day}} · Budget d’{{month}}',

@@ -63,6 +63,16 @@ router.put('/timezone', async (req, res) => {
   res.json({ user: publicUser(user) });
 });
 
+// Theme and light or dark mode; saving it also ends the first-login choice
+router.put('/theme', async (req, res) => {
+  const data = validate(
+    z.object({ skin: z.enum(['ticket', 'bocal', 'pop']), appearance: z.enum(['auto', 'light', 'dark']) }),
+    req.body,
+  );
+  const user = await prisma.user.update({ where: { id: req.user.id }, data: { ...data, themeChosen: true } });
+  res.json({ user: publicUser(user) });
+});
+
 // Account language, also used for notifications
 router.put('/language', async (req, res) => {
   const { language } = validate(z.object({ language: z.enum(['fr', 'en']) }), req.body);

@@ -1,0 +1,246 @@
+/*
+  Design tokens of the three themes, each in light and dark.
+  The <html> element carries data-skin (ticket, bocal, pop) and data-mode (auto, light, dark);
+  every component only uses these variables, so changing theme never touches the components.
+*/
+
+/* ---------- Ticket de caisse (default) ---------- */
+:root,
+[data-skin='ticket'] {
+  --bg: #e3e7f0;
+  --surface: #fbfbf8;
+  --surface-2: #f1f2f6;
+  --text: #23264a;
+  --muted: #62658a;
+  --line: #c3c7d9;
+  --accent: #23264a;
+  --on-accent: #ffe24a;
+  --highlight: #ffe24a;
+  --on-highlight: #23264a;
+  --danger: #d23b55;
+  --warning: #b86e00;
+  --success: #2f8a5b;
+  --c1: #23264a;
+  --c2: #5a5fd6;
+  --c3: #d23b55;
+  --c4: #e0a800;
+  --c5: #2f8a5b;
+  --shadow: 0 2px 0 rgb(35 38 74 / 8%);
+  --shadow-press: none;
+  --radius: 4px;
+  --radius-lg: 6px;
+  --border: 2px;
+  --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --font-num: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --display-weight: 800;
+  --label-case: uppercase;
+  --label-spacing: 0.12em;
+  color-scheme: light;
+}
+
+[data-skin='ticket'][data-mode='dark'] {
+  --bg: #11131f;
+  --surface: #1c1e31;
+  --surface-2: #24273f;
+  --text: #ecedf8;
+  --muted: #a2a5c6;
+  --line: #3a3d61;
+  --accent: #ffe24a;
+  --on-accent: #1c1e31;
+  --highlight: #6b5c00;
+  --on-highlight: #fff6c2;
+  --danger: #ff6b84;
+  --warning: #ffb44d;
+  --success: #6fd39d;
+  --c1: #ffe24a;
+  --c2: #8f93ff;
+  --c3: #ff6b84;
+  --c4: #6fd39d;
+  --c5: #ecedf8;
+  --shadow: 0 2px 0 rgb(0 0 0 / 30%);
+  color-scheme: dark;
+}
+
+/* ---------- Le bocal ---------- */
+[data-skin='bocal'] {
+  --bg: #e8f3ef;
+  --surface: #ffffff;
+  --surface-2: #f1f8f5;
+  --text: #12312f;
+  --muted: #4c6b67;
+  --line: #d2e4de;
+  --accent: #0e4d4a;
+  --on-accent: #ffffff;
+  --highlight: #ffb84d;
+  --on-highlight: #4a2c00;
+  --danger: #c8443b;
+  --warning: #b86a00;
+  --success: #1f8f78;
+  --water: #1fa58a;
+  --water-light: #6fd6b8;
+  --c1: #0e4d4a;
+  --c2: #1fa58a;
+  --c3: #6fd6b8;
+  --c4: #ffb84d;
+  --c5: #f28c76;
+  --shadow: 0 8px 24px rgb(14 77 74 / 10%);
+  --shadow-press: 0 2px 8px rgb(14 77 74 / 12%);
+  --radius: 16px;
+  --radius-lg: 24px;
+  --border: 0px;
+  --font-display: 'Fredoka Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Nunito Sans Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-num: 'Fredoka Variable', 'Segoe UI', system-ui, sans-serif;
+  --display-weight: 600;
+  --label-case: none;
+  --label-spacing: 0;
+  color-scheme: light;
+}
+
+[data-skin='bocal'][data-mode='dark'] {
+  --bg: #0a1d1c;
+  --surface: #12302e;
+  --surface-2: #173a37;
+  --text: #e2f3ee;
+  --muted: #9cc2ba;
+  --line: #24504b;
+  --accent: #6fd6b8;
+  --on-accent: #0a1d1c;
+  --highlight: #ffb84d;
+  --on-highlight: #2b1a00;
+  --danger: #ff8a7f;
+  --warning: #ffc266;
+  --success: #6fd6b8;
+  --c1: #6fd6b8;
+  --c2: #1fa58a;
+  --c3: #ffb84d;
+  --c4: #f28c76;
+  --c5: #e2f3ee;
+  --shadow: 0 8px 24px rgb(0 0 0 / 35%);
+  color-scheme: dark;
+}
+
+/* ---------- Pop campus ---------- */
+[data-skin='pop'] {
+  --bg: #f7f2ff;
+  --surface: #fffef6;
+  --surface-2: #f1ebff;
+  --text: #121212;
+  --muted: #4a4a55;
+  --line: #121212;
+  --accent: #121212;
+  --on-accent: #c6f34b;
+  --highlight: #c6f34b;
+  --on-highlight: #121212;
+  --danger: #e5325b;
+  --warning: #b86a00;
+  --success: #1d8a4e;
+  --lilac: #b9a2ff;
+  --pink: #ff8fc7;
+  --sky: #8fd3ff;
+  --c1: #b9a2ff;
+  --c2: #c6f34b;
+  --c3: #ff8fc7;
+  --c4: #8fd3ff;
+  --c5: #ffd166;
+  --shadow: 4px 4px 0 var(--line);
+  --shadow-press: 1px 1px 0 var(--line);
+  --radius: 14px;
+  --radius-lg: 18px;
+  --border: 2.5px;
+  --font-display: 'Unbounded Variable', 'Arial Black', system-ui, sans-serif;
+  --font-body: 'Archivo Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-num: 'Unbounded Variable', 'Arial Black', system-ui, sans-serif;
+  --display-weight: 800;
+  --label-case: uppercase;
+  --label-spacing: 0.08em;
+  color-scheme: light;
+}
+
+[data-skin='pop'][data-mode='dark'] {
+  --bg: #16131e;
+  --surface: #221e2e;
+  --surface-2: #2b2639;
+  --text: #f5f2ff;
+  --muted: #b9b2cc;
+  --line: #f5f2ff;
+  --accent: #c6f34b;
+  --on-accent: #121212;
+  --highlight: #c6f34b;
+  --on-highlight: #121212;
+  --danger: #ff6f91;
+  --warning: #ffc266;
+  --success: #7be0a5;
+  --shadow: 4px 4px 0 var(--lilac);
+  --shadow-press: 1px 1px 0 var(--lilac);
+  color-scheme: dark;
+}
+
+/* "Auto" follows the device: same dark values as above, applied only when the device is dark */
+@media (prefers-color-scheme: dark) {
+  [data-skin='ticket'][data-mode='auto'] {
+    --bg: #11131f;
+    --surface: #1c1e31;
+    --surface-2: #24273f;
+    --text: #ecedf8;
+    --muted: #a2a5c6;
+    --line: #3a3d61;
+    --accent: #ffe24a;
+    --on-accent: #1c1e31;
+    --highlight: #6b5c00;
+    --on-highlight: #fff6c2;
+    --danger: #ff6b84;
+    --warning: #ffb44d;
+    --success: #6fd39d;
+    --c1: #ffe24a;
+    --c2: #8f93ff;
+    --c3: #ff6b84;
+    --c4: #6fd39d;
+    --c5: #ecedf8;
+    --shadow: 0 2px 0 rgb(0 0 0 / 30%);
+    color-scheme: dark;
+  }
+
+  [data-skin='bocal'][data-mode='auto'] {
+    --bg: #0a1d1c;
+    --surface: #12302e;
+    --surface-2: #173a37;
+    --text: #e2f3ee;
+    --muted: #9cc2ba;
+    --line: #24504b;
+    --accent: #6fd6b8;
+    --on-accent: #0a1d1c;
+    --highlight: #ffb84d;
+    --on-highlight: #2b1a00;
+    --danger: #ff8a7f;
+    --warning: #ffc266;
+    --success: #6fd6b8;
+    --c1: #6fd6b8;
+    --c2: #1fa58a;
+    --c3: #ffb84d;
+    --c4: #f28c76;
+    --c5: #e2f3ee;
+    --shadow: 0 8px 24px rgb(0 0 0 / 35%);
+    color-scheme: dark;
+  }
+
+  [data-skin='pop'][data-mode='auto'] {
+    --bg: #16131e;
+    --surface: #221e2e;
+    --surface-2: #2b2639;
+    --text: #f5f2ff;
+    --muted: #b9b2cc;
+    --line: #f5f2ff;
+    --accent: #c6f34b;
+    --on-accent: #121212;
+    --highlight: #c6f34b;
+    --on-highlight: #121212;
+    --danger: #ff6f91;
+    --warning: #ffc266;
+    --success: #7be0a5;
+    --shadow: 4px 4px 0 var(--lilac);
+    --shadow-press: 1px 1px 0 var(--lilac);
+    color-scheme: dark;
+  }
+}

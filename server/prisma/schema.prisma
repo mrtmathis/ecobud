@@ -12,33 +12,51 @@ enum Language {
   en
 }
 
+// Look of the app, chosen by the user
+enum Skin {
+  ticket
+  bocal
+  pop
+}
+
+// "auto" follows the phone or computer setting
+enum Appearance {
+  auto
+  light
+  dark
+}
+
 enum TransactionType {
   EXPENSE
   INCOME
 }
 
 model User {
-  id                String   @id @default(uuid())
+  id                String     @id @default(uuid())
   name              String
-  email             String   @unique
+  email             String     @unique
   passwordHash      String
   // Hash of the recovery code shown once to the user; empty for accounts created before it existed
   recoveryCodeHash  String?
-  language          Language @default(fr)
+  language          Language   @default(fr)
+  skin              Skin       @default(ticket)
+  appearance        Appearance @default(auto)
+  // False until the user has picked a theme, so the choice is offered once after signing in
+  themeChosen       Boolean    @default(false)
   // Reminder time is local to the user's time zone (HH:MM)
-  timezone          String   @default("Europe/Paris")
-  reminderOn        Boolean  @default(true)
-  reminderTime      String   @default("21:00")
+  timezone          String     @default("Europe/Paris")
+  reminderOn        Boolean    @default(true)
+  reminderTime      String     @default("21:00")
   // ISO weekdays: 1 = Monday ... 7 = Sunday
-  reminderDays      Int[]    @default([1, 2, 3, 4, 5, 6, 7])
-  alertsOn          Boolean  @default(true)
+  reminderDays      Int[]      @default([1, 2, 3, 4, 5, 6, 7])
+  alertsOn          Boolean    @default(true)
   // Last day the daily reminder went out, so it is sent once a day at most
-  lastReminderDate  DateTime? @db.Date
+  lastReminderDate  DateTime?  @db.Date
   // Last month whose recap was announced by notification, "YYYY-MM"
   recapNotifiedFor  String?
   // Sessions issued before this date are rejected (set on password change)
-  passwordChangedAt DateTime @default(now())
-  createdAt         DateTime @default(now())
+  passwordChangedAt DateTime   @default(now())
+  createdAt         DateTime   @default(now())
 
   transactions      Transaction[]
   recurrences       Recurrence[]

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { errorMessage } from '../messages.js';
+import AppearanceSettings from '../components/AppearanceSettings.jsx';
 import InstallApp from '../components/InstallApp.jsx';
 import LanguageToggle from '../components/LanguageToggle.jsx';
 import NotificationSettings from '../components/NotificationSettings.jsx';
@@ -55,6 +56,8 @@ export default function Account() {
           {user.language === 'en' ? 'English' : 'Français'} · <LanguageToggle />
         </p>
       </section>
+
+      <AppearanceSettings />
 
       <InstallApp />
 
