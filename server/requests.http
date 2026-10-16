@@ -1,0 +1,9 @@
+# Test requests for the VS Code "REST Client" extension
+
+@api = http://localhost:4000/api
+
+### Health check
+GET {{api}}/health
+
+### Unknown route, expects 404
+GET {{api}}/does-not-exist

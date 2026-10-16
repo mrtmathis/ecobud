@@ -1,0 +1,14 @@
+{
+  "name": "ecobud-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "helmet": "^8.3.0"
+  }
+}
