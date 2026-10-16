@@ -83,3 +83,18 @@ POST {{api}}/recurrences
 Content-Type: application/json
 
 { "label": "Spotify", "type": "EXPENSE", "amountCents": 1199, "categoryId": "subscriptions", "frequency": "MONTHLY", "nextDate": "2026-11-15", "isTrial": true, "remindOn": true }
+
+### "Nothing spent today" (use today's date)
+POST {{api}}/days/2026-10-16/empty
+
+### Undo "nothing spent"
+DELETE {{api}}/days/2026-10-16/empty
+
+### Recap of a finished month (default: last month)
+GET {{api}}/recap?month=2026-09
+
+### Answer to "put your savings aside": DONE or REMIND_LATER
+PUT {{api}}/recap/2026-09/answer
+Content-Type: application/json
+
+{ "status": "DONE" }

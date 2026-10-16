@@ -15,5 +15,11 @@ export const today = (timeZone = 'Europe/Paris') =>
 // Current month in the user's time zone, as "YYYY-MM"
 export const currentMonth = (timeZone = 'Europe/Paris') => today(timeZone).slice(0, 7);
 
+// "2026-10" -> "2026-09", "2026-01" -> "2025-12"
+export function previousMonth(month) {
+  const [y, m] = month.split('-').map(Number);
+  return m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, '0')}`;
+}
+
 // Number of days from one "YYYY-MM-DD" to another
 export const daysBetween = (from, to) => Math.round((toDbDate(to) - toDbDate(from)) / 86_400_000);

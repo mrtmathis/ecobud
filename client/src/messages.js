@@ -6,6 +6,8 @@ const errorMessages = {
   TOO_MANY_ATTEMPTS: 'Trop de tentatives. Réessaie dans 15 minutes.',
   INVALID_RECOVERY: 'Adresse e-mail ou code de récupération incorrect.',
   INVALID_PASSWORD: 'Mot de passe incorrect.',
+  DAY_HAS_EXPENSES: 'Tu as déjà noté une dépense aujourd’hui.',
+  MONTH_NOT_FINISHED: 'Le récap est disponible une fois le mois terminé.',
   UNAUTHENTICATED: 'Ta session a expiré. Reconnecte-toi.',
   SERVER_ERROR: 'Une erreur est survenue. Réessaie plus tard.',
 };

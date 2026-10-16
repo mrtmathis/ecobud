@@ -49,6 +49,12 @@ async function checkTransaction(data) {
   if (data.date > tomorrow || data.date < '2000-01-01') throw fieldError('date');
 }
 
+// A day marked "nothing spent" is no longer true once an expense is added on it
+async function uncheckDay(userId, data) {
+  if (data.type !== 'EXPENSE') return;
+  await prisma.dayCheck.deleteMany({ where: { userId, date: toDbDate(data.date) } });
+}
+
 function fieldError(field) {
   const error = new HttpError(400, 'VALIDATION_ERROR');
   error.fields = [field];
@@ -106,6 +112,7 @@ router.post('/', async (req, res) => {
   const transaction = await prisma.transaction.create({
     data: { ...data, date: toDbDate(data.date), userId: req.user.id },
   });
+  await uncheckDay(req.user.id, data);
   res.status(201).json({ transaction: toJson(transaction) });
 });
 
@@ -117,6 +124,7 @@ router.put('/:id', async (req, res) => {
     where: { id: existing.id },
     data: { ...data, date: toDbDate(data.date) },
   });
+  await uncheckDay(req.user.id, data);
   res.json({ transaction: toJson(transaction) });
 });
 

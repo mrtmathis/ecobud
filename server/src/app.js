@@ -7,6 +7,8 @@ import transactionRoutes from './routes/transactions.js';
 import budgetRoutes from './routes/budgets.js';
 import dashboardRoutes from './routes/dashboard.js';
 import recurrenceRoutes from './routes/recurrences.js';
+import dayRoutes from './routes/days.js';
+import recapRoutes from './routes/recap.js';
 import { sameOriginOnly } from './middlewares/security.js';
 
 const app = express();
@@ -33,6 +35,8 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/recurrences', recurrenceRoutes);
+app.use('/api/days', dayRoutes);
+app.use('/api/recap', recapRoutes);
 
 // Errors are codes, not sentences: the front end translates them
 app.use('/api', (req, res) => {

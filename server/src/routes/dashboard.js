@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db.js';
 import { validate } from '../lib/validation.js';
-import { currentMonth, daysBetween, fromDbDate, monthRange, toDbDate, today } from '../lib/dates.js';
+import { currentMonth, daysBetween, fromDbDate, monthRange, previousMonth, toDbDate, today } from '../lib/dates.js';
 import { alertLevel, findMonthBudget } from '../lib/budget.js';
 import { applyDueRecurrences } from '../lib/recurrences.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
@@ -23,7 +23,8 @@ router.get('/', async (req, res) => {
   const where = { userId: req.user.id, date: { gte: start, lt: end } };
   const horizon = new Date(toDbDate(now).getTime() + UPCOMING_DAYS * 86_400_000);
 
-  const [budget, totals, byCategory, latest, upcoming] = await Promise.all([
+  const lastMonth = previousMonth(currentMonth(req.user.timezone));
+  const [budget, totals, byCategory, latest, upcoming, todayExpenses, todayCheck, lastBudget, lastAnswer] = await Promise.all([
     findMonthBudget(req.user.id, month),
     prisma.transaction.groupBy({ by: ['type'], where, _sum: { amountCents: true } }),
     prisma.transaction.groupBy({
@@ -37,7 +38,17 @@ router.get('/', async (req, res) => {
       where: { userId: req.user.id, type: 'EXPENSE', nextDate: { lte: horizon } },
       orderBy: { nextDate: 'asc' },
     }),
+    prisma.transaction.count({ where: { userId: req.user.id, type: 'EXPENSE', date: toDbDate(now) } }),
+    prisma.dayCheck.findUnique({ where: { userId_date: { userId: req.user.id, date: toDbDate(now) } } }),
+    findMonthBudget(req.user.id, lastMonth),
+    prisma.recapAnswer.findUnique({ where: { userId_month: { userId: req.user.id, month: lastMonth } } }),
   ]);
+
+  // The last month recap is offered during the first 10 days, until answered (or until the reminder date)
+  const recapWaiting =
+    Number(now.slice(8)) <= 10 &&
+    Boolean(lastBudget) &&
+    (!lastAnswer || (lastAnswer.status === 'REMIND_LATER' && fromDbDate(lastAnswer.remindDate) <= now));
 
   const total = (type) => totals.find((t) => t.type === type)?._sum.amountCents ?? 0;
   const spentCents = total('EXPENSE');
@@ -60,6 +71,8 @@ router.get('/', async (req, res) => {
       categoryId: t.categoryId,
       note: t.note,
     })),
+    today: { date: now, expenseCount: todayExpenses, nothingSpent: Boolean(todayCheck) },
+    recapMonth: recapWaiting ? lastMonth : null,
     // Debits of the next 30 days, so the user can cancel a subscription in time
     upcoming: upcoming.map((r) => ({
       id: r.id,

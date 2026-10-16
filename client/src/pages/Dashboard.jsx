@@ -17,6 +17,16 @@ export default function Dashboard() {
       .catch((err) => setError(errorMessage(err)));
   }, []);
 
+  // "Nothing spent today" on or off, then the dashboard is refreshed
+  const setNothingSpent = async (on) => {
+    try {
+      await api(`/days/${data.today.date}/empty`, { method: on ? 'POST' : 'DELETE' });
+      setData({ ...data, today: { ...data.today, nothingSpent: on } });
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  };
+
   if (error) return <p role="alert">{error}</p>;
   if (!data) return <p>Chargement…</p>;
 
@@ -32,6 +42,37 @@ export default function Dashboard() {
           Tu n’as pas encore de code de récupération. <Link to="/account">Le créer dans Mon compte</Link>
         </p>
       )}
+
+      {data.recapMonth && (
+        <p role="status">
+          Ton récap de {formatMonth(data.recapMonth)} est prêt.{' '}
+          <Link to={`/recap?month=${data.recapMonth}`}>Voir combien tu as économisé</Link>
+        </p>
+      )}
+
+      <section aria-labelledby="today-title">
+        <h2 id="today-title">Aujourd’hui</h2>
+        {data.today.expenseCount > 0 ? (
+          <p>
+            {data.today.expenseCount} dépense{data.today.expenseCount > 1 ? 's' : ''} notée
+            {data.today.expenseCount > 1 ? 's' : ''} aujourd’hui.
+          </p>
+        ) : data.today.nothingSpent ? (
+          <p>
+            Journée validée : rien dépensé.{' '}
+            <button type="button" onClick={() => setNothingSpent(false)}>
+              Annuler
+            </button>
+          </p>
+        ) : (
+          <p>
+            <Link to="/transactions/new">Ajouter une dépense</Link> ou{' '}
+            <button type="button" onClick={() => setNothingSpent(true)}>
+              Rien dépensé aujourd’hui
+            </button>
+          </p>
+        )}
+      </section>
 
       <section aria-labelledby="remaining-title">
         <h2 id="remaining-title">Reste à dépenser ce mois</h2>

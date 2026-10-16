@@ -112,7 +112,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
 - [ ] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
-- [ ] Récap de fin de mois : montant économisé et suggestion de le mettre de côté
+- [x] Récap de fin de mois : montant économisé, suggestion de le mettre de côté (« C'est fait » ou « Me le rappeler demain »), 3 catégories qui ont le plus pesé
 - [x] Dépenses et revenus récurrents, mensuels ou annuels, ajoutés automatiquement le jour du prélèvement
 - [x] Abonnements : période d'essai gratuite et rappel avant prélèvement réglable (notification à l'étape 8)
 - [x] Prochains prélèvements des 30 jours sur le tableau de bord
@@ -120,7 +120,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Historique filtrable (mois, type, catégorie, recherche dans la note)
 - [ ] Application installable (PWA)
 - [ ] Rappel quotidien par notification, heure et jours réglables
-- [ ] Ajout express et bouton « Rien dépensé aujourd'hui »
+- [x] Bouton « Rien dépensé aujourd'hui » (annulé automatiquement si une dépense est ajoutée ce jour-là)
+- [ ] Ajout express depuis la notification
 
 ### Bonus
 
@@ -167,6 +168,7 @@ Category (liste fixe)
 | `Budget` | id, mois, montant, category_id (vide = budget global), user_id |
 | `PushSubscription` | id, endpoint, clés de chiffrement, user_id (une par appareil) |
 | `DayCheck` | id, date, user_id (journée validée « rien dépensé ») |
+| `RecapAnswer` | id, mois, réponse (fait ou me le rappeler), date du rappel, user_id |
 | `BudgetAlert` | id, seuil (80 ou 100 %), date d'envoi, budget_id (évite d'envoyer deux fois la même alerte) |
 
 Les montants sont stockés **en centimes** (nombres entiers) pour éviter les erreurs d'arrondi. Le schéma complet est dans [server/prisma/schema.prisma](server/prisma/schema.prisma), et `npm run db:studio` ouvre une interface pour parcourir les données.
@@ -295,7 +297,8 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `POST` | `/api/transactions` | Ajouter une transaction |
 | `PUT` | `/api/transactions/:id` | Modifier une transaction |
 | `DELETE` | `/api/transactions/:id` | Supprimer une transaction |
-| `POST` | `/api/days/:date/empty` | Valider une journée sans dépense |
+| `POST` | `/api/days/:date/empty` | Valider une journée sans dépense (refusé s'il y a déjà une dépense) |
+| `DELETE` | `/api/days/:date/empty` | Annuler la validation |
 | `GET` | `/api/categories` | Lister les catégories prédéfinies |
 | `GET` | `/api/recurrences` | Lister les dépenses et revenus récurrents |
 | `POST` | `/api/recurrences` | Créer une récurrence |
@@ -306,7 +309,8 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `GET` | `/api/budgets?month=YYYY-MM` | Budget du mois (sinon celui du dernier mois qui en a un) |
 | `PUT` | `/api/budgets` | Définir ou modifier le budget d'un mois |
 | `GET` | `/api/dashboard?month=YYYY-MM` | Tableau de bord : budget, dépensé, reste, pourcentage, niveau d'alerte, répartition, 5 dernières transactions |
-| `GET` | `/api/recap?month=YYYY-MM` | Récap du mois : montant économisé, top catégories |
+| `GET` | `/api/recap?month=YYYY-MM` | Récap d'un mois terminé (par défaut le mois dernier) : économisé ou dépassé, 3 catégories qui ont le plus pesé |
+| `PUT` | `/api/recap/:month/answer` | Réponse à « Mets-les de côté » : `DONE` ou `REMIND_LATER` |
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |
 | `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |

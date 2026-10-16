@@ -41,6 +41,27 @@ model User {
   budgets           Budget[]
   pushSubscriptions PushSubscription[]
   dayChecks         DayCheck[]
+  recapAnswers      RecapAnswer[]
+}
+
+enum RecapStatus {
+  DONE
+  REMIND_LATER
+}
+
+// Answer to "put your savings aside" in a month recap; REMIND_LATER is reminded on remindDate
+model RecapAnswer {
+  id         String      @id @default(uuid())
+  // Month of the recap, "YYYY-MM"
+  month      String
+  status     RecapStatus
+  remindDate DateTime?   @db.Date
+  userId     String
+  updatedAt  DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, month])
 }
 
 // Fixed list seeded by the site; the id is also the translation key
