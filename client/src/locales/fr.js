@@ -82,6 +82,7 @@ export default {
     welcomeIntro: 'Le contenu reste le même, seul le look change. Tu pourras en changer quand tu veux dans Mon compte.',
     start: 'C’est parti',
   },
+  zoom: { on: 'Texte agrandi · double appui pour revenir', off: 'Taille normale' },
   notFound: { title: 'Page introuvable', back: 'Retour à l’accueil' },
   nav: {
     label: 'Navigation principale',

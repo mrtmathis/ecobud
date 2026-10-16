@@ -76,7 +76,7 @@ Le choix est proposé à la première connexion, puis modifiable à tout moment 
 | Moins de 900 px | Téléphone, tablette en portrait | Barre en bas avec bouton « + » central et menu « Plus » |
 | 900 px et plus | Tablette en paysage, ordinateur | Menu latéral complet |
 
-L'interface est testée à partir de 320 px de large, et toutes les zones cliquables font au moins 44 px.
+L'interface est testée à partir de 320 px de large, et toutes les zones cliquables font au moins 44 px. Le zoom à deux doigts est désactivé pour que l'application garde toujours sa taille. À la place, un double appui sur une zone vide agrandit tout le texte de 25 % (la page se réorganise, rien ne dépasse) et un second double appui revient à la normale. Les textes sont grands et contrastés, et la fonction Zoom d'accessibilité du téléphone (iPhone et Android) reste disponible pour les personnes qui en ont besoin. Les champs font au moins 16 px pour que Safari ne zoome pas tout seul pendant la saisie.
 
 > Projet étudiant individuel réalisé dans le cadre d'un cours de développement web.
 

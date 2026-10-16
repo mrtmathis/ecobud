@@ -9,8 +9,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   background: var(--bg);
-  /* No zoom on a quick double tap; pinch zoom stays available */
-  touch-action: manipulation;
+  /* Only scrolling: no double tap zoom, no pinch zoom */
+  touch-action: pan-x pan-y;
 }
 
 body {
@@ -21,7 +21,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 15px;
+  /* In rem so the whole page grows with the double tap text zoom */
+  font-size: 0.9375rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -307,4 +308,27 @@ input,
 select,
 textarea {
   font-size: max(16px, 1rem);
+}
+
+/* Bigger text after a double tap (see zoom.js) */
+html.large-text {
+  font-size: 125%;
+}
+
+.zoom-toast {
+  position: fixed;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  text-align: center;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  padding: 10px 16px;
+  font-weight: 700;
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+  animation: fade-in 0.2s ease both;
 }
