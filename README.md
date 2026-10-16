@@ -47,7 +47,21 @@ Le 1er de chaque mois, une notification ouvre le récap du mois écoulé :
 
 En cas de dépassement, le récap affiche le montant dépassé à la place, sans suggestion d'épargne.
 
-L'interface est pensée **mobile first** et l'application s'installe sur l'écran d'accueil du téléphone (PWA).
+L'application est disponible **en français et en anglais**. Elle est **responsive** : utilisable dans de bonnes conditions sur téléphone, tablette et ordinateur. Elle s'installe aussi sur l'écran d'accueil du téléphone (PWA).
+
+### Langues
+
+La langue suit celle du navigateur au premier lancement, puis se change à tout moment (sélecteur FR / EN sur la page de connexion, menu « Langue » dans les réglages). Le choix est enregistré sur le compte : les notifications et les e-mails arrivent dans la même langue. Les dates et les montants suivent le format de la langue (`1 234,56 €` en français, `€1,234.56` en anglais).
+
+### Affichage selon l'appareil
+
+| Largeur d'écran | Appareil | Navigation |
+| --- | --- | --- |
+| Moins de 768 px | Téléphone | Barre en bas avec bouton « + » central |
+| 768 à 1023 px | Tablette | Barre latérale d'icônes |
+| 1024 px et plus | Ordinateur | Menu latéral complet |
+
+L'interface est testée à partir de 320 px de large, et toutes les zones cliquables font au moins 44 px.
 
 > Projet étudiant individuel réalisé dans le cadre d'un cours de développement web.
 
@@ -83,6 +97,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 ### MVP
 
 - [ ] Inscription et connexion (authentification JWT)
+- [ ] Interface en français et en anglais
+- [ ] Responsive : téléphone, tablette et ordinateur
 - [ ] Ajout, modification et suppression de dépenses et de revenus
 - [ ] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
 - [ ] Budget mensuel global
@@ -110,6 +126,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | Couche | Technologie |
 | --- | --- |
 | Front-end | React (Vite), Tailwind CSS, Chart.js |
+| Traduction | react-i18next, API `Intl` du navigateur (dates et montants) |
 | PWA et notifications | vite-plugin-pwa, Web Push (`web-push`), `node-cron` |
 | Back-end | Node.js, Express |
 | Base de données | PostgreSQL, Prisma (ORM) |
@@ -131,8 +148,8 @@ Category (liste fixe)
 
 | Table | Champs principaux |
 | --- | --- |
-| `User` | id, nom, email, mot de passe haché, heure du rappel, jours du rappel, alertes activées, date de création |
-| `Category` | id, nom, couleur, icône (liste fixe définie par le site, commune à tous) |
+| `User` | id, nom, email, mot de passe haché, heure du rappel, jours du rappel, alertes activées, langue (`fr` ou `en`), date de création |
+| `Category` | id, clé de traduction, couleur, icône (liste fixe définie par le site, commune à tous) |
 | `Transaction` | id, montant, type (dépense / revenu), date, note (obligatoire pour « Autre »), category_id, user_id |
 | `Recurrence` | id, montant, type, jour du mois, libellé, category_id, user_id |
 | `Budget` | id, mois, montant, category_id (vide = budget global), user_id |
@@ -150,6 +167,9 @@ ecobud/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
+│   │   ├── locales/     # Traductions
+│   │   │   ├── fr.json
+│   │   │   └── en.json
 │   │   ├── services/    # Appels à l'API
 │   │   ├── sw.js        # Service worker (notifications)
 │   │   └── App.jsx
@@ -237,6 +257,7 @@ L'application est alors disponible sur `http://localhost:5173`.
 | `GET` | `/api/recap?month=YYYY-MM` | Récap du mois : montant économisé, top catégories |
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |
+| `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |
 | `POST` | `/api/push/subscribe` | Enregistrer un appareil pour les notifications |
 | `DELETE` | `/api/push/subscribe` | Désactiver les notifications sur un appareil |
 
@@ -247,11 +268,11 @@ Toutes les routes sauf `/api/auth/*` nécessitent l'en-tête `Authorization: Bea
 | Semaine | Étape |
 | --- | --- |
 | 1 | Conception : brief, wireframes, schéma de base de données |
-| 2 | Mise en place : dépôt Git, projets React et Express, base PostgreSQL |
+| 2 | Mise en place : dépôt Git, projets React et Express, base PostgreSQL, traduction FR / EN |
 | 3 | Authentification |
 | 4-5 | Transactions, catégories, récurrences, budget, historique |
 | 6 | Tableau de bord, graphiques, récap de fin de mois, premier déploiement |
-| 7 | Rappels et PWA : application installable, rappels, alertes de budget, ajout express |
+| 7 | Rappels et PWA : application installable, rappels, alertes de budget, ajout express, tests sur téléphone, tablette et ordinateur |
 | 8 | Finitions, README, soutenance |
 
 ## Auteur
