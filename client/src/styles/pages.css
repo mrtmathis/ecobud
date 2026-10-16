@@ -716,3 +716,10 @@
 .notification-settings h3 {
   margin: 18px 0 6px;
 }
+
+/* Phones: the month filter gets the whole first line */
+@media (max-width: 480px) {
+  .filters .field:first-child {
+    grid-column: 1 / -1;
+  }
+}

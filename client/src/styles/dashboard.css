@@ -104,9 +104,10 @@
   margin: 6px 0 10px;
   font-family: var(--font-num);
   font-weight: var(--display-weight);
-  font-size: clamp(2.5rem, 11vw, 3.4rem);
+  font-size: clamp(2rem, 11vw, 3.4rem);
   line-height: 1;
   letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
 }
 
 .hero-sub {

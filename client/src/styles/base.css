@@ -9,10 +9,14 @@
 html {
   -webkit-text-size-adjust: 100%;
   background: var(--bg);
+  /* No zoom on a quick double tap; pinch zoom stays available */
+  touch-action: manipulation;
 }
 
 body {
   margin: 0;
+  /* Nothing may stick out sideways on a phone */
+  overflow-x: clip;
   min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
@@ -91,6 +95,8 @@ td {
   width: 100%;
   max-width: 760px;
   margin-inline: auto;
+  /* The column never grows wider than the screen, whatever its content */
+  grid-template-columns: minmax(0, 1fr);
 }
 
 :where(main > section, main > form, .card) {
@@ -280,4 +286,25 @@ meter {
 
 .password-field button {
   flex: none;
+}
+
+/* Safari on iPhone gives date and month fields their own minimum width: make them fit their box */
+input[type='date'],
+input[type='month'] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-width: 0;
+}
+
+input[type='date']::-webkit-date-and-time-value,
+input[type='month']::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+/* Safari on iPhone zooms into any field under 16px and stays zoomed: keep fields at 16px or more */
+input,
+select,
+textarea {
+  font-size: max(16px, 1rem);
 }
