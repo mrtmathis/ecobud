@@ -4,6 +4,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.js';
 import categoryRoutes from './routes/categories.js';
 import transactionRoutes from './routes/transactions.js';
+import budgetRoutes from './routes/budgets.js';
+import dashboardRoutes from './routes/dashboard.js';
 import { sameOriginOnly } from './middlewares/security.js';
 
 const app = express();
@@ -27,6 +29,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/budgets', budgetRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Errors are codes, not sentences: the front end translates them
 app.use('/api', (req, res) => {

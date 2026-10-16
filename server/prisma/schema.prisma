@@ -116,12 +116,14 @@ model BudgetAlert {
   id        String   @id @default(uuid())
   // 80 or 100 (percent of the budget)
   threshold Int
+  // Month the alert is about, "YYYY-MM": a budget reused over several months alerts once per month
+  month     String
   budgetId  String
   sentAt    DateTime @default(now())
 
   budget Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
-  @@unique([budgetId, threshold])
+  @@unique([budgetId, month, threshold])
 }
 
 model PushSubscription {

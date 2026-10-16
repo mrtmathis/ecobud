@@ -109,11 +109,11 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [ ] Responsive : téléphone, tablette et ordinateur
 - [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
 - [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
-- [ ] Budget mensuel global
+- [x] Budget mensuel global (reconduit automatiquement les mois suivants)
 - [ ] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
 - [ ] Récap de fin de mois : montant économisé et suggestion de le mettre de côté
 - [ ] Dépenses et revenus récurrents
-- [ ] Tableau de bord : solde restant, répartition par catégorie, dernières dépenses
+- [x] Tableau de bord : reste à dépenser, alertes à 80 % et 100 %, répartition par catégorie, dernières transactions (graphiques à l'étape design)
 - [x] Historique filtrable (mois, type, catégorie, recherche dans la note)
 - [ ] Application installable (PWA)
 - [ ] Rappel quotidien par notification, heure et jours réglables
@@ -297,9 +297,9 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `GET` | `/api/recurrences` | Lister les dépenses et revenus récurrents |
 | `POST` | `/api/recurrences` | Créer une récurrence |
 | `DELETE` | `/api/recurrences/:id` | Supprimer une récurrence |
-| `GET` | `/api/budgets?month=YYYY-MM` | Budget du mois |
-| `PUT` | `/api/budgets` | Définir ou modifier un budget |
-| `GET` | `/api/dashboard?month=YYYY-MM` | Données du tableau de bord |
+| `GET` | `/api/budgets?month=YYYY-MM` | Budget du mois (sinon celui du dernier mois qui en a un) |
+| `PUT` | `/api/budgets` | Définir ou modifier le budget d'un mois |
+| `GET` | `/api/dashboard?month=YYYY-MM` | Tableau de bord : budget, dépensé, reste, pourcentage, niveau d'alerte, répartition, 5 dernières transactions |
 | `GET` | `/api/recap?month=YYYY-MM` | Récap du mois : montant économisé, top catégories |
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |

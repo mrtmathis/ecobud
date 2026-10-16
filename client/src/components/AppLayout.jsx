@@ -18,7 +18,8 @@ export default function AppLayout() {
         <NavLink to="/transactions/new" end>
           Ajouter une dépense
         </NavLink>{' '}
-        · <Link to="/transactions/new?type=INCOME">Ajouter un revenu</Link> ·{' '}
+        · <Link to="/transactions/new?type=INCOME">Ajouter un revenu</Link> · <NavLink to="/budget">Budget</NavLink> ·{' '}
+        <NavLink to="/account">Mon compte</NavLink> ·{' '}
         <button type="button" onClick={handleLogout}>
           Se déconnecter
         </button>

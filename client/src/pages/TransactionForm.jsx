@@ -35,11 +35,6 @@ export default function TransactionForm() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Follow the menu when switching between "add an expense" and "add an income"
-  useEffect(() => {
-    if (!id) setForm((f) => (f.type === initialType ? f : { ...f, type: initialType, categoryId: '' }));
-  }, [id, initialType]);
-
   const update = (name, value) => setForm((f) => ({ ...f, [name]: value }));
   const choices = categories.filter((c) => c.type === form.type);
   const selected = categories.find((c) => c.id === form.categoryId);

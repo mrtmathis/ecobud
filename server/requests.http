@@ -56,3 +56,15 @@ POST {{api}}/transactions
 Content-Type: application/json
 
 { "type": "EXPENSE", "amountCents": 1500, "date": "2026-10-16", "categoryId": "other", "note": "Coiffeur" }
+
+### Budget of a month (falls back to the latest earlier budget)
+GET {{api}}/budgets?month=2026-10
+
+### Set the budget of a month (80000 = 800 €)
+PUT {{api}}/budgets
+Content-Type: application/json
+
+{ "month": "2026-10", "amountCents": 80000 }
+
+### Dashboard of a month
+GET {{api}}/dashboard?month=2026-10
