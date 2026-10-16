@@ -93,7 +93,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | Rappel quotidien | Une notification à l'heure choisie (21 h par défaut) : « Tu as dépensé quelque chose aujourd'hui ? » | MVP |
 | Ajout express | Depuis la notification : montant et catégorie en 2 touches, date du jour par défaut | MVP |
 | Bouton « Rien dépensé aujourd'hui » | Une seule touche pour valider une journée sans dépense | MVP |
-| Dépenses récurrentes | Loyer, abonnements et bourse saisis une seule fois | MVP |
+| Dépenses récurrentes | Loyer, abonnements et salaire saisis une seule fois | MVP |
 | Série de jours suivis | Un compteur de jours d'affilée remplis | Bonus |
 | Récap hebdomadaire par e-mail | Chaque dimanche, le total de la semaine | Bonus |
 | Scan de ticket | Le montant est lu sur la photo du ticket (Tesseract.js) | Bonus |
@@ -107,14 +107,14 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Inscription, connexion, déconnexion et mot de passe oublié (code de récupération)
 - [ ] Interface en français et en anglais
 - [ ] Responsive : téléphone, tablette et ordinateur
-- [ ] Ajout, modification et suppression de dépenses et de revenus
-- [ ] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
+- [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
+- [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
 - [ ] Budget mensuel global
 - [ ] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
 - [ ] Récap de fin de mois : montant économisé et suggestion de le mettre de côté
 - [ ] Dépenses et revenus récurrents
 - [ ] Tableau de bord : solde restant, répartition par catégorie, dernières dépenses
-- [ ] Historique filtrable (mois, catégorie, recherche)
+- [x] Historique filtrable (mois, type, catégorie, recherche dans la note)
 - [ ] Application installable (PWA)
 - [ ] Rappel quotidien par notification, heure et jours réglables
 - [ ] Ajout express et bouton « Rien dépensé aujourd'hui »
@@ -287,7 +287,8 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `GET` | `/api/auth/me` | Utilisateur connecté |
 | `POST` | `/api/auth/recover` | Mot de passe oublié : e-mail + code de récupération + nouveau mot de passe (déconnecte les autres sessions, renvoie un nouveau code) |
 | `POST` | `/api/auth/recovery-code` | Générer un nouveau code de récupération (mot de passe demandé) |
-| `GET` | `/api/transactions` | Lister les transactions (filtres : `month`, `category`, `q`) |
+| `GET` | `/api/transactions` | Lister les transactions d'un mois avec les totaux (filtres : `month`, `type`, `category`, `q`) |
+| `GET` | `/api/transactions/:id` | Détail d'une transaction |
 | `POST` | `/api/transactions` | Ajouter une transaction |
 | `PUT` | `/api/transactions/:id` | Modifier une transaction |
 | `DELETE` | `/api/transactions/:id` | Supprimer une transaction |

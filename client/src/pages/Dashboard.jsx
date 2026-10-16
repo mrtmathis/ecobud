@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { errorMessage } from '../messages.js';
@@ -8,16 +8,10 @@ import RecoveryCode from '../components/RecoveryCode.jsx';
 
 // Placeholder until the budget features arrive in the next steps
 export default function Dashboard() {
-  const { user, logout, signIn } = useAuth();
-  const navigate = useNavigate();
+  const { user, signIn } = useAuth();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [newCode, setNewCode] = useState(null);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/');
-  };
 
   const regenerate = async (event) => {
     event.preventDefault();
@@ -49,7 +43,12 @@ export default function Dashboard() {
     <main>
       <h1>Bonjour {user.name}</h1>
       <p>Tu es connecté avec {user.email}.</p>
-      <p>Les dépenses et le budget arrivent à la prochaine étape.</p>
+      <p>
+        <Link to="/transactions/new">Ajouter une dépense</Link> ·{' '}
+        <Link to="/transactions/new?type=INCOME">Ajouter un revenu (salaire, virement…)</Link> ·{' '}
+        <Link to="/transactions">Voir mes transactions</Link>
+      </p>
+      <p>Le budget et le résumé du mois arrivent à la prochaine étape.</p>
 
       <section aria-labelledby="recovery-section">
         <h2 id="recovery-section">Code de récupération</h2>
@@ -72,12 +71,6 @@ export default function Dashboard() {
         </form>
         {error && <p role="alert">{error}</p>}
       </section>
-
-      <p>
-        <button type="button" onClick={handleLogout}>
-          Se déconnecter
-        </button>
-      </p>
     </main>
   );
 }

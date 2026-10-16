@@ -27,14 +27,32 @@ GET {{api}}/auth/me
 ### Logout
 POST {{api}}/auth/logout
 
-### Forgot password (the link is printed in the API terminal)
-POST {{api}}/auth/forgot-password
+### Forgotten password (paste the recovery code shown at signup)
+POST {{api}}/auth/recover
 Content-Type: application/json
 
-{ "email": "lea@exemple.fr" }
+{ "email": "lea@exemple.fr", "recoveryCode": "XXXX-XXXX-XXXX-XXXX", "password": "New-Password-42!" }
 
-### Reset password (paste the token from the link)
-POST {{api}}/auth/reset-password
+### New recovery code (needs the session cookie and the current password)
+POST {{api}}/auth/recovery-code
 Content-Type: application/json
 
-{ "token": "PASTE_TOKEN_HERE", "password": "New-Password-42!" }
+{ "password": "New-Password-42!" }
+
+### Categories (needs the session cookie)
+GET {{api}}/categories
+
+### Transactions of a month, with optional filters: category, type, q
+GET {{api}}/transactions?month=2026-10
+
+### Add an expense (amount in cents: 2380 = 23,80 €)
+POST {{api}}/transactions
+Content-Type: application/json
+
+{ "type": "EXPENSE", "amountCents": 2380, "date": "2026-10-16", "categoryId": "groceries", "note": "Supermarché" }
+
+### "Other" needs a note
+POST {{api}}/transactions
+Content-Type: application/json
+
+{ "type": "EXPENSE", "amountCents": 1500, "date": "2026-10-16", "categoryId": "other", "note": "Coiffeur" }
