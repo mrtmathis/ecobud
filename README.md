@@ -111,17 +111,18 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
 - [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
-- [ ] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
+- [x] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
 - [x] Récap de fin de mois : montant économisé, suggestion de le mettre de côté (« C'est fait » ou « Me le rappeler demain »), 3 catégories qui ont le plus pesé
 - [x] Dépenses et revenus récurrents, mensuels ou annuels, ajoutés automatiquement le jour du prélèvement
-- [x] Abonnements : période d'essai gratuite et rappel avant prélèvement réglable (notification à l'étape 8)
+- [x] Abonnements : période d'essai gratuite et rappel avant prélèvement réglable
 - [x] Prochains prélèvements des 30 jours sur le tableau de bord
 - [x] Tableau de bord : reste à dépenser, alertes à 80 % et 100 %, répartition par catégorie, dernières transactions (graphiques à l'étape design)
 - [x] Historique filtrable (mois, type, catégorie, recherche dans la note)
 - [x] Application installable (PWA)
-- [ ] Rappel quotidien par notification, heure et jours réglables (réglages prêts, envoi à l'étape 8b)
+- [x] Rappel quotidien par notification, heure et jours réglables (pas envoyé si la journée est déjà notée)
 - [x] Bouton « Rien dépensé aujourd'hui » (annulé automatiquement si une dépense est ajoutée ce jour-là)
-- [ ] Ajout express depuis la notification
+- [x] Ajout express depuis la notification (boutons « Ajouter une dépense » et « Rien dépensé »)
+- [x] Rappels avant prélèvement et fin d'essai gratuit, récap du mois et rappel « Me le rappeler demain » par notification
 
 ### Bonus
 
@@ -271,6 +272,7 @@ JWT_SECRET="une_chaine_secrete_longue"
 VAPID_PUBLIC_KEY="..."
 VAPID_PRIVATE_KEY="..."
 VAPID_SUBJECT="https://github.com/mrtmathis/ecobud"
+JOBS_SECRET="une_autre_chaine_secrete_longue"
 PORT=4000
 ```
 

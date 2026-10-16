@@ -4,6 +4,7 @@ import { prisma } from '../db.js';
 import { HttpError } from '../lib/errors.js';
 import { validate } from '../lib/validation.js';
 import { currentMonth, fromDbDate, monthRange, toDbDate } from '../lib/dates.js';
+import { checkBudgetAlerts } from '../lib/notifications.js';
 import { applyDueRecurrences } from '../lib/recurrences.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 
@@ -106,6 +107,16 @@ router.get('/:id', async (req, res) => {
   res.json({ transaction: toJson(await findOwned(req)) });
 });
 
+// A new or changed expense may cross 80 % or 100 % of the budget; a failed alert never blocks the save
+async function alertIfOverBudget(user, data) {
+  if (data.type !== 'EXPENSE') return;
+  try {
+    await checkBudgetAlerts(user);
+  } catch (err) {
+    console.error('Budget alert failed', err);
+  }
+}
+
 router.post('/', async (req, res) => {
   const data = validate(transactionSchema, req.body);
   await checkTransaction(data);
@@ -113,6 +124,7 @@ router.post('/', async (req, res) => {
     data: { ...data, date: toDbDate(data.date), userId: req.user.id },
   });
   await uncheckDay(req.user.id, data);
+  await alertIfOverBudget(req.user, data);
   res.status(201).json({ transaction: toJson(transaction) });
 });
 
@@ -125,6 +137,7 @@ router.put('/:id', async (req, res) => {
     data: { ...data, date: toDbDate(data.date) },
   });
   await uncheckDay(req.user.id, data);
+  await alertIfOverBudget(req.user, data);
   res.json({ transaction: toJson(transaction) });
 });
 

@@ -32,6 +32,10 @@ model User {
   // ISO weekdays: 1 = Monday ... 7 = Sunday
   reminderDays      Int[]    @default([1, 2, 3, 4, 5, 6, 7])
   alertsOn          Boolean  @default(true)
+  // Last day the daily reminder went out, so it is sent once a day at most
+  lastReminderDate  DateTime? @db.Date
+  // Last month whose recap was announced by notification, "YYYY-MM"
+  recapNotifiedFor  String?
   // Sessions issued before this date are rejected (set on password change)
   passwordChangedAt DateTime @default(now())
   createdAt         DateTime @default(now())
@@ -56,6 +60,8 @@ model RecapAnswer {
   month      String
   status     RecapStatus
   remindDate DateTime?   @db.Date
+  // True once the "remind me tomorrow" notification has been sent
+  reminded   Boolean     @default(false)
   userId     String
   updatedAt  DateTime    @updatedAt
 

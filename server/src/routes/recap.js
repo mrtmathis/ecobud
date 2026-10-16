@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { prisma } from '../db.js';
 import { HttpError } from '../lib/errors.js';
 import { validate } from '../lib/validation.js';
-import { currentMonth, monthRange, previousMonth, toDbDate, today } from '../lib/dates.js';
-import { findMonthBudget } from '../lib/budget.js';
+import { currentMonth, previousMonth, toDbDate, today } from '../lib/dates.js';
+import { buildRecap } from '../lib/recap.js';
 import { applyDueRecurrences } from '../lib/recurrences.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 
@@ -12,41 +12,6 @@ const router = Router();
 router.use(requireAuth);
 
 const monthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
-
-// Summary of a finished month: saved amount (budget minus expenses) and top 3 categories
-export async function buildRecap(user, month) {
-  const { start, end } = monthRange(month);
-  const where = { userId: user.id, date: { gte: start, lt: end } };
-
-  const [budget, totals, top, answer] = await Promise.all([
-    findMonthBudget(user.id, month),
-    prisma.transaction.groupBy({ by: ['type'], where, _sum: { amountCents: true } }),
-    prisma.transaction.groupBy({
-      by: ['categoryId'],
-      where: { ...where, type: 'EXPENSE' },
-      _sum: { amountCents: true },
-      orderBy: { _sum: { amountCents: 'desc' } },
-      take: 3,
-    }),
-    prisma.recapAnswer.findUnique({ where: { userId_month: { userId: user.id, month } } }),
-  ]);
-
-  const total = (type) => totals.find((t) => t.type === type)?._sum.amountCents ?? 0;
-  const spentCents = total('EXPENSE');
-  const budgetCents = budget?.amountCents ?? null;
-  const difference = budgetCents === null ? null : budgetCents - spentCents;
-
-  return {
-    month,
-    budgetCents,
-    spentCents,
-    incomeCents: total('INCOME'),
-    savedCents: difference !== null && difference > 0 ? difference : 0,
-    overCents: difference !== null && difference < 0 ? -difference : 0,
-    topCategories: top.map((c) => ({ categoryId: c.categoryId, amountCents: c._sum.amountCents })),
-    answer: answer?.status ?? null,
-  };
-}
 
 // Defaults to the last finished month; the current month cannot be summed up yet
 router.get('/', async (req, res) => {
@@ -66,7 +31,8 @@ router.put('/:month/answer', async (req, res) => {
 
   const tomorrow = toDbDate(today(req.user.timezone));
   tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-  const data = { status, remindDate: status === 'REMIND_LATER' ? tomorrow : null };
+  // A new answer also re-arms the reminder notification
+  const data = { status, remindDate: status === 'REMIND_LATER' ? tomorrow : null, reminded: false };
 
   await prisma.recapAnswer.upsert({
     where: { userId_month: { userId: req.user.id, month } },

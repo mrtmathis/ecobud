@@ -1,0 +1,23 @@
+# Every 15 minutes, asks the API to send the notifications that are due
+name: Notifications
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  # Lets you run it by hand from the Actions tab
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send due notifications
+        env:
+          JOBS_SECRET: ${{ secrets.JOBS_SECRET }}
+        run: |
+          curl --fail-with-body --silent --show-error --max-time 120 \
+            -X POST "https://ecobud-app.vercel.app/api/jobs/run" \
+            -H "Authorization: Bearer $JOBS_SECRET"

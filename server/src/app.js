@@ -11,6 +11,7 @@ import dayRoutes from './routes/days.js';
 import recapRoutes from './routes/recap.js';
 import settingsRoutes from './routes/settings.js';
 import pushRoutes from './routes/push.js';
+import jobRoutes from './routes/jobs.js';
 import { sameOriginOnly } from './middlewares/security.js';
 
 const app = express();
@@ -41,6 +42,7 @@ app.use('/api/days', dayRoutes);
 app.use('/api/recap', recapRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/push', pushRoutes);
+app.use('/api/jobs', jobRoutes);
 
 // Errors are codes, not sentences: the front end translates them
 app.use('/api', (req, res) => {

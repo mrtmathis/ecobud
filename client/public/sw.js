@@ -1,5 +1,5 @@
 // Service worker: makes the app installable, keeps the interface usable offline and shows notifications
-const CACHE = 'ecobud-v1';
+const CACHE = 'ecobud-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.add('/index.html')));
@@ -68,20 +68,39 @@ self.addEventListener('push', (event) => {
       body: data.body,
       icon: '/icon-192.png',
       tag: data.tag,
-      data: { url: data.url || '/dashboard' },
+      // Buttons under the notification (Android and computers; iPhone only opens the app)
+      actions: data.actions || [],
+      data: { url: data.url || '/dashboard', day: data.day, doneText: data.doneText },
     }),
   );
 });
 
-// A tap on the notification opens the app on the right page
+// Opens the app on a page, reusing a window that is already open
+function openApp(url) {
+  return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windows) => {
+    const open = windows.find((w) => new URL(w.url).origin === self.location.origin);
+    if (open) return open.focus().then((w) => (w && 'navigate' in w ? w.navigate(url) : w));
+    return self.clients.openWindow(url);
+  });
+}
+
+// "Nothing spent" straight from the notification; opens the app if it cannot be saved
+async function markNothingSpent({ day, doneText, url }) {
+  try {
+    const response = await fetch(`/api/days/${day}/empty`, { method: 'POST', credentials: 'same-origin' });
+    if (!response.ok) return openApp(response.status === 409 ? '/dashboard' : url);
+    return self.registration.showNotification('EcoBud', { body: doneText, icon: '/icon-192.png', tag: 'reminder' });
+  } catch {
+    return openApp(url);
+  }
+}
+
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = event.notification.data?.url || '/dashboard';
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windows) => {
-      const open = windows.find((w) => new URL(w.url).origin === self.location.origin);
-      if (open) return open.focus().then((w) => (w && 'navigate' in w ? w.navigate(url) : w));
-      return self.clients.openWindow(url);
-    }),
-  );
+  const data = event.notification.data || {};
+  if (event.action === 'nothing' && data.day) {
+    event.waitUntil(markNothingSpent(data));
+    return;
+  }
+  event.waitUntil(openApp(data.url || '/dashboard'));
 });
