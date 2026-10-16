@@ -118,8 +118,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Prochains prélèvements des 30 jours sur le tableau de bord
 - [x] Tableau de bord : reste à dépenser, alertes à 80 % et 100 %, répartition par catégorie, dernières transactions (graphiques à l'étape design)
 - [x] Historique filtrable (mois, type, catégorie, recherche dans la note)
-- [ ] Application installable (PWA)
-- [ ] Rappel quotidien par notification, heure et jours réglables
+- [x] Application installable (PWA)
+- [ ] Rappel quotidien par notification, heure et jours réglables (réglages prêts, envoi à l'étape 8b)
 - [x] Bouton « Rien dépensé aujourd'hui » (annulé automatiquement si une dépense est ajoutée ce jour-là)
 - [ ] Ajout express depuis la notification
 
@@ -139,7 +139,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | --- | --- |
 | Front-end | React (Vite), Tailwind CSS, Chart.js |
 | Traduction | react-i18next, API `Intl` du navigateur (dates et montants) |
-| PWA et notifications | vite-plugin-pwa, Web Push (`web-push`), tâche planifiée GitHub Actions |
+| PWA et notifications | service worker écrit à la main (`client/public/sw.js`), manifeste, Web Push (`web-push`), tâche planifiée GitHub Actions |
 | Back-end | Node.js, Express |
 | Base de données | PostgreSQL, Prisma (ORM) |
 | Authentification | JWT dans un cookie httpOnly, bcrypt |
@@ -270,7 +270,7 @@ DATABASE_URL="postgresql://utilisateur:motdepasse@localhost:5432/ecobud"
 JWT_SECRET="une_chaine_secrete_longue"
 VAPID_PUBLIC_KEY="..."
 VAPID_PRIVATE_KEY="..."
-VAPID_SUBJECT="mailto:contact@exemple.fr"
+VAPID_SUBJECT="https://github.com/mrtmathis/ecobud"
 PORT=4000
 ```
 
@@ -311,15 +311,19 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `GET` | `/api/dashboard?month=YYYY-MM` | Tableau de bord : budget, dépensé, reste, pourcentage, niveau d'alerte, répartition, 5 dernières transactions |
 | `GET` | `/api/recap?month=YYYY-MM` | Récap d'un mois terminé (par défaut le mois dernier) : économisé ou dépassé, 3 catégories qui ont le plus pesé |
 | `PUT` | `/api/recap/:month/answer` | Réponse à « Mets-les de côté » : `DONE` ou `REMIND_LATER` |
+| `GET` | `/api/settings` | Lire les réglages des notifications |
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |
 | `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |
+| `PUT` | `/api/settings/timezone` | Mettre à jour le fuseau horaire (envoyé automatiquement par le navigateur) |
+| `GET` | `/api/push/key` | Clé publique dont le navigateur a besoin pour s'abonner |
 | `POST` | `/api/push/subscribe` | Enregistrer un appareil pour les notifications |
 | `DELETE` | `/api/push/subscribe` | Désactiver les notifications sur un appareil |
+| `POST` | `/api/push/test` | Envoyer une notification de test sur tous les appareils du compte |
 | `DELETE` | `/api/account` | Supprimer son compte et toutes ses données |
 | `POST` | `/api/jobs/run` | Lancer les tâches planifiées (réservé à GitHub Actions, clé secrète) |
 
-Toutes les routes sauf `/api/auth/*`, `/api/health` et `/api/jobs/run` nécessitent d'être connecté (cookie de session).
+Toutes les routes sauf `/api/auth/*`, `/api/health`, `/api/push/key` et `/api/jobs/run` nécessitent d'être connecté (cookie de session).
 
 ## Planning
 

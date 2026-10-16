@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { errorMessage } from '../messages.js';
+import InstallApp from '../components/InstallApp.jsx';
 import LanguageToggle from '../components/LanguageToggle.jsx';
+import NotificationSettings from '../components/NotificationSettings.jsx';
 import PasswordInput from '../components/PasswordInput.jsx';
 import RecoveryCode from '../components/RecoveryCode.jsx';
 
@@ -53,6 +55,10 @@ export default function Account() {
           {user.language === 'en' ? 'English' : 'Français'} · <LanguageToggle />
         </p>
       </section>
+
+      <InstallApp />
+
+      <NotificationSettings />
 
       <section aria-labelledby="recovery-section">
         <h2 id="recovery-section">{t('account.recoveryTitle')}</h2>

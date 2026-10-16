@@ -24,6 +24,16 @@ export function AuthProvider({ children }) {
     if (language) applyLanguage(language);
   }, [language]);
 
+  // Keeps the account time zone in line with the device, for "today" and reminder times
+  const timezone = user?.timezone;
+  useEffect(() => {
+    const local = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!timezone || !local || timezone === local) return;
+    api('/settings/timezone', { method: 'PUT', body: { timezone: local } })
+      .then((data) => setUser(data.user))
+      .catch(() => {});
+  }, [timezone]);
+
   const login = async (email, password) => {
     const data = await api('/auth/login', { method: 'POST', body: { email, password } });
     setUser(data.user);

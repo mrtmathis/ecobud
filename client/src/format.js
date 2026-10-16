@@ -1,7 +1,7 @@
 import i18n from './i18n.js';
 
 // Number and date formats follow the interface language
-const locale = () => (i18n.language === 'en' ? 'en-GB' : 'fr-FR');
+export const locale = () => (i18n.language === 'en' ? 'en-GB' : 'fr-FR');
 
 export const formatCents = (cents) =>
   new Intl.NumberFormat(locale(), { style: 'currency', currency: 'EUR' }).format(cents / 100);
