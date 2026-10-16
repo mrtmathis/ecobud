@@ -43,3 +43,15 @@ export function formatMonth(month) {
   const [y, m] = month.split('-').map(Number);
   return new Date(y, m - 1, 1).toLocaleDateString(locale(), { month: 'long', year: 'numeric' });
 }
+
+// "2026-10-14" -> "14 oct." or "14 Oct"
+export function formatShortDay(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(locale(), { day: 'numeric', month: 'short' });
+}
+
+// "2026-10-18" -> { day: "18", month: "oct." } for date badges
+export function dayParts(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  return { day: String(d), month: new Date(y, m - 1, d).toLocaleDateString(locale(), { month: 'short' }) };
+}

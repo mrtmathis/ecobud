@@ -83,10 +83,14 @@ td {
 
 /* ---------- Page content ---------- */
 
-main {
+/* Pages are centered; the dashboard sets a wider width */
+:where(main) {
   display: grid;
   gap: 16px;
   align-content: start;
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
 }
 
 :where(main > section, main > form, .card) {

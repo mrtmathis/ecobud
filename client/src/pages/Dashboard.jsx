@@ -3,8 +3,12 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
-import { formatCents, formatDay, formatMonth, inDays } from '../format.js';
+import { categoryColor } from '../categories.js';
+import { dayParts, formatCents, formatDay, formatMonth, formatShortDay, inDays } from '../format.js';
 import { errorMessage } from '../messages.js';
+import BudgetHero from '../components/BudgetHero.jsx';
+import DonutChart from '../components/DonutChart.jsx';
+import Icon from '../components/Icon.jsx';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -31,153 +35,164 @@ export default function Dashboard() {
   if (error) return <p role="alert">{error}</p>;
   if (!data) return <p>{t('common.loading')}</p>;
 
-  const hasBudget = data.budgetCents !== null;
   const day = formatDay(data.today.date);
   const month = formatMonth(data.month);
 
   return (
-    <main>
-      <h1>{t('dashboard.hello', { name: user.name, context: user.skin })}</h1>
-      <p>
-        {t('dashboard.dateLine', {
-          day: day.charAt(0).toUpperCase() + day.slice(1),
-          month,
-          context: /^[aeiou]/i.test(month) ? 'vowel' : undefined,
-        })}
-      </p>
-
-      {!user.hasRecoveryCode && (
-        <p role="alert">
-          {t('dashboard.noRecoveryCode')} <Link to="/account">{t('dashboard.createRecoveryCode')}</Link>
+    <main className="dash">
+      <header className="dash-head">
+        <h1>{t('dashboard.hello', { name: user.name, context: user.skin })}</h1>
+        <p className="dash-date">
+          {t('dashboard.dateLine', {
+            day: day.charAt(0).toUpperCase() + day.slice(1),
+            month,
+            context: /^[aeiou]/i.test(month) ? 'vowel' : undefined,
+          })}
         </p>
+      </header>
+
+      {(!user.hasRecoveryCode || data.recapMonth) && (
+        <div className="dash-notices">
+          {!user.hasRecoveryCode && (
+            <p role="alert">
+              {t('dashboard.noRecoveryCode')} <Link to="/account">{t('dashboard.createRecoveryCode')}</Link>
+            </p>
+          )}
+          {data.recapMonth && (
+            <p role="status">
+              {t('dashboard.recapReady', { month: formatMonth(data.recapMonth) })}{' '}
+              <Link to={`/recap?month=${data.recapMonth}`}>{t('dashboard.recapLink')}</Link>
+            </p>
+          )}
+        </div>
       )}
 
-      {data.recapMonth && (
-        <p role="status">
-          {t('dashboard.recapReady', { month: formatMonth(data.recapMonth) })}{' '}
-          <Link to={`/recap?month=${data.recapMonth}`}>{t('dashboard.recapLink')}</Link>
-        </p>
-      )}
+      <div className="dash-hero">
+        <BudgetHero data={data} skin={user.skin} />
+        {data.alertLevel === 100 && (
+          <p role="alert">{t('dashboard.over', { amount: formatCents(-data.remainingCents) })}</p>
+        )}
+        {data.alertLevel === 80 && (
+          <p role="alert">{t('dashboard.warning', { percent: data.percentUsed, remaining: formatCents(data.remainingCents) })}</p>
+        )}
+      </div>
 
-      <section aria-labelledby="today-title">
+      <section className="today-card" aria-labelledby="today-title">
         <h2 id="today-title">{t('dashboard.todayTitle')}</h2>
         {data.today.expenseCount > 0 ? (
-          <p>{t('dashboard.expensesToday', { count: data.today.expenseCount })}</p>
+          <p className="today-done">
+            <Icon name="check" /> {t('dashboard.expensesToday', { count: data.today.expenseCount })}
+          </p>
         ) : data.today.nothingSpent ? (
-          <p>
-            {t('dashboard.dayValidated')}{' '}
-            <button type="button" onClick={() => setNothingSpent(false)}>
+          <div className="today-done">
+            <Icon name="check" /> <span>{t('dashboard.dayValidated')}</span>
+            <button type="button" className="link-button" onClick={() => setNothingSpent(false)}>
               {t('common.cancel')}
             </button>
-          </p>
+          </div>
         ) : (
-          <p>
-            <Link to="/transactions/new">{t('common.addExpense')}</Link> {t('dashboard.or')}{' '}
+          <div className="today-actions">
+            <Link to="/transactions/new" className="btn">
+              <Icon name="plus" size={18} /> {t('common.addExpense')}
+            </Link>
             <button type="button" onClick={() => setNothingSpent(true)}>
               {t('dashboard.nothingSpent')}
             </button>
-          </p>
+          </div>
         )}
-      </section>
-
-      <section aria-labelledby="remaining-title">
-        <h2 id="remaining-title">{t('dashboard.remainingTitle')}</h2>
-        {hasBudget ? (
-          <>
-            <p>
-              <strong style={{ fontSize: '2em' }}>{formatCents(data.remainingCents)}</strong>
-            </p>
-            <p>
-              <meter min={0} max={100} low={80} high={99} optimum={0} value={Math.min(data.percentUsed, 100)}>
-                {t('dashboard.percent', { percent: data.percentUsed })}
-              </meter>{' '}
-              {t('dashboard.spentOfBudget', {
-                spent: formatCents(data.spentCents),
-                budget: formatCents(data.budgetCents),
-                percent: data.percentUsed,
-              })}
-            </p>
-            {data.alertLevel === 100 && <p role="alert">{t('dashboard.over', { amount: formatCents(-data.remainingCents) })}</p>}
-            {data.alertLevel === 80 && (
-              <p role="alert">
-                {t('dashboard.warning', { percent: data.percentUsed, remaining: formatCents(data.remainingCents) })}
-              </p>
-            )}
-          </>
-        ) : (
-          <p>
-            {t('dashboard.noBudget')} <Link to="/budget">{t('dashboard.setBudget')}</Link>
-          </p>
-        )}
-        <p>
-          {t('dashboard.monthIncome', { amount: formatCents(data.incomeCents) })} ·{' '}
-          <Link to="/budget">{t('dashboard.editBudget')}</Link>
+        <p className="today-income">
+          <Link to="/transactions/new?type=INCOME">{t('dashboard.addIncomeLong')}</Link>
+          {' · '}
+          {t('dashboard.monthIncome', { amount: formatCents(data.incomeCents) })}
         </p>
       </section>
 
-      <p>
-        <Link to="/transactions/new">{t('common.addExpense')}</Link> ·{' '}
-        <Link to="/transactions/new?type=INCOME">{t('dashboard.addIncomeLong')}</Link>
-      </p>
+      <section className="split-card" aria-labelledby="split-title">
+        <h2 id="split-title">{t('dashboard.splitTitle')}</h2>
+        {data.byCategory.length === 0 ? (
+          <p className="empty">{t('dashboard.noExpenses')}</p>
+        ) : (
+          <div className="split">
+            <DonutChart
+              slices={data.byCategory.map((c) => ({ id: c.categoryId, value: c.amountCents, color: categoryColor(c.categoryId) }))}
+              centerLabel={t('dashboard.spentLabel')}
+              centerValue={formatCents(data.spentCents)}
+            />
+            <ul className="legend">
+              {data.byCategory.map((c) => (
+                <li key={c.categoryId}>
+                  <i style={{ background: categoryColor(c.categoryId) }} aria-hidden="true" />
+                  <span className="legend-name">{t(`categories.${c.categoryId}`)}</span>
+                  <span className="legend-amount tnum">{formatCents(c.amountCents)}</span>
+                  <span className="legend-share tnum">
+                    {t('dashboard.percent', { percent: Math.round((c.amountCents / data.spentCents) * 100) })}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
 
-      <section aria-labelledby="upcoming-title">
-        <h2 id="upcoming-title">{t('dashboard.upcomingTitle')}</h2>
+      <section className="upcoming-card" aria-labelledby="upcoming-title">
+        <div className="card-head">
+          <h2 id="upcoming-title">{t('dashboard.upcomingTitle')}</h2>
+          <Link to="/recurrences">{t('dashboard.manageRecurrences')}</Link>
+        </div>
         {data.upcoming.length === 0 ? (
-          <p>
+          <p className="empty">
             {t('dashboard.noUpcoming')} <Link to="/recurrences/new">{t('dashboard.addRecurrence')}</Link>
           </p>
         ) : (
-          <ul>
-            {data.upcoming.map((r) => (
-              <li key={r.id}>
-                {r.label} · {formatCents(r.amountCents)} · {r.isTrial ? `${t('dashboard.trialEnds')} ` : ''}
-                {inDays(r.daysUntil)}
-              </li>
-            ))}
-          </ul>
-        )}
-        <p>
-          <Link to="/recurrences">{t('dashboard.manageRecurrences')}</Link>
-        </p>
-      </section>
-
-      <section aria-labelledby="split-title">
-        <h2 id="split-title">{t('dashboard.splitTitle')}</h2>
-        {data.byCategory.length === 0 ? (
-          <p>{t('dashboard.noExpenses')}</p>
-        ) : (
-          <ul>
-            {data.byCategory.map((c) => (
-              <li key={c.categoryId}>
-                {t('dashboard.categoryShare', {
-                  category: t(`categories.${c.categoryId}`),
-                  amount: formatCents(c.amountCents),
-                  percent: Math.round((c.amountCents / data.spentCents) * 100),
-                })}
-              </li>
-            ))}
+          <ul className="rows">
+            {data.upcoming.map((r) => {
+              const date = dayParts(r.nextDate);
+              return (
+                <li key={r.id} className="row">
+                  <span className="date-chip" aria-hidden="true">
+                    <b>{date.day}</b>
+                    <small>{date.month}</small>
+                  </span>
+                  <span className="row-main">
+                    <strong>{r.label}</strong>
+                    <small>
+                      {r.isTrial && <span className="tag">{t('dashboard.trialEnds')}</span>} {inDays(r.daysUntil)}
+                    </small>
+                  </span>
+                  <span className="row-amount tnum">{formatCents(r.amountCents)}</span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
 
-      <section aria-labelledby="latest-title">
-        <h2 id="latest-title">{t('dashboard.latestTitle')}</h2>
-        {data.latest.length === 0 ? (
-          <p>{t('dashboard.noTransactions')}</p>
-        ) : (
-          <ul>
-            {data.latest.map((tr) => (
-              <li key={tr.id}>
-                {tr.type === 'EXPENSE' ? '−' : '+'}
-                {formatCents(tr.amountCents)} · {t(`categories.${tr.categoryId}`)}
-                {tr.note && <> · {tr.note}</>} · {formatDay(tr.date)}
-              </li>
-            ))}
-          </ul>
-        )}
-        <p>
+      <section className="latest-card" aria-labelledby="latest-title">
+        <div className="card-head">
+          <h2 id="latest-title">{t('dashboard.latestTitle')}</h2>
           <Link to="/transactions">{t('dashboard.seeAll')}</Link>
-        </p>
+        </div>
+        {data.latest.length === 0 ? (
+          <p className="empty">{t('dashboard.noTransactions')}</p>
+        ) : (
+          <ul className="rows">
+            {data.latest.map((tr) => (
+              <li key={tr.id} className="row">
+                <span className="cat-dot" style={{ '--dot': categoryColor(tr.categoryId) }} aria-hidden="true" />
+                <span className="row-main">
+                  <strong>{tr.note || t(`categories.${tr.categoryId}`)}</strong>
+                  <small>
+                    {t(`categories.${tr.categoryId}`)} · {formatShortDay(tr.date)}
+                  </small>
+                </span>
+                <span className={`row-amount tnum ${tr.type === 'EXPENSE' ? 'is-expense' : 'is-income'}`}>
+                  {tr.type === 'EXPENSE' ? '−' : '+'}
+                  {formatCents(tr.amountCents)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );

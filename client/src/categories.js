@@ -14,3 +14,15 @@ export function useCategories() {
   }, []);
   return categories;
 }
+
+// Chart color of each category, taken from the current theme
+const colors = {
+  rent: 'var(--c1)',
+  groceries: 'var(--c2)',
+  outings: 'var(--c3)',
+  transport: 'var(--c4)',
+  health: 'var(--c5)',
+  studies: 'var(--c6)',
+  subscriptions: 'var(--c7)',
+};
+export const categoryColor = (id) => colors[id] || 'var(--muted)';
