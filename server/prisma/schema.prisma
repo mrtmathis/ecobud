@@ -1,8 +1,6 @@
+// Plain JavaScript client, so Vercel can bundle it without TypeScript support
 generator client {
-  provider               = "prisma-client"
-  output                 = "../src/generated/prisma"
-  generatedFileExtension = "ts"
-  importFileExtension    = "ts"
+  provider = "prisma-client-js"
 }
 
 datasource db {
