@@ -26,6 +26,8 @@ export const isStandalone = () =>
 export const isIos = () =>
   /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+export const isAndroid = () => /Android/i.test(navigator.userAgent);
+
 export const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 
 // Re-renders when the browser's install prompt becomes available

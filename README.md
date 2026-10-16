@@ -110,7 +110,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | Récap hebdomadaire par e-mail | Chaque dimanche, le total de la semaine | Bonus |
 | Scan de ticket | Le montant est lu sur la photo du ticket (Tesseract.js) | Bonus |
 
-> Sur iPhone, les notifications web ne fonctionnent que si l'application est installée sur l'écran d'accueil (iOS 16.4 ou plus).
+> Installation : sur Android (Chrome, Edge, Samsung Internet), le bouton « Installer » de « Mon compte » suffit, sinon menu ⋮ puis « Installer l'application ». Sur iPhone, Safari ou Chrome puis Partager et « Sur l'écran d'accueil ». Les notifications marchent sur Android même sans installer ; sur iPhone, seulement une fois l'application installée (iOS 16.4 ou plus).
 
 ## Fonctionnalités
 

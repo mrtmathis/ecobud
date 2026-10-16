@@ -39,6 +39,10 @@ export default {
     iosStep1: 'Open this site in Safari (or Chrome from iOS 16.4).',
     iosStep2: 'Tap the Share button (the square with an arrow pointing up), sometimes hidden in the “…” menu.',
     iosStep3: 'Choose “Add to Home Screen”, then “Add”.',
+    androidIntro: 'On Android, add EcoBud to your home screen to open it like an app. Notifications also work without installing it.',
+    androidStep1: 'Open this site in Chrome.',
+    androidStep2: 'Tap the ⋮ menu at the top right.',
+    androidStep3: 'Choose “Install app” or “Add to Home screen”, then confirm.',
     browserMenu: 'To install it, use the “Install app” or “Add to Home screen” option in your browser menu.',
   },
   notifications: {

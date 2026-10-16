@@ -39,6 +39,10 @@ export default {
     iosStep1: 'Ouvre ce site dans Safari (ou Chrome à partir d’iOS 16.4).',
     iosStep2: 'Appuie sur le bouton Partager (le carré avec une flèche vers le haut), parfois caché dans le menu « … ».',
     iosStep3: 'Choisis « Sur l’écran d’accueil », puis « Ajouter ».',
+    androidIntro: 'Sur Android, ajoute EcoBud à ton écran d’accueil pour l’ouvrir comme une application. Les notifications marchent aussi sans l’installer.',
+    androidStep1: 'Ouvre ce site dans Chrome.',
+    androidStep2: 'Appuie sur le menu ⋮ en haut à droite.',
+    androidStep3: 'Choisis « Installer l’application » ou « Ajouter à l’écran d’accueil », puis confirme.',
     browserMenu: 'Pour l’installer, utilise l’option « Installer l’application » ou « Ajouter à l’écran d’accueil » du menu de ton navigateur.',
   },
   notifications: {

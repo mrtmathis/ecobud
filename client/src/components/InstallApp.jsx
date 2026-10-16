@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { isIos, isStandalone, useInstallPrompt } from '../pwa.js';
+import { isAndroid, isIos, isStandalone, useInstallPrompt } from '../pwa.js';
 
-// Install button where the browser offers one, step by step instructions on iPhone
+// Install button where the browser offers one, step by step instructions on iPhone and Android
 export default function InstallApp() {
   const { t } = useTranslation();
   const { canInstall, install } = useInstallPrompt();
@@ -26,6 +26,17 @@ export default function InstallApp() {
           <li>{t('install.iosStep1')}</li>
           <li>{t('install.iosStep2')}</li>
           <li>{t('install.iosStep3')}</li>
+        </ol>
+      </>
+    );
+  } else if (isAndroid()) {
+    content = (
+      <>
+        <p>{t('install.androidIntro')}</p>
+        <ol>
+          <li>{t('install.androidStep1')}</li>
+          <li>{t('install.androidStep2')}</li>
+          <li>{t('install.androidStep3')}</li>
         </ol>
       </>
     );
