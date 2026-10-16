@@ -21,20 +21,16 @@ export function AuthProvider({ children }) {
     setUser(data.user);
   };
 
-  const register = async (fields) => {
-    const data = await api('/auth/register', { method: 'POST', body: fields });
-    setUser(data.user);
-  };
-
   const logout = async () => {
     await api('/auth/logout', { method: 'POST' });
     setUser(null);
   };
 
+  // Used after signup or recovery, once the user has saved their recovery code
+  const signIn = (newUser) => setUser(newUser);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user, loading, login, logout, signIn }}>{children}</AuthContext.Provider>
   );
 }
 

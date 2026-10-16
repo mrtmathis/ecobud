@@ -69,6 +69,10 @@ L'interface est testée à partir de 320 px de large, et toutes les zones cliqua
 
 > Projet étudiant individuel réalisé dans le cadre d'un cours de développement web.
 
+### Mot de passe oublié : le code de récupération
+
+EcoBud n'envoie aucun e-mail. À l'inscription, l'utilisateur reçoit **une seule fois** un code de récupération (`XXXX-XXXX-XXXX-XXXX`), qu'il peut copier ou télécharger. S'il oublie son mot de passe, ce code lui permet d'en choisir un nouveau ; il reçoit alors un nouveau code, l'ancien ne marchant plus. Garder ce code est sa responsabilité : sans lui, le compte ne peut pas être récupéré.
+
 ## Données et confidentialité
 
 EcoBud **ne se connecte à aucune banque** et ne demande **aucune donnée bancaire** (ni identifiants, ni IBAN, ni numéro de carte).
@@ -100,7 +104,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 
 ### MVP
 
-- [x] Inscription, connexion, déconnexion et mot de passe oublié
+- [x] Inscription, connexion, déconnexion et mot de passe oublié (code de récupération)
 - [ ] Interface en français et en anglais
 - [ ] Responsive : téléphone, tablette et ordinateur
 - [ ] Ajout, modification et suppression de dépenses et de revenus
@@ -136,7 +140,6 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | Base de données | PostgreSQL, Prisma (ORM) |
 | Authentification | JWT dans un cookie httpOnly, bcrypt |
 | Sécurité | Helmet, Zod (validation), express-rate-limit |
-| E-mails | Brevo (réinitialisation du mot de passe) |
 | Déploiement | Vercel (front et API), Neon (PostgreSQL hébergé) |
 | Outils | Git, GitHub, Figma |
 
@@ -172,8 +175,8 @@ La sécurité est traitée dès la première ligne de code :
 | Risque | Protection |
 | --- | --- |
 | Vol de mots de passe | Hachage bcrypt (coût 12), jamais stockés ni renvoyés en clair ; 12 caractères minimum avec minuscule, majuscule, chiffre et symbole |
-| Comptes devinables | Même réponse pour un e-mail inconnu et un mauvais mot de passe, même réponse à « mot de passe oublié » que le compte existe ou non |
-| Lien de réinitialisation volé | Valable 30 minutes, à usage unique, seule son empreinte SHA-256 est stockée |
+| Comptes devinables | Même réponse pour un e-mail inconnu et un mauvais mot de passe, ou un mauvais code de récupération |
+| Code de récupération deviné ou volé | 16 caractères aléatoires (80 bits), haché avec bcrypt, à usage unique, essais limités ; en générer un nouveau depuis le compte demande le mot de passe |
 | Requêtes venant d'un autre site (CSRF) | Cookie `SameSite=Lax` et refus des requêtes dont l'origine n'est pas le site |
 | Vol de session (XSS) | JWT dans un cookie `httpOnly`, `Secure`, `SameSite` ; React échappe tout le contenu affiché |
 | Accès aux données d'un autre utilisateur | Chaque requête en base est filtrée par l'utilisateur connecté |
@@ -260,9 +263,6 @@ Variables d'environnement (`server/.env`) :
 ```env
 DATABASE_URL="postgresql://utilisateur:motdepasse@localhost:5432/ecobud"
 JWT_SECRET="une_chaine_secrete_longue"
-APP_URL="http://localhost:5173"
-BREVO_API_KEY=""        # vide en local : les e-mails s'affichent dans le terminal
-MAIL_FROM="EcoBud <ton.adresse@exemple.fr>"
 VAPID_PUBLIC_KEY="..."
 VAPID_PRIVATE_KEY="..."
 VAPID_SUBJECT="mailto:contact@exemple.fr"
@@ -285,8 +285,8 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `POST` | `/api/auth/login` | Se connecter (pose un cookie de session de 30 jours) |
 | `POST` | `/api/auth/logout` | Se déconnecter |
 | `GET` | `/api/auth/me` | Utilisateur connecté |
-| `POST` | `/api/auth/forgot-password` | Recevoir un lien de réinitialisation par e-mail (valable 30 min) |
-| `POST` | `/api/auth/reset-password` | Choisir un nouveau mot de passe (déconnecte toutes les sessions) |
+| `POST` | `/api/auth/recover` | Mot de passe oublié : e-mail + code de récupération + nouveau mot de passe (déconnecte les autres sessions, renvoie un nouveau code) |
+| `POST` | `/api/auth/recovery-code` | Générer un nouveau code de récupération (mot de passe demandé) |
 | `GET` | `/api/transactions` | Lister les transactions (filtres : `month`, `category`, `q`) |
 | `POST` | `/api/transactions` | Ajouter une transaction |
 | `PUT` | `/api/transactions/:id` | Modifier une transaction |

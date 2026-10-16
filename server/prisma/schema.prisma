@@ -22,6 +22,8 @@ model User {
   name              String
   email             String   @unique
   passwordHash      String
+  // Hash of the recovery code shown once to the user; empty for accounts created before it existed
+  recoveryCodeHash  String?
   language          Language @default(fr)
   // Reminder time is local to the user's time zone (HH:MM)
   timezone          String   @default("Europe/Paris")
@@ -34,23 +36,11 @@ model User {
   passwordChangedAt DateTime @default(now())
   createdAt         DateTime @default(now())
 
-  passwordResetTokens PasswordResetToken[]
-  transactions        Transaction[]
-  recurrences         Recurrence[]
-  budgets             Budget[]
-  pushSubscriptions   PushSubscription[]
-  dayChecks           DayCheck[]
-}
-
-// Only a hash of the token is stored, so a database leak cannot be used to reset passwords
-model PasswordResetToken {
-  id        String   @id @default(uuid())
-  tokenHash String   @unique
-  userId    String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions      Transaction[]
+  recurrences       Recurrence[]
+  budgets           Budget[]
+  pushSubscriptions PushSubscription[]
+  dayChecks         DayCheck[]
 }
 
 // Fixed list seeded by the site; the id is also the translation key

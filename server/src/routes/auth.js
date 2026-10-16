@@ -1,4 +1,3 @@
-import { createHash, randomBytes } from 'node:crypto';
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db.js';
@@ -8,17 +7,22 @@ import {
   DUMMY_HASH,
   checkPassword,
   clearSessionCookie,
+  generateRecoveryCode,
   hashPassword,
+  normalizeRecoveryCode,
   publicUser,
   setSessionCookie,
 } from '../lib/auth.js';
-import { sendMail } from '../lib/mailer.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 import { authLimiter } from '../middlewares/security.js';
 
 const router = Router();
-const RESET_MINUTES = 30;
-const sha256 = (value) => createHash('sha256').update(value).digest('hex');
+
+// Creates a new recovery code; the plain code is returned once and only its hash is kept
+async function newRecoveryCode() {
+  const code = generateRecoveryCode();
+  return { code, hash: await hashPassword(normalizeRecoveryCode(code)) };
+}
 
 const registerSchema = z.object({
   name: z.string().trim().min(1).max(60),
@@ -32,16 +36,18 @@ router.post('/register', authLimiter, async (req, res) => {
   const existing = await prisma.user.findUnique({ where: { email: data.email } });
   if (existing) throw new HttpError(409, 'EMAIL_TAKEN');
 
+  const recovery = await newRecoveryCode();
   const user = await prisma.user.create({
     data: {
       name: data.name,
       email: data.email,
       language: data.language,
       passwordHash: await hashPassword(data.password),
+      recoveryCodeHash: recovery.hash,
     },
   });
   setSessionCookie(res, user.id);
-  res.status(201).json({ user: publicUser(user) });
+  res.status(201).json({ user: publicUser(user), recoveryCode: recovery.code });
 });
 
 const loginSchema = z.object({ email: emailSchema, password: z.string().min(1).max(128) });
@@ -66,51 +72,44 @@ router.get('/me', requireAuth, (req, res) => {
   res.json({ user: publicUser(req.user) });
 });
 
-router.post('/forgot-password', authLimiter, async (req, res) => {
-  const { email } = validate(z.object({ email: emailSchema }), req.body);
-  const user = await prisma.user.findUnique({ where: { email } });
-
-  if (user) {
-    const token = randomBytes(32).toString('hex');
-    await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } });
-    await prisma.passwordResetToken.create({
-      data: {
-        tokenHash: sha256(token),
-        userId: user.id,
-        expiresAt: new Date(Date.now() + RESET_MINUTES * 60 * 1000),
-      },
-    });
-    const link = `${process.env.APP_URL}/reset-password?token=${token}`;
-    const fr = user.language === 'fr';
-    // A failed send must not change the answer, or it would reveal that the account exists
-    await sendMail({
-      to: user.email,
-      subject: fr ? 'Réinitialise ton mot de passe EcoBud' : 'Reset your EcoBud password',
-      text: fr
-        ? `Bonjour ${user.name},\n\nPour choisir un nouveau mot de passe, ouvre ce lien (valable ${RESET_MINUTES} minutes) :\n${link}\n\nSi tu n'as rien demandé, ignore cet e-mail.`
-        : `Hi ${user.name},\n\nTo choose a new password, open this link (valid for ${RESET_MINUTES} minutes):\n${link}\n\nIf you did not ask for this, ignore this email.`,
-    }).catch((err) => console.error('Password reset email failed:', err.message));
-  }
-  // Always the same answer, so nobody can check which emails have an account
-  res.json({ ok: true });
+const recoverSchema = z.object({
+  email: emailSchema,
+  recoveryCode: z.string().max(40).transform(normalizeRecoveryCode).pipe(z.string().length(16)),
+  password: passwordSchema,
 });
 
-const resetSchema = z.object({ token: z.string().regex(/^[a-f0-9]{64}$/), password: passwordSchema });
+// Forgotten password: email + recovery code + new password
+router.post('/recover', authLimiter, async (req, res) => {
+  const data = validate(recoverSchema, req.body);
+  const user = await prisma.user.findUnique({ where: { email: data.email } });
+  const valid = await checkPassword(data.recoveryCode, user?.recoveryCodeHash ?? DUMMY_HASH);
+  if (!user?.recoveryCodeHash || !valid) throw new HttpError(401, 'INVALID_RECOVERY');
 
-router.post('/reset-password', authLimiter, async (req, res) => {
-  const data = validate(resetSchema, req.body);
-  const record = await prisma.passwordResetToken.findUnique({ where: { tokenHash: sha256(data.token) } });
-  if (!record || record.expiresAt < new Date()) throw new HttpError(400, 'INVALID_RESET_TOKEN');
+  // A used code is replaced, and every other session is logged out
+  const recovery = await newRecoveryCode();
+  const updated = await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      passwordHash: await hashPassword(data.password),
+      recoveryCodeHash: recovery.hash,
+      passwordChangedAt: new Date(),
+    },
+  });
+  setSessionCookie(res, updated.id);
+  res.json({ user: publicUser(updated), recoveryCode: recovery.code });
+});
 
-  // New password, all reset links removed, and every existing session logged out
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { id: record.userId },
-      data: { passwordHash: await hashPassword(data.password), passwordChangedAt: new Date() },
-    }),
-    prisma.passwordResetToken.deleteMany({ where: { userId: record.userId } }),
-  ]);
-  res.json({ ok: true });
+// Logged-in user gets a new code; the password is asked again in case the session was stolen
+router.post('/recovery-code', authLimiter, requireAuth, async (req, res) => {
+  const { password } = validate(z.object({ password: z.string().min(1).max(128) }), req.body);
+  if (!(await checkPassword(password, req.user.passwordHash))) throw new HttpError(401, 'INVALID_PASSWORD');
+
+  const recovery = await newRecoveryCode();
+  const updated = await prisma.user.update({
+    where: { id: req.user.id },
+    data: { recoveryCodeHash: recovery.hash },
+  });
+  res.json({ user: publicUser(updated), recoveryCode: recovery.code });
 });
 
 export default router;

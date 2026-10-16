@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -37,8 +38,20 @@ export function readSessionToken(token) {
   return jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
 }
 
+// No 0/O or 1/I, so the code is easy to copy by hand
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+// 16 random characters (80 bits), shown as XXXX-XXXX-XXXX-XXXX
+export function generateRecoveryCode() {
+  const chars = Array.from({ length: 16 }, () => CODE_ALPHABET[randomInt(CODE_ALPHABET.length)]);
+  return chars.join('').match(/.{4}/g).join('-');
+}
+
+// Ignores case, spaces and dashes typed by the user
+export const normalizeRecoveryCode = (code) => code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
 // Only these fields ever leave the API
 export function publicUser(user) {
   const { id, name, email, language, createdAt } = user;
-  return { id, name, email, language, createdAt };
+  return { id, name, email, language, createdAt, hasRecoveryCode: Boolean(user.recoveryCodeHash) };
 }

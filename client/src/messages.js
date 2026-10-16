@@ -4,7 +4,8 @@ const errorMessages = {
   EMAIL_TAKEN: 'Un compte existe déjà avec cette adresse e-mail.',
   INVALID_CREDENTIALS: 'Adresse e-mail ou mot de passe incorrect.',
   TOO_MANY_ATTEMPTS: 'Trop de tentatives. Réessaie dans 15 minutes.',
-  INVALID_RESET_TOKEN: 'Ce lien n’est plus valable. Demande un nouveau lien.',
+  INVALID_RECOVERY: 'Adresse e-mail ou code de récupération incorrect.',
+  INVALID_PASSWORD: 'Mot de passe incorrect.',
   UNAUTHENTICATED: 'Ta session a expiré. Reconnecte-toi.',
   SERVER_ERROR: 'Une erreur est survenue. Réessaie plus tard.',
 };

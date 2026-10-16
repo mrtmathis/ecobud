@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { PASSWORD_RULES, errorMessage, isStrongPassword } from '../messages.js';
 import PasswordInput from '../components/PasswordInput.jsx';
+import RecoveryCode from '../components/RecoveryCode.jsx';
 
 export default function Register() {
-  const { register } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
+  const [created, setCreated] = useState(null);
 
   const update = (event) => setForm({ ...form, [event.target.name]: event.target.value });
 
@@ -20,13 +23,26 @@ export default function Register() {
     setError('');
     try {
       const language = navigator.language.startsWith('fr') ? 'fr' : 'en';
-      await register({ ...form, language });
-      navigate('/dashboard');
+      setCreated(await api('/auth/register', { method: 'POST', body: { ...form, language } }));
     } catch (err) {
       setError(errorMessage(err));
       setSending(false);
     }
   };
+
+  // Account created: show the recovery code before entering the app
+  if (created) {
+    const finish = () => {
+      signIn(created.user);
+      navigate('/dashboard');
+    };
+    return (
+      <main>
+        <h1>Compte créé</h1>
+        <RecoveryCode code={created.recoveryCode} onDone={finish} />
+      </main>
+    );
+  }
 
   return (
     <main>
