@@ -18,6 +18,8 @@
 - [Fonctionnalités](#fonctionnalités)
 - [Stack technique](#stack-technique)
 - [Modèle de données](#modèle-de-données)
+- [Sécurité](#sécurité)
+- [Mise en ligne](#mise-en-ligne)
 - [Structure du projet](#structure-du-projet)
 - [Installation](#installation)
 - [API](#api)
@@ -127,11 +129,12 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | --- | --- |
 | Front-end | React (Vite), Tailwind CSS, Chart.js |
 | Traduction | react-i18next, API `Intl` du navigateur (dates et montants) |
-| PWA et notifications | vite-plugin-pwa, Web Push (`web-push`), `node-cron` |
+| PWA et notifications | vite-plugin-pwa, Web Push (`web-push`), tâche planifiée GitHub Actions |
 | Back-end | Node.js, Express |
 | Base de données | PostgreSQL, Prisma (ORM) |
-| Authentification | JWT, bcrypt |
-| Déploiement | Vercel (front), Render (API + base de données) |
+| Authentification | JWT dans un cookie httpOnly, bcrypt |
+| Sécurité | Helmet, Zod (validation), express-rate-limit |
+| Déploiement | Vercel (front et API), Neon (PostgreSQL hébergé) |
 | Outils | Git, GitHub, Figma |
 
 ## Modèle de données
@@ -156,6 +159,29 @@ Category (liste fixe)
 | `PushSubscription` | id, endpoint, clés de chiffrement, user_id (une par appareil) |
 | `DayCheck` | id, date, user_id (journée validée « rien dépensé ») |
 | `BudgetAlert` | id, seuil (80 ou 100 %), date d'envoi, budget_id (évite d'envoyer deux fois la même alerte) |
+
+## Sécurité
+
+La sécurité est traitée dès la première ligne de code :
+
+| Risque | Protection |
+| --- | --- |
+| Vol de mots de passe | Hachage bcrypt, jamais stockés ni renvoyés en clair |
+| Vol de session (XSS) | JWT dans un cookie `httpOnly`, `Secure`, `SameSite` ; React échappe tout le contenu affiché |
+| Accès aux données d'un autre utilisateur | Chaque requête en base est filtrée par l'utilisateur connecté |
+| Injection SQL | Requêtes paramétrées par Prisma, aucun SQL écrit à la main |
+| Données invalides ou piégées | Validation de chaque entrée avec Zod, corps de requête limité à 10 ko |
+| Force brute sur la connexion | Nombre de tentatives limité par adresse IP |
+| Fuite de secrets | Clés dans les variables d'environnement, `.env` exclu de Git |
+| Failles dans les dépendances | `npm audit` à chaque ajout, Dependabot |
+| Panne ou surcharge | En-têtes Helmet, erreurs sans détail technique, sauvegardes Neon |
+| Données personnelles (RGPD) | Suppression du compte et de toutes ses données |
+
+L'API ne renvoie jamais de message technique : seulement des codes comme `NOT_FOUND` ou `INVALID_JSON`, que le front traduit.
+
+## Mise en ligne
+
+L'application est déployée sur **Vercel** : le front et l'API sur le même domaine, ce qui permet des cookies `SameSite` stricts. La base PostgreSQL est hébergée chez **Neon**. Comme Vercel ne garde pas de serveur allumé en permanence, les rappels, alertes et récaps sont déclenchés toutes les 15 minutes par **GitHub Actions**, via une route protégée par une clé secrète.
 
 ## Structure du projet
 
@@ -182,7 +208,7 @@ ecobud/
 │   │   ├── routes/
 │   │   ├── controllers/
 │   │   ├── middlewares/ # Vérification du JWT
-│   │   ├── jobs/        # Rappels et récurrences (node-cron)
+│   │   ├── jobs/        # Rappels, alertes, récurrences, récap
 │   │   └── index.js
 │   └── package.json
 ├── docs/            # Brief et wireframes
@@ -223,7 +249,7 @@ JWT_SECRET="une_chaine_secrete_longue"
 VAPID_PUBLIC_KEY="..."
 VAPID_PRIVATE_KEY="..."
 VAPID_SUBJECT="mailto:contact@exemple.fr"
-PORT=3000
+PORT=4000
 ```
 
 ### 3. Lancer le front-end
@@ -260,8 +286,10 @@ L'application est alors disponible sur `http://localhost:5173`.
 | `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |
 | `POST` | `/api/push/subscribe` | Enregistrer un appareil pour les notifications |
 | `DELETE` | `/api/push/subscribe` | Désactiver les notifications sur un appareil |
+| `DELETE` | `/api/account` | Supprimer son compte et toutes ses données |
+| `POST` | `/api/jobs/run` | Lancer les tâches planifiées (réservé à GitHub Actions, clé secrète) |
 
-Toutes les routes sauf `/api/auth/*` nécessitent l'en-tête `Authorization: Bearer <token>`.
+Toutes les routes sauf `/api/auth/*`, `/api/health` et `/api/jobs/run` nécessitent d'être connecté (cookie de session).
 
 ## Planning
 
