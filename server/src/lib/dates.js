@@ -8,6 +8,12 @@ export function monthRange(month) {
   return { start: new Date(Date.UTC(year, m - 1, 1)), end: new Date(Date.UTC(year, m, 1)) };
 }
 
+// Today in the user's time zone, as "YYYY-MM-DD"
+export const today = (timeZone = 'Europe/Paris') =>
+  new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+
 // Current month in the user's time zone, as "YYYY-MM"
-export const currentMonth = (timeZone = 'Europe/Paris') =>
-  new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit' }).format(new Date());
+export const currentMonth = (timeZone = 'Europe/Paris') => today(timeZone).slice(0, 7);
+
+// Number of days from one "YYYY-MM-DD" to another
+export const daysBetween = (from, to) => Math.round((toDbDate(to) - toDbDate(from)) / 86_400_000);

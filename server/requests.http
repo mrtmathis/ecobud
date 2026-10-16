@@ -68,3 +68,18 @@ Content-Type: application/json
 
 ### Dashboard of a month
 GET {{api}}/dashboard?month=2026-10
+
+### Recurrences (due debits are added to the transactions first)
+GET {{api}}/recurrences
+
+### Monthly subscription with a reminder 3 days before
+POST {{api}}/recurrences
+Content-Type: application/json
+
+{ "label": "Netflix", "type": "EXPENSE", "amountCents": 1349, "categoryId": "subscriptions", "frequency": "MONTHLY", "nextDate": "2026-11-05", "remindOn": true, "remindDaysBefore": 3 }
+
+### Free trial: nextDate is the end of the trial (first debit)
+POST {{api}}/recurrences
+Content-Type: application/json
+
+{ "label": "Spotify", "type": "EXPENSE", "amountCents": 1199, "categoryId": "subscriptions", "frequency": "MONTHLY", "nextDate": "2026-11-15", "isTrial": true, "remindOn": true }

@@ -93,7 +93,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | Rappel quotidien | Une notification à l'heure choisie (21 h par défaut) : « Tu as dépensé quelque chose aujourd'hui ? » | MVP |
 | Ajout express | Depuis la notification : montant et catégorie en 2 touches, date du jour par défaut | MVP |
 | Bouton « Rien dépensé aujourd'hui » | Une seule touche pour valider une journée sans dépense | MVP |
-| Dépenses récurrentes | Loyer, abonnements et salaire saisis une seule fois | MVP |
+| Dépenses récurrentes | Loyer, abonnements et salaire saisis une seule fois, ajoutés automatiquement chaque mois ou chaque année | MVP |
+| Rappel avant prélèvement | Pour un abonnement ou un essai gratuit : rappel 1, 3 ou 7 jours avant (3 par défaut), pour résilier à temps et économiser ; activable à tout moment | MVP |
 | Série de jours suivis | Un compteur de jours d'affilée remplis | Bonus |
 | Récap hebdomadaire par e-mail | Chaque dimanche, le total de la semaine | Bonus |
 | Scan de ticket | Le montant est lu sur la photo du ticket (Tesseract.js) | Bonus |
@@ -112,7 +113,9 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
 - [ ] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
 - [ ] Récap de fin de mois : montant économisé et suggestion de le mettre de côté
-- [ ] Dépenses et revenus récurrents
+- [x] Dépenses et revenus récurrents, mensuels ou annuels, ajoutés automatiquement le jour du prélèvement
+- [x] Abonnements : période d'essai gratuite et rappel avant prélèvement réglable (notification à l'étape 8)
+- [x] Prochains prélèvements des 30 jours sur le tableau de bord
 - [x] Tableau de bord : reste à dépenser, alertes à 80 % et 100 %, répartition par catégorie, dernières transactions (graphiques à l'étape design)
 - [x] Historique filtrable (mois, type, catégorie, recherche dans la note)
 - [ ] Application installable (PWA)
@@ -160,7 +163,7 @@ Category (liste fixe)
 | `User` | id, nom, email, mot de passe haché, heure du rappel, jours du rappel, alertes activées, langue (`fr` ou `en`), date de création |
 | `Category` | id, clé de traduction, couleur, icône (liste fixe définie par le site, commune à tous) |
 | `Transaction` | id, montant, type (dépense / revenu), date, note (obligatoire pour « Autre »), category_id, user_id |
-| `Recurrence` | id, montant, type, jour du mois, libellé, category_id, user_id |
+| `Recurrence` | id, libellé, montant, type, fréquence (mensuelle ou annuelle), prochaine date, jour d'ancrage, fin d'essai, rappel (oui ou non, 1, 3 ou 7 jours), category_id, user_id |
 | `Budget` | id, mois, montant, category_id (vide = budget global), user_id |
 | `PushSubscription` | id, endpoint, clés de chiffrement, user_id (une par appareil) |
 | `DayCheck` | id, date, user_id (journée validée « rien dépensé ») |
@@ -296,7 +299,10 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `GET` | `/api/categories` | Lister les catégories prédéfinies |
 | `GET` | `/api/recurrences` | Lister les dépenses et revenus récurrents |
 | `POST` | `/api/recurrences` | Créer une récurrence |
-| `DELETE` | `/api/recurrences/:id` | Supprimer une récurrence |
+| `GET` | `/api/recurrences/:id` | Détail d'une récurrence |
+| `PUT` | `/api/recurrences/:id` | Modifier une récurrence |
+| `PATCH` | `/api/recurrences/:id/reminder` | Activer ou désactiver le rappel |
+| `DELETE` | `/api/recurrences/:id` | Arrêter une récurrence (les montants déjà ajoutés restent) |
 | `GET` | `/api/budgets?month=YYYY-MM` | Budget du mois (sinon celui du dernier mois qui en a un) |
 | `PUT` | `/api/budgets` | Définir ou modifier le budget d'un mois |
 | `GET` | `/api/dashboard?month=YYYY-MM` | Tableau de bord : budget, dépensé, reste, pourcentage, niveau d'alerte, répartition, 5 dernières transactions |

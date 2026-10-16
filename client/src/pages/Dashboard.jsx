@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { categoryLabels } from '../categories.js';
-import { formatCents, formatDay, formatMonth } from '../format.js';
+import { formatCents, formatDay, formatMonth, inDays } from '../format.js';
 import { errorMessage } from '../messages.js';
 
 export default function Dashboard() {
@@ -72,6 +72,27 @@ export default function Dashboard() {
         <Link to="/transactions/new">Ajouter une dépense</Link> ·{' '}
         <Link to="/transactions/new?type=INCOME">Ajouter un revenu (salaire, virement…)</Link>
       </p>
+
+      <section aria-labelledby="upcoming-title">
+        <h2 id="upcoming-title">Prochains prélèvements (30 jours)</h2>
+        {data.upcoming.length === 0 ? (
+          <p>
+            Aucun prélèvement prévu. <Link to="/recurrences/new">Ajouter un abonnement ou le loyer</Link>
+          </p>
+        ) : (
+          <ul>
+            {data.upcoming.map((r) => (
+              <li key={r.id}>
+                {r.label} · {formatCents(r.amountCents)} · {r.isTrial ? 'fin de l’essai ' : ''}
+                {inDays(r.daysUntil)}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p>
+          <Link to="/recurrences">Gérer les récurrences</Link>
+        </p>
+      </section>
 
       <section aria-labelledby="split-title">
         <h2 id="split-title">Répartition des dépenses</h2>

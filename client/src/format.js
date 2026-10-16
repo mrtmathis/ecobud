@@ -27,6 +27,9 @@ export function formatDay(day) {
   return new Date(y, m - 1, d).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
+// 0 -> "aujourd'hui", 1 -> "demain", 3 -> "dans 3 jours"
+export const inDays = (n) => (n === 0 ? 'aujourd’hui' : n === 1 ? 'demain' : `dans ${n} jours`);
+
 // "2026-10" -> "octobre 2026"
 export function formatMonth(month) {
   const [y, m] = month.split('-').map(Number);

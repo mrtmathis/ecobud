@@ -19,6 +19,8 @@ export const categoryLabels = {
 
 export const typeLabels = { EXPENSE: 'Dépense', INCOME: 'Revenu' };
 
+export const frequencyLabels = { MONTHLY: 'Tous les mois', YEARLY: 'Tous les ans' };
+
 // Category list, loaded once and shared between pages
 let cache = null;
 export function useCategories() {

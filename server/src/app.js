@@ -6,6 +6,7 @@ import categoryRoutes from './routes/categories.js';
 import transactionRoutes from './routes/transactions.js';
 import budgetRoutes from './routes/budgets.js';
 import dashboardRoutes from './routes/dashboard.js';
+import recurrenceRoutes from './routes/recurrences.js';
 import { sameOriginOnly } from './middlewares/security.js';
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/recurrences', recurrenceRoutes);
 
 // Errors are codes, not sentences: the front end translates them
 app.use('/api', (req, res) => {

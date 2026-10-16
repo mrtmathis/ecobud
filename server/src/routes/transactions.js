@@ -4,6 +4,7 @@ import { prisma } from '../db.js';
 import { HttpError } from '../lib/errors.js';
 import { validate } from '../lib/validation.js';
 import { currentMonth, fromDbDate, monthRange, toDbDate } from '../lib/dates.js';
+import { applyDueRecurrences } from '../lib/recurrences.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 
 const router = Router();
@@ -71,6 +72,7 @@ const listSchema = z.object({
 
 router.get('/', async (req, res) => {
   const filters = validate(listSchema, req.query);
+  await applyDueRecurrences(req.user);
   const month = filters.month || currentMonth(req.user.timezone);
   const { start, end } = monthRange(month);
 

@@ -10,6 +10,8 @@ import Transactions from './pages/Transactions.jsx';
 import TransactionForm from './pages/TransactionForm.jsx';
 import Budget from './pages/Budget.jsx';
 import Account from './pages/Account.jsx';
+import Recurrences from './pages/Recurrences.jsx';
+import RecurrenceForm from './pages/RecurrenceForm.jsx';
 
 // A new form when switching between "add an expense" and "add an income" in the menu
 function NewTransaction() {
@@ -32,6 +34,9 @@ export default function App() {
             <Route path="/transactions/new" element={<NewTransaction />} />
             <Route path="/transactions/:id/edit" element={<TransactionForm />} />
             <Route path="/budget" element={<Budget />} />
+            <Route path="/recurrences" element={<Recurrences />} />
+            <Route path="/recurrences/new" element={<RecurrenceForm />} />
+            <Route path="/recurrences/:id/edit" element={<RecurrenceForm />} />
             <Route path="/account" element={<Account />} />
           </Route>
           <Route

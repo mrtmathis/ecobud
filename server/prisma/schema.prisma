@@ -76,18 +76,30 @@ model Transaction {
   @@index([userId, date])
 }
 
+enum Frequency {
+  MONTHLY
+  YEARLY
+}
+
 model Recurrence {
-  id          String          @id @default(uuid())
-  label       String
-  amountCents Int
-  type        TransactionType
-  dayOfMonth  Int
-  categoryId  String
-  userId      String
-  active      Boolean         @default(true)
-  // Last month already generated, "YYYY-MM", so a month is never added twice
-  lastMonth   String?
-  createdAt   DateTime        @default(now())
+  id               String          @id @default(uuid())
+  label            String
+  amountCents      Int
+  type             TransactionType
+  frequency        Frequency
+  // Next debit (or first debit after a free trial); moved forward each time it is added
+  nextDate         DateTime        @db.Date
+  // Day of the month to come back to after short months (31 -> 28 -> 31)
+  anchorDay        Int
+  // Set while the subscription is a free trial ending on nextDate
+  trialUntil       DateTime?       @db.Date
+  remindOn         Boolean         @default(false)
+  remindDaysBefore Int             @default(3)
+  // Debit date already reminded, so a reminder is sent only once
+  remindedFor      DateTime?       @db.Date
+  categoryId       String
+  userId           String
+  createdAt        DateTime        @default(now())
 
   category     Category      @relation(fields: [categoryId], references: [id])
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
