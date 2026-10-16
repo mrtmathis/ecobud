@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { api } from '../api.js';
 import { PASSWORD_RULES, errorMessage, isStrongPassword } from '../messages.js';
+import PasswordInput from '../components/PasswordInput.jsx';
 
 export default function ResetPassword() {
   const [params] = useSearchParams();
@@ -43,9 +44,8 @@ export default function ResetPassword() {
         <p>
           <label htmlFor="password">Nouveau mot de passe</label>
           <br />
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="new-password"
             aria-describedby="password-rules"
             minLength={12}

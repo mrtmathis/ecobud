@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../auth.jsx';
 import { errorMessage } from '../messages.js';
+import PasswordInput from '../components/PasswordInput.jsx';
 
 export default function Login() {
   const { login } = useAuth();
@@ -36,9 +37,8 @@ export default function Login() {
         <p>
           <label htmlFor="password">Mot de passe</label>
           <br />
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="current-password"
             required
             value={password}

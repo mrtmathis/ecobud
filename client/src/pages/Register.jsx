@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../auth.jsx';
 import { PASSWORD_RULES, errorMessage, isStrongPassword } from '../messages.js';
+import PasswordInput from '../components/PasswordInput.jsx';
 
 export default function Register() {
   const { register } = useAuth();
@@ -44,10 +45,9 @@ export default function Register() {
         <p>
           <label htmlFor="password">Mot de passe</label>
           <br />
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             autoComplete="new-password"
             aria-describedby="password-rules"
             minLength={12}
