@@ -1,0 +1,145 @@
+generator client {
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Language {
+  fr
+  en
+}
+
+enum TransactionType {
+  EXPENSE
+  INCOME
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  passwordHash  String
+  language      Language @default(fr)
+  // Reminder time is local to the user's time zone (HH:MM)
+  timezone      String   @default("Europe/Paris")
+  reminderOn    Boolean  @default(true)
+  reminderTime  String   @default("21:00")
+  // ISO weekdays: 1 = Monday ... 7 = Sunday
+  reminderDays  Int[]    @default([1, 2, 3, 4, 5, 6, 7])
+  alertsOn      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  transactions      Transaction[]
+  recurrences       Recurrence[]
+  budgets           Budget[]
+  pushSubscriptions PushSubscription[]
+  dayChecks         DayCheck[]
+}
+
+// Fixed list seeded by the site; the id is also the translation key
+model Category {
+  id           String          @id
+  type         TransactionType
+  icon         String
+  color        String
+  sortOrder    Int
+  requiresNote Boolean         @default(false)
+
+  transactions Transaction[]
+  recurrences  Recurrence[]
+  budgets      Budget[]
+}
+
+model Transaction {
+  id           String          @id @default(uuid())
+  // Money is stored in cents to avoid floating point errors
+  amountCents  Int
+  type         TransactionType
+  date         DateTime        @db.Date
+  note         String?
+  categoryId   String
+  userId       String
+  recurrenceId String?
+  createdAt    DateTime        @default(now())
+
+  category   Category    @relation(fields: [categoryId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recurrence Recurrence? @relation(fields: [recurrenceId], references: [id], onDelete: SetNull)
+
+  @@index([userId, date])
+}
+
+model Recurrence {
+  id          String          @id @default(uuid())
+  label       String
+  amountCents Int
+  type        TransactionType
+  dayOfMonth  Int
+  categoryId  String
+  userId      String
+  active      Boolean         @default(true)
+  // Last month already generated, "YYYY-MM", so a month is never added twice
+  lastMonth   String?
+  createdAt   DateTime        @default(now())
+
+  category     Category      @relation(fields: [categoryId], references: [id])
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model Budget {
+  id          String  @id @default(uuid())
+  // Month as "YYYY-MM"
+  month       String
+  amountCents Int
+  // Empty category = global budget for the month
+  categoryId  String?
+  userId      String
+
+  category Category?     @relation(fields: [categoryId], references: [id])
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alerts   BudgetAlert[]
+
+  @@index([userId, month])
+}
+
+model BudgetAlert {
+  id        String   @id @default(uuid())
+  // 80 or 100 (percent of the budget)
+  threshold Int
+  budgetId  String
+  sentAt    DateTime @default(now())
+
+  budget Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+
+  @@unique([budgetId, threshold])
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// A day the user confirmed with "Nothing spent today"
+model DayCheck {
+  id     String   @id @default(uuid())
+  date   DateTime @db.Date
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}

@@ -160,6 +160,8 @@ Category (liste fixe)
 | `DayCheck` | id, date, user_id (journée validée « rien dépensé ») |
 | `BudgetAlert` | id, seuil (80 ou 100 %), date d'envoi, budget_id (évite d'envoyer deux fois la même alerte) |
 
+Les montants sont stockés **en centimes** (nombres entiers) pour éviter les erreurs d'arrondi. Le schéma complet est dans [server/prisma/schema.prisma](server/prisma/schema.prisma), et `npm run db:studio` ouvre une interface pour parcourir les données.
+
 ## Sécurité
 
 La sécurité est traitée dès la première ligne de code :
@@ -233,11 +235,11 @@ cd ecobud
 
 ```bash
 cd server
-npm install
+npm install             # génère aussi le client Prisma
 cp .env.example .env    # puis renseigner les variables
 npx web-push generate-vapid-keys   # clés pour les notifications
-npx prisma migrate dev
-npx prisma db seed      # crée les catégories prédéfinies
+npm run db:migrate      # crée les tables
+npm run db:seed         # crée les catégories prédéfinies
 npm run dev
 ```
 
