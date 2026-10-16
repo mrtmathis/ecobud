@@ -132,6 +132,7 @@ export default {
   },
   dashboard: {
     hello: 'Hi {{name}}',
+    dateLine: '{{day}} · {{month}} budget',
     noRecoveryCode: 'You do not have a recovery code yet.',
     createRecoveryCode: 'Create it in My account',
     recapReady: 'Your {{month}} recap is ready.',

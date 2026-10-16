@@ -133,6 +133,9 @@ export default {
   },
   dashboard: {
     hello: 'Bonjour {{name}}',
+    // "d’" before a vowel: d’avril, d’août, d’octobre
+    dateLine: '{{day}} · Budget de {{month}}',
+    dateLine_vowel: '{{day}} · Budget d’{{month}}',
     noRecoveryCode: 'Tu n’as pas encore de code de récupération.',
     createRecoveryCode: 'Le créer dans Mon compte',
     recapReady: 'Ton récap de {{month}} est prêt.',

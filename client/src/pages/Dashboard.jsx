@@ -32,11 +32,19 @@ export default function Dashboard() {
   if (!data) return <p>{t('common.loading')}</p>;
 
   const hasBudget = data.budgetCents !== null;
+  const day = formatDay(data.today.date);
+  const month = formatMonth(data.month);
 
   return (
     <main>
       <h1>{t('dashboard.hello', { name: user.name })}</h1>
-      <p>{formatMonth(data.month)}</p>
+      <p>
+        {t('dashboard.dateLine', {
+          day: day.charAt(0).toUpperCase() + day.slice(1),
+          month,
+          context: /^[aeiou]/i.test(month) ? 'vowel' : undefined,
+        })}
+      </p>
 
       {!user.hasRecoveryCode && (
         <p role="alert">
