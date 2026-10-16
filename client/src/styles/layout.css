@@ -32,20 +32,24 @@
   gap: 8px;
 }
 
-.brand-mark {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  font-size: 1rem;
-  color: var(--on-accent);
-  background: var(--accent);
-  border: var(--border) solid var(--line);
-  border-radius: var(--radius);
+/* Logo colors follow the theme: coin in the main color, leaf in an accent */
+.brand {
+  --logo-coin: var(--accent);
+  --logo-ring: var(--surface);
+  --logo-leaf: var(--c4);
 }
 
-[data-skin='bocal'] .brand-mark {
-  border-radius: 50%;
+[data-skin='pop'] .brand {
+  --logo-leaf: var(--c3);
+}
+
+.logo {
+  flex: none;
+  transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.brand:hover .logo {
+  transform: rotate(-8deg) scale(1.08);
 }
 
 /* ---------- Bottom tab bar (phones and tablets) ---------- */

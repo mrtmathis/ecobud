@@ -1,17 +1,16 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth.jsx';
 import Icon from './Icon.jsx';
 import LanguageToggle from './LanguageToggle.jsx';
+import Logo from './Logo.jsx';
 
 // Logo shared by the side menu and the visitor pages
 export function Brand({ to = '/' }) {
   return (
     <Link to={to} className="brand">
-      <span className="brand-mark" aria-hidden="true">
-        E
-      </span>
+      <Logo />
       EcoBud
     </Link>
   );
@@ -76,7 +75,10 @@ export default function AppLayout() {
       </aside>
 
       <div className="content">
-        <Outlet />
+        {/* The menu stays in place while a page is downloading */}
+        <Suspense fallback={null}>
+          <Outlet />
+        </Suspense>
       </div>
 
       <nav className="tabbar" aria-label={t('nav.label')}>

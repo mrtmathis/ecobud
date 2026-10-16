@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react';
 import { BrowserRouter, Link, Route, Routes, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { AuthProvider, GuestOnly, RequireAuth } from './auth.jsx';
@@ -7,20 +8,28 @@ import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
-import Welcome from './pages/Welcome.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import Transactions from './pages/Transactions.jsx';
-import TransactionForm from './pages/TransactionForm.jsx';
-import Budget from './pages/Budget.jsx';
-import Account from './pages/Account.jsx';
-import Recurrences from './pages/Recurrences.jsx';
-import RecurrenceForm from './pages/RecurrenceForm.jsx';
-import Recap from './pages/Recap.jsx';
+
+// Pages of the logged-in area are downloaded only when first opened, so the first visit loads faster
+const Welcome = lazy(() => import('./pages/Welcome.jsx'));
+const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
+const Transactions = lazy(() => import('./pages/Transactions.jsx'));
+const TransactionForm = lazy(() => import('./pages/TransactionForm.jsx'));
+const Budget = lazy(() => import('./pages/Budget.jsx'));
+const Account = lazy(() => import('./pages/Account.jsx'));
+const Recurrences = lazy(() => import('./pages/Recurrences.jsx'));
+const RecurrenceForm = lazy(() => import('./pages/RecurrenceForm.jsx'));
+const Recap = lazy(() => import('./pages/Recap.jsx'));
 
 // A new form when switching between "add an expense" and "add an income" in the menu
 function NewTransaction() {
   const [params] = useSearchParams();
   return <TransactionForm key={params.get('type') || 'EXPENSE'} />;
+}
+
+// Shown for the split second a page is downloading
+function Loading() {
+  const { t } = useTranslation();
+  return <p className="loading">{t('common.loading')}</p>;
 }
 
 function NotFound() {
@@ -37,39 +46,41 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route element={<GuestLayout />}>
-            <Route path="/" element={<GuestOnly><Home /></GuestOnly>} />
-            <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
-            <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
-            <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-          <Route
-            path="/welcome"
-            element={
-              <RequireAuth>
-                <div className="guest">
-                  <div className="guest-body wide">
-                    <Welcome />
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route element={<GuestLayout />}>
+              <Route path="/" element={<GuestOnly><Home /></GuestOnly>} />
+              <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
+              <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
+              <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+            <Route
+              path="/welcome"
+              element={
+                <RequireAuth>
+                  <div className="guest">
+                    <div className="guest-body wide">
+                      <Welcome />
+                    </div>
                   </div>
-                </div>
-              </RequireAuth>
-            }
-          />
-          <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/transactions/new" element={<NewTransaction />} />
-            <Route path="/transactions/:id/edit" element={<TransactionForm />} />
-            <Route path="/budget" element={<Budget />} />
-            <Route path="/recurrences" element={<Recurrences />} />
-            <Route path="/recurrences/new" element={<RecurrenceForm />} />
-            <Route path="/recurrences/:id/edit" element={<RecurrenceForm />} />
-            <Route path="/recap" element={<Recap />} />
-            <Route path="/account" element={<Account />} />
-          </Route>
-        </Routes>
+                </RequireAuth>
+              }
+            />
+            <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/transactions/new" element={<NewTransaction />} />
+              <Route path="/transactions/:id/edit" element={<TransactionForm />} />
+              <Route path="/budget" element={<Budget />} />
+              <Route path="/recurrences" element={<Recurrences />} />
+              <Route path="/recurrences/new" element={<RecurrenceForm />} />
+              <Route path="/recurrences/:id/edit" element={<RecurrenceForm />} />
+              <Route path="/recap" element={<Recap />} />
+              <Route path="/account" element={<Account />} />
+            </Route>
+          </Routes>
+        </Suspense>
       </AuthProvider>
     </BrowserRouter>
   );

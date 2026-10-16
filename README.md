@@ -69,6 +69,12 @@ Chaque utilisateur choisit le look de l'application parmi trois thèmes. Le cont
 
 Le choix est proposé à la première connexion, puis modifiable à tout moment dans « Mon compte », avec le mode : automatique (suit le téléphone), clair ou sombre. Il est enregistré sur le compte. Techniquement, la page porte deux attributs (`data-skin` et `data-mode`) et chaque thème redéfinit les mêmes variables CSS : les composants ne changent jamais. Seules les polices du thème choisi sont téléchargées, et elles sont servies par le site lui-même (aucune requête vers Google Fonts).
 
+### Logo et performances
+
+Le logo est une pièce d'où pousse un bourgeon (« bud » en anglais) : l'argent mis de côté qui grandit. Dans l'application, il prend les couleurs du thème choisi ; l'icône sur l'écran d'accueil du téléphone est aux couleurs du thème Bocal.
+
+Pour rester rapide sur un réseau mobile : chaque page n'est téléchargée qu'à sa première ouverture, seules les polices du thème choisi sont chargées, les graphiques et les icônes sont dessinés en SVG sans librairie, et les fichiers du site sont gardés en cache un an par le navigateur (leur nom change à chaque nouvelle version).
+
 ### Affichage selon l'appareil
 
 | Largeur d'écran | Appareil | Navigation |

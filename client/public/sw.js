@@ -1,5 +1,5 @@
 // Service worker: makes the app installable, keeps the interface usable offline and shows notifications
-const CACHE = 'ecobud-v2';
+const CACHE = 'ecobud-v3';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.add('/index.html')));
