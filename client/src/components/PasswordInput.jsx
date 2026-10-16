@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Password field with a button to show or hide what was typed
 export default function PasswordInput({ id, ...props }) {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
   return (
@@ -11,10 +13,10 @@ export default function PasswordInput({ id, ...props }) {
         type="button"
         aria-controls={id}
         aria-pressed={visible}
-        aria-label={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+        aria-label={visible ? t('password.hideLabel') : t('password.showLabel')}
         onClick={() => setVisible(!visible)}
       >
-        {visible ? 'Masquer' : 'Afficher'}
+        {visible ? t('password.hide') : t('password.show')}
       </button>
     </span>
   );

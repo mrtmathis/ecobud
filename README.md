@@ -55,7 +55,7 @@ L'application est disponible **en français et en anglais**. Elle est **responsi
 
 ### Langues
 
-La langue suit celle du navigateur au premier lancement, puis se change à tout moment (sélecteur FR / EN sur la page de connexion, menu « Langue » dans les réglages). Le choix est enregistré sur le compte : les notifications et les e-mails arrivent dans la même langue. Les dates et les montants suivent le format de la langue (`1 234,56 €` en français, `€1,234.56` en anglais).
+La langue suit celle du navigateur au premier lancement, puis se change à tout moment avec le bouton « English / Français » présent en haut de chaque page (aussi dans « Mon compte »). Un appui bascule toute l'interface : textes, catégories, messages d'erreur, dates et montants (`1 234,56 €` en français, `€1,234.56` en anglais). Le choix est retenu sur l'appareil et, une fois connecté, enregistré sur le compte : il est retrouvé sur tous les appareils et servira aussi pour les notifications.
 
 ### Affichage selon l'appareil
 
@@ -106,7 +106,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 ### MVP
 
 - [x] Inscription, connexion, déconnexion et mot de passe oublié (code de récupération)
-- [ ] Interface en français et en anglais
+- [x] Interface en français et en anglais
 - [ ] Responsive : téléphone, tablette et ordinateur
 - [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
 - [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire

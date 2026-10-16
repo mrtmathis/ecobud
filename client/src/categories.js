@@ -1,27 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from './api.js';
 
-// French labels for the category ids sent by the API
-export const categoryLabels = {
-  groceries: 'Courses',
-  rent: 'Loyer',
-  transport: 'Transport',
-  outings: 'Sorties',
-  health: 'Santé',
-  studies: 'Études',
-  subscriptions: 'Abonnements',
-  other: 'Autre',
-  salary: 'Salaire',
-  family: 'Aide de la famille',
-  transfer: 'Virement reçu',
-  other_income: 'Autre revenu',
-};
-
-export const typeLabels = { EXPENSE: 'Dépense', INCOME: 'Revenu' };
-
-export const frequencyLabels = { MONTHLY: 'Tous les mois', YEARLY: 'Tous les ans' };
-
-// Category list, loaded once and shared between pages
+// Category list, loaded once and shared between pages; labels come from the translations
 let cache = null;
 export function useCategories() {
   const [categories, setCategories] = useState(cache || []);

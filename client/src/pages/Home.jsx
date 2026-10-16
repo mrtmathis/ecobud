@@ -1,16 +1,15 @@
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
+  const { t } = useTranslation();
   return (
     <main>
       <h1>EcoBud</h1>
-      <p>Ton budget étudiant, sans prise de tête.</p>
+      <p>{t('home.tagline')}</p>
+      <p>{t('home.pitch')}</p>
       <p>
-        Note tes dépenses en quelques secondes, fixe ton budget du mois et vois ce qu’il te reste.
-        Aucune donnée bancaire demandée.
-      </p>
-      <p>
-        <Link to="/register">Créer un compte</Link> · <Link to="/login">Se connecter</Link>
+        <Link to="/register">{t('auth.register')}</Link> · <Link to="/login">{t('auth.login')}</Link>
       </p>
     </main>
   );

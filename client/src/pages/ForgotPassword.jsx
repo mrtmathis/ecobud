@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
-import { PASSWORD_RULES, errorMessage, isStrongPassword } from '../messages.js';
+import { errorMessage, isStrongPassword } from '../messages.js';
 import PasswordInput from '../components/PasswordInput.jsx';
 import RecoveryCode from '../components/RecoveryCode.jsx';
 
 export default function ForgotPassword() {
   const { signIn } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', recoveryCode: '', password: '' });
   const [error, setError] = useState('');
@@ -18,7 +20,7 @@ export default function ForgotPassword() {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (!isStrongPassword(form.password)) return setError(`Mot de passe trop faible : ${PASSWORD_RULES}`);
+    if (!isStrongPassword(form.password)) return setError(t('password.tooWeak', { rules: t('password.rules') }));
     setSending(true);
     setError('');
     try {
@@ -37,9 +39,9 @@ export default function ForgotPassword() {
     };
     return (
       <main>
-        <h1>Mot de passe modifié</h1>
-        <p role="status">Ton mot de passe a été changé et tes autres sessions ont été déconnectées.</p>
-        <p>Ton ancien code de récupération ne fonctionne plus. Voici le nouveau.</p>
+        <h1>{t('forgot.doneTitle')}</h1>
+        <p role="status">{t('forgot.doneStatus')}</p>
+        <p>{t('forgot.newCode')}</p>
         <RecoveryCode code={result.recoveryCode} onDone={finish} />
       </main>
     );
@@ -47,16 +49,16 @@ export default function ForgotPassword() {
 
   return (
     <main>
-      <h1>Mot de passe oublié</h1>
-      <p>Saisis ton code de récupération, reçu à la création de ton compte, pour choisir un nouveau mot de passe.</p>
+      <h1>{t('forgot.title')}</h1>
+      <p>{t('forgot.intro')}</p>
       <form onSubmit={submit}>
         <p>
-          <label htmlFor="email">Adresse e-mail du compte</label>
+          <label htmlFor="email">{t('forgot.email')}</label>
           <br />
           <input id="email" name="email" type="email" autoComplete="email" required value={form.email} onChange={update} />
         </p>
         <p>
-          <label htmlFor="recoveryCode">Code de récupération</label>
+          <label htmlFor="recoveryCode">{t('forgot.code')}</label>
           <br />
           <input
             id="recoveryCode"
@@ -72,7 +74,7 @@ export default function ForgotPassword() {
           />
         </p>
         <p>
-          <label htmlFor="password">Nouveau mot de passe</label>
+          <label htmlFor="password">{t('forgot.newPassword')}</label>
           <br />
           <PasswordInput
             id="password"
@@ -86,18 +88,16 @@ export default function ForgotPassword() {
             onChange={update}
           />
           <br />
-          <small id="password-rules">{PASSWORD_RULES}</small>
+          <small id="password-rules">{t('password.rules')}</small>
         </p>
         {error && <p role="alert">{error}</p>}
         <button type="submit" disabled={sending}>
-          {sending ? 'Vérification…' : 'Changer mon mot de passe'}
+          {sending ? t('forgot.checking') : t('forgot.submit')}
         </button>
       </form>
+      <p>{t('forgot.lost')}</p>
       <p>
-        Code perdu ? Sans lui, le compte ne peut pas être récupéré : tu peux en créer un nouveau.
-      </p>
-      <p>
-        <Link to="/login">Retour à la connexion</Link>
+        <Link to="/login">{t('forgot.back')}</Link>
       </p>
     </main>
   );

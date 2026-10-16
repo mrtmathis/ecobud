@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
-import { PASSWORD_RULES, errorMessage, isStrongPassword } from '../messages.js';
+import { errorMessage, isStrongPassword } from '../messages.js';
 import PasswordInput from '../components/PasswordInput.jsx';
 import RecoveryCode from '../components/RecoveryCode.jsx';
 
 export default function Register() {
   const { signIn } = useAuth();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -18,12 +20,12 @@ export default function Register() {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (!isStrongPassword(form.password)) return setError(`Mot de passe trop faible : ${PASSWORD_RULES}`);
+    if (!isStrongPassword(form.password)) return setError(t('password.tooWeak', { rules: t('password.rules') }));
     setSending(true);
     setError('');
     try {
-      const language = navigator.language.startsWith('fr') ? 'fr' : 'en';
-      setCreated(await api('/auth/register', { method: 'POST', body: { ...form, language } }));
+      // The account keeps the language shown while signing up
+      setCreated(await api('/auth/register', { method: 'POST', body: { ...form, language: i18n.language } }));
     } catch (err) {
       setError(errorMessage(err));
       setSending(false);
@@ -38,7 +40,7 @@ export default function Register() {
     };
     return (
       <main>
-        <h1>Compte créé</h1>
+        <h1>{t('auth.created')}</h1>
         <RecoveryCode code={created.recoveryCode} onDone={finish} />
       </main>
     );
@@ -46,20 +48,20 @@ export default function Register() {
 
   return (
     <main>
-      <h1>Créer un compte</h1>
+      <h1>{t('auth.register')}</h1>
       <form onSubmit={submit}>
         <p>
-          <label htmlFor="name">Prénom</label>
+          <label htmlFor="name">{t('auth.name')}</label>
           <br />
           <input id="name" name="name" autoComplete="given-name" maxLength={60} required value={form.name} onChange={update} />
         </p>
         <p>
-          <label htmlFor="email">Adresse e-mail</label>
+          <label htmlFor="email">{t('auth.email')}</label>
           <br />
           <input id="email" name="email" type="email" autoComplete="email" required value={form.email} onChange={update} />
         </p>
         <p>
-          <label htmlFor="password">Mot de passe</label>
+          <label htmlFor="password">{t('auth.password')}</label>
           <br />
           <PasswordInput
             id="password"
@@ -73,15 +75,15 @@ export default function Register() {
             onChange={update}
           />
           <br />
-          <small id="password-rules">{PASSWORD_RULES}</small>
+          <small id="password-rules">{t('password.rules')}</small>
         </p>
         {error && <p role="alert">{error}</p>}
         <button type="submit" disabled={sending}>
-          {sending ? 'Création…' : 'Créer mon compte'}
+          {sending ? t('auth.creating') : t('auth.createMine')}
         </button>
       </form>
       <p>
-        Déjà un compte ? <Link to="/login">Se connecter</Link>
+        {t('auth.hasAccount')} <Link to="/login">{t('auth.login')}</Link>
       </p>
     </main>
   );

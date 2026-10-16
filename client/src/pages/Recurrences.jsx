@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
-import { categoryLabels, frequencyLabels } from '../categories.js';
 import { formatCents, formatDay, inDays } from '../format.js';
 import { errorMessage } from '../messages.js';
 
 export default function Recurrences() {
+  const { t } = useTranslation();
   const [recurrences, setRecurrences] = useState(null);
   const [error, setError] = useState('');
 
@@ -27,7 +28,7 @@ export default function Recurrences() {
   };
 
   const remove = async (r) => {
-    if (!window.confirm(`Arrêter « ${r.label} » ? Les montants déjà ajoutés restent dans tes transactions.`)) return;
+    if (!window.confirm(t('recurrences.confirmStop', { label: r.label }))) return;
     try {
       await api(`/recurrences/${r.id}`, { method: 'DELETE' });
       setRecurrences((list) => list.filter((x) => x.id !== r.id));
@@ -38,39 +39,41 @@ export default function Recurrences() {
 
   return (
     <main>
-      <h1>Récurrences</h1>
+      <h1>{t('recurrences.title')}</h1>
+      <p>{t('recurrences.intro')}</p>
       <p>
-        Loyer, abonnements, salaire… Saisis-les une fois : ils sont ajoutés automatiquement à tes transactions le jour
-        du prélèvement.
-      </p>
-      <p>
-        <Link to="/recurrences/new">Ajouter une récurrence</Link>
+        <Link to="/recurrences/new">{t('recurrences.add')}</Link>
       </p>
 
       {error && <p role="alert">{error}</p>}
-      {!recurrences && !error && <p>Chargement…</p>}
-      {recurrences?.length === 0 && <p>Aucune récurrence pour l’instant.</p>}
+      {!recurrences && !error && <p>{t('common.loading')}</p>}
+      {recurrences?.length === 0 && <p>{t('recurrences.empty')}</p>}
 
       <ul>
         {recurrences?.map((r) => (
           <li key={r.id}>
             <strong>{r.label}</strong> · {r.type === 'EXPENSE' ? '−' : '+'}
-            {formatCents(r.amountCents)} · {categoryLabels[r.categoryId]} · {frequencyLabels[r.frequency]}
+            {formatCents(r.amountCents)} · {t(`categories.${r.categoryId}`)} · {t(`frequency.${r.frequency}`)}
             <br />
-            {r.isTrial ? 'Fin de l’essai gratuit' : 'Prochain prélèvement'} : {formatDay(r.nextDate)} ({inDays(r.daysUntil)})
+            {t(r.isTrial ? 'recurrences.trialEnd' : 'recurrences.nextDebit', {
+              date: formatDay(r.nextDate),
+              when: inDays(r.daysUntil),
+            })}
             {r.type === 'EXPENSE' && (
               <>
                 <br />
                 <label>
-                  <input type="checkbox" checked={r.remindOn} onChange={() => toggleReminder(r)} /> Me prévenir{' '}
-                  {r.remindDaysBefore === 1 ? 'la veille' : `${r.remindDaysBefore} jours avant`}
+                  <input type="checkbox" checked={r.remindOn} onChange={() => toggleReminder(r)} />{' '}
+                  {r.remindDaysBefore === 1
+                    ? t('recurrences.remindDayBefore')
+                    : t('recurrences.remindDaysBefore', { count: r.remindDaysBefore })}
                 </label>
               </>
             )}
             <br />
-            <Link to={`/recurrences/${r.id}/edit`}>Modifier</Link>{' '}
+            <Link to={`/recurrences/${r.id}/edit`}>{t('common.edit')}</Link>{' '}
             <button type="button" onClick={() => remove(r)}>
-              Arrêter
+              {t('recurrences.stop')}
             </button>
           </li>
         ))}

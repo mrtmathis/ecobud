@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
-import { categoryLabels } from '../categories.js';
 import { formatCents, formatMonth, thisMonth } from '../format.js';
 import { errorMessage } from '../messages.js';
 
@@ -12,14 +12,15 @@ function lastMonth() {
 }
 
 export default function Recap() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const month = params.get('month') || lastMonth();
 
   return (
     <main>
-      <h1>Récap du mois</h1>
+      <h1>{t('recap.title')}</h1>
       <p>
-        <label htmlFor="month">Mois</label>{' '}
+        <label htmlFor="month">{t('common.month')}</label>{' '}
         <input
           id="month"
           type="month"
@@ -34,6 +35,7 @@ export default function Recap() {
 }
 
 function MonthRecap({ month }) {
+  const { t } = useTranslation();
   const [recap, setRecap] = useState(null);
   const [error, setError] = useState('');
 
@@ -53,55 +55,48 @@ function MonthRecap({ month }) {
   };
 
   if (error) return <p role="alert">{error}</p>;
-  if (!recap) return <p>Chargement…</p>;
+  if (!recap) return <p>{t('common.loading')}</p>;
+
+  const spent = formatCents(recap.spentCents);
+  const budget = recap.budgetCents === null ? '' : formatCents(recap.budgetCents);
+  const saved = formatCents(recap.savedCents);
 
   return (
     <>
       <h2>{formatMonth(month)}</h2>
 
       {recap.budgetCents === null ? (
-        <p>
-          Pas de budget pour ce mois : impossible de calculer ce que tu as économisé. Tu as dépensé{' '}
-          {formatCents(recap.spentCents)}.
-        </p>
+        <p>{t('recap.noBudget', { amount: spent })}</p>
       ) : recap.overCents > 0 ? (
         <section aria-labelledby="result-title">
-          <h3 id="result-title">Budget dépassé de {formatCents(recap.overCents)}</h3>
-          <p>
-            {formatCents(recap.spentCents)} dépensés pour un budget de {formatCents(recap.budgetCents)}. Regarde ce qui a le
-            plus pesé ci-dessous pour ajuster le mois prochain.
-          </p>
+          <h3 id="result-title">{t('recap.overTitle', { amount: formatCents(recap.overCents) })}</h3>
+          <p>{t('recap.overText', { spent, budget })}</p>
         </section>
       ) : (
         <section aria-labelledby="result-title">
-          <h3 id="result-title">Montant économisé</h3>
+          <h3 id="result-title">{t('recap.savedTitle')}</h3>
           <p>
-            <strong style={{ fontSize: '2em' }}>{formatCents(recap.savedCents)}</strong>
+            <strong style={{ fontSize: '2em' }}>{saved}</strong>
           </p>
-          <p>
-            {formatCents(recap.spentCents)} dépensés sur un budget de {formatCents(recap.budgetCents)}.
-          </p>
+          <p>{t('recap.spentOfBudget', { spent, budget })}</p>
         </section>
       )}
 
       {recap.savedCents > 0 && (
         <section aria-labelledby="aside-title">
-          <h3 id="aside-title">Mets-les de côté</h3>
+          <h3 id="aside-title">{t('recap.asideTitle')}</h3>
           {recap.answer === 'DONE' ? (
-            <p role="status">Bravo, {formatCents(recap.savedCents)} mis de côté pour {formatMonth(month)}.</p>
+            <p role="status">{t('recap.done', { amount: saved, month: formatMonth(month) })}</p>
           ) : (
             <>
-              <p>
-                Vire ces {formatCents(recap.savedCents)} sur ton livret d’épargne dès aujourd’hui : l’argent qui reste sur le
-                compte courant finit souvent par être dépensé.
-              </p>
-              {recap.answer === 'REMIND_LATER' && <p role="status">C’est noté, on te le rappellera demain.</p>}
+              <p>{t('recap.advice', { amount: saved })}</p>
+              {recap.answer === 'REMIND_LATER' && <p role="status">{t('recap.remindLaterSet')}</p>}
               <button type="button" onClick={() => answer('DONE')}>
-                C’est fait
+                {t('recap.doneButton')}
               </button>{' '}
               {recap.answer !== 'REMIND_LATER' && (
                 <button type="button" onClick={() => answer('REMIND_LATER')}>
-                  Me le rappeler demain
+                  {t('recap.remindLater')}
                 </button>
               )}
             </>
@@ -110,23 +105,23 @@ function MonthRecap({ month }) {
       )}
 
       <section aria-labelledby="top-title">
-        <h3 id="top-title">Ce qui a le plus pesé</h3>
+        <h3 id="top-title">{t('recap.topTitle')}</h3>
         {recap.topCategories.length === 0 ? (
-          <p>Aucune dépense ce mois-là.</p>
+          <p>{t('recap.noExpenses')}</p>
         ) : (
           <ol>
             {recap.topCategories.map((c) => (
               <li key={c.categoryId}>
-                {categoryLabels[c.categoryId]} : {formatCents(c.amountCents)}
+                {t('recap.categoryAmount', { category: t(`categories.${c.categoryId}`), amount: formatCents(c.amountCents) })}
               </li>
             ))}
           </ol>
         )}
       </section>
 
-      <p>Revenus du mois : {formatCents(recap.incomeCents)}</p>
+      <p>{t('recap.income', { amount: formatCents(recap.incomeCents) })}</p>
       <p>
-        <Link to={`/transactions?month=${month}`}>Voir les transactions de {formatMonth(month)}</Link>
+        <Link to={`/transactions?month=${month}`}>{t('recap.seeTransactions', { month: formatMonth(month) })}</Link>
       </p>
     </>
   );

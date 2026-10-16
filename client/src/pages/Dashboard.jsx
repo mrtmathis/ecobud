@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
-import { categoryLabels } from '../categories.js';
 import { formatCents, formatDay, formatMonth, inDays } from '../format.js';
 import { errorMessage } from '../messages.js';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
@@ -28,54 +29,51 @@ export default function Dashboard() {
   };
 
   if (error) return <p role="alert">{error}</p>;
-  if (!data) return <p>Chargement…</p>;
+  if (!data) return <p>{t('common.loading')}</p>;
 
   const hasBudget = data.budgetCents !== null;
 
   return (
     <main>
-      <h1>Bonjour {user.name}</h1>
+      <h1>{t('dashboard.hello', { name: user.name })}</h1>
       <p>{formatMonth(data.month)}</p>
 
       {!user.hasRecoveryCode && (
         <p role="alert">
-          Tu n’as pas encore de code de récupération. <Link to="/account">Le créer dans Mon compte</Link>
+          {t('dashboard.noRecoveryCode')} <Link to="/account">{t('dashboard.createRecoveryCode')}</Link>
         </p>
       )}
 
       {data.recapMonth && (
         <p role="status">
-          Ton récap de {formatMonth(data.recapMonth)} est prêt.{' '}
-          <Link to={`/recap?month=${data.recapMonth}`}>Voir combien tu as économisé</Link>
+          {t('dashboard.recapReady', { month: formatMonth(data.recapMonth) })}{' '}
+          <Link to={`/recap?month=${data.recapMonth}`}>{t('dashboard.recapLink')}</Link>
         </p>
       )}
 
       <section aria-labelledby="today-title">
-        <h2 id="today-title">Aujourd’hui</h2>
+        <h2 id="today-title">{t('dashboard.todayTitle')}</h2>
         {data.today.expenseCount > 0 ? (
-          <p>
-            {data.today.expenseCount} dépense{data.today.expenseCount > 1 ? 's' : ''} notée
-            {data.today.expenseCount > 1 ? 's' : ''} aujourd’hui.
-          </p>
+          <p>{t('dashboard.expensesToday', { count: data.today.expenseCount })}</p>
         ) : data.today.nothingSpent ? (
           <p>
-            Journée validée : rien dépensé.{' '}
+            {t('dashboard.dayValidated')}{' '}
             <button type="button" onClick={() => setNothingSpent(false)}>
-              Annuler
+              {t('common.cancel')}
             </button>
           </p>
         ) : (
           <p>
-            <Link to="/transactions/new">Ajouter une dépense</Link> ou{' '}
+            <Link to="/transactions/new">{t('common.addExpense')}</Link> {t('dashboard.or')}{' '}
             <button type="button" onClick={() => setNothingSpent(true)}>
-              Rien dépensé aujourd’hui
+              {t('dashboard.nothingSpent')}
             </button>
           </p>
         )}
       </section>
 
       <section aria-labelledby="remaining-title">
-        <h2 id="remaining-title">Reste à dépenser ce mois</h2>
+        <h2 id="remaining-title">{t('dashboard.remainingTitle')}</h2>
         {hasBudget ? (
           <>
             <p>
@@ -83,68 +81,71 @@ export default function Dashboard() {
             </p>
             <p>
               <meter min={0} max={100} low={80} high={99} optimum={0} value={Math.min(data.percentUsed, 100)}>
-                {data.percentUsed} %
+                {t('dashboard.percent', { percent: data.percentUsed })}
               </meter>{' '}
-              {formatCents(data.spentCents)} dépensés sur un budget de {formatCents(data.budgetCents)} ({data.percentUsed} %)
+              {t('dashboard.spentOfBudget', {
+                spent: formatCents(data.spentCents),
+                budget: formatCents(data.budgetCents),
+                percent: data.percentUsed,
+              })}
             </p>
-            {data.alertLevel === 100 && (
-              <p role="alert">
-                Budget dépassé de {formatCents(-data.remainingCents)}. Essaie de limiter les dépenses jusqu’à la fin du
-                mois.
-              </p>
-            )}
+            {data.alertLevel === 100 && <p role="alert">{t('dashboard.over', { amount: formatCents(-data.remainingCents) })}</p>}
             {data.alertLevel === 80 && (
               <p role="alert">
-                Attention : tu as utilisé {data.percentUsed} % de ton budget. Il te reste {formatCents(data.remainingCents)}.
+                {t('dashboard.warning', { percent: data.percentUsed, remaining: formatCents(data.remainingCents) })}
               </p>
             )}
           </>
         ) : (
           <p>
-            Tu n’as pas encore fixé de budget. <Link to="/budget">Fixer mon budget du mois</Link>
+            {t('dashboard.noBudget')} <Link to="/budget">{t('dashboard.setBudget')}</Link>
           </p>
         )}
         <p>
-          Revenus du mois : {formatCents(data.incomeCents)} · <Link to="/budget">Modifier le budget</Link>
+          {t('dashboard.monthIncome', { amount: formatCents(data.incomeCents) })} ·{' '}
+          <Link to="/budget">{t('dashboard.editBudget')}</Link>
         </p>
       </section>
 
       <p>
-        <Link to="/transactions/new">Ajouter une dépense</Link> ·{' '}
-        <Link to="/transactions/new?type=INCOME">Ajouter un revenu (salaire, virement…)</Link>
+        <Link to="/transactions/new">{t('common.addExpense')}</Link> ·{' '}
+        <Link to="/transactions/new?type=INCOME">{t('dashboard.addIncomeLong')}</Link>
       </p>
 
       <section aria-labelledby="upcoming-title">
-        <h2 id="upcoming-title">Prochains prélèvements (30 jours)</h2>
+        <h2 id="upcoming-title">{t('dashboard.upcomingTitle')}</h2>
         {data.upcoming.length === 0 ? (
           <p>
-            Aucun prélèvement prévu. <Link to="/recurrences/new">Ajouter un abonnement ou le loyer</Link>
+            {t('dashboard.noUpcoming')} <Link to="/recurrences/new">{t('dashboard.addRecurrence')}</Link>
           </p>
         ) : (
           <ul>
             {data.upcoming.map((r) => (
               <li key={r.id}>
-                {r.label} · {formatCents(r.amountCents)} · {r.isTrial ? 'fin de l’essai ' : ''}
+                {r.label} · {formatCents(r.amountCents)} · {r.isTrial ? `${t('dashboard.trialEnds')} ` : ''}
                 {inDays(r.daysUntil)}
               </li>
             ))}
           </ul>
         )}
         <p>
-          <Link to="/recurrences">Gérer les récurrences</Link>
+          <Link to="/recurrences">{t('dashboard.manageRecurrences')}</Link>
         </p>
       </section>
 
       <section aria-labelledby="split-title">
-        <h2 id="split-title">Répartition des dépenses</h2>
+        <h2 id="split-title">{t('dashboard.splitTitle')}</h2>
         {data.byCategory.length === 0 ? (
-          <p>Aucune dépense ce mois-ci.</p>
+          <p>{t('dashboard.noExpenses')}</p>
         ) : (
           <ul>
             {data.byCategory.map((c) => (
               <li key={c.categoryId}>
-                {categoryLabels[c.categoryId]} : {formatCents(c.amountCents)} (
-                {Math.round((c.amountCents / data.spentCents) * 100)} %)
+                {t('dashboard.categoryShare', {
+                  category: t(`categories.${c.categoryId}`),
+                  amount: formatCents(c.amountCents),
+                  percent: Math.round((c.amountCents / data.spentCents) * 100),
+                })}
               </li>
             ))}
           </ul>
@@ -152,22 +153,22 @@ export default function Dashboard() {
       </section>
 
       <section aria-labelledby="latest-title">
-        <h2 id="latest-title">Dernières transactions</h2>
+        <h2 id="latest-title">{t('dashboard.latestTitle')}</h2>
         {data.latest.length === 0 ? (
-          <p>Aucune transaction ce mois-ci.</p>
+          <p>{t('dashboard.noTransactions')}</p>
         ) : (
           <ul>
-            {data.latest.map((t) => (
-              <li key={t.id}>
-                {t.type === 'EXPENSE' ? '−' : '+'}
-                {formatCents(t.amountCents)} · {categoryLabels[t.categoryId]}
-                {t.note && <> · {t.note}</>} · {formatDay(t.date)}
+            {data.latest.map((tr) => (
+              <li key={tr.id}>
+                {tr.type === 'EXPENSE' ? '−' : '+'}
+                {formatCents(tr.amountCents)} · {t(`categories.${tr.categoryId}`)}
+                {tr.note && <> · {tr.note}</>} · {formatDay(tr.date)}
               </li>
             ))}
           </ul>
         )}
         <p>
-          <Link to="/transactions">Tout voir</Link>
+          <Link to="/transactions">{t('dashboard.seeAll')}</Link>
         </p>
       </section>
     </main>

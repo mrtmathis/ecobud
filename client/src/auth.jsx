@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Navigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { api } from './api.js';
+import { applyLanguage } from './i18n.js';
 
 const AuthContext = createContext(null);
 
@@ -15,6 +17,12 @@ export function AuthProvider({ children }) {
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
+
+  // The language saved on the account wins once logged in
+  const language = user?.language;
+  useEffect(() => {
+    if (language) applyLanguage(language);
+  }, [language]);
 
   const login = async (email, password) => {
     const data = await api('/auth/login', { method: 'POST', body: { email, password } });
@@ -39,13 +47,15 @@ export const useAuth = () => useContext(AuthContext);
 // Pages only for logged-in users
 export function RequireAuth({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <p>Chargement…</p>;
+  const { t } = useTranslation();
+  if (loading) return <p>{t('common.loading')}</p>;
   return user ? children : <Navigate to="/login" replace />;
 }
 
 // Pages only for visitors (login, signup...)
 export function GuestOnly({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <p>Chargement…</p>;
+  const { t } = useTranslation();
+  if (loading) return <p>{t('common.loading')}</p>;
   return user ? <Navigate to="/dashboard" replace /> : children;
 }

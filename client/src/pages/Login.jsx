@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth.jsx';
 import { errorMessage } from '../messages.js';
 import PasswordInput from '../components/PasswordInput.jsx';
 
 export default function Login() {
   const { login } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,15 +29,15 @@ export default function Login() {
 
   return (
     <main>
-      <h1>Se connecter</h1>
+      <h1>{t('auth.login')}</h1>
       <form onSubmit={submit}>
         <p>
-          <label htmlFor="email">Adresse e-mail</label>
+          <label htmlFor="email">{t('auth.email')}</label>
           <br />
           <input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </p>
         <p>
-          <label htmlFor="password">Mot de passe</label>
+          <label htmlFor="password">{t('auth.password')}</label>
           <br />
           <PasswordInput
             id="password"
@@ -47,14 +49,14 @@ export default function Login() {
         </p>
         {error && <p role="alert">{error}</p>}
         <button type="submit" disabled={sending}>
-          {sending ? 'Connexion…' : 'Se connecter'}
+          {sending ? t('auth.loggingIn') : t('auth.login')}
         </button>
       </form>
       <p>
-        <Link to="/forgot-password">Mot de passe oublié ?</Link>
+        <Link to="/forgot-password">{t('auth.forgot')}</Link>
       </p>
       <p>
-        Pas encore de compte ? <Link to="/register">Créer un compte</Link>
+        {t('auth.noAccount')} <Link to="/register">{t('auth.register')}</Link>
       </p>
     </main>
   );

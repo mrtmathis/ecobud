@@ -1,6 +1,10 @@
-const euros = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+import i18n from './i18n.js';
 
-export const formatCents = (cents) => euros.format(cents / 100);
+// Number and date formats follow the interface language
+const locale = () => (i18n.language === 'en' ? 'en-GB' : 'fr-FR');
+
+export const formatCents = (cents) =>
+  new Intl.NumberFormat(locale(), { style: 'currency', currency: 'EUR' }).format(cents / 100);
 
 // "23,80", "23.8" or "1 234,5" -> 2380 cents; null if not a valid positive amount
 export function parseAmount(text) {
@@ -10,8 +14,11 @@ export function parseAmount(text) {
   return cents > 0 ? cents : null;
 }
 
-// Cents -> "23,80" to prefill an input
-export const centsToInput = (cents) => (cents / 100).toFixed(2).replace('.', ',');
+// Cents -> "23,80" (or "23.80" in English) to prefill an input
+export const centsToInput = (cents) => {
+  const text = (cents / 100).toFixed(2);
+  return i18n.language === 'en' ? text : text.replace('.', ',');
+};
 
 // Today and the current month in the user's local time zone
 const pad = (n) => String(n).padStart(2, '0');
@@ -21,17 +28,18 @@ export function today() {
 }
 export const thisMonth = () => today().slice(0, 7);
 
-// "2026-10-16" -> "vendredi 16 octobre"
+// "2026-10-16" -> "vendredi 16 octobre" or "Friday 16 October"
 export function formatDay(day) {
   const [y, m, d] = day.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return new Date(y, m - 1, d).toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
-// 0 -> "aujourd'hui", 1 -> "demain", 3 -> "dans 3 jours"
-export const inDays = (n) => (n === 0 ? 'aujourd’hui' : n === 1 ? 'demain' : `dans ${n} jours`);
+// 0 -> "today", 1 -> "tomorrow", 3 -> "in 3 days"
+export const inDays = (n) =>
+  n === 0 ? i18n.t('common.today') : n === 1 ? i18n.t('common.tomorrow') : i18n.t('common.inDays', { count: n });
 
-// "2026-10" -> "octobre 2026"
+// "2026-10" -> "octobre 2026" or "October 2026"
 export function formatMonth(month) {
   const [y, m] = month.split('-').map(Number);
-  return new Date(y, m - 1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  return new Date(y, m - 1, 1).toLocaleDateString(locale(), { month: 'long', year: 'numeric' });
 }

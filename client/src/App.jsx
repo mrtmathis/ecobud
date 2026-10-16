@@ -1,6 +1,8 @@
 import { BrowserRouter, Link, Route, Routes, useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { AuthProvider, GuestOnly, RequireAuth } from './auth.jsx';
 import AppLayout from './components/AppLayout.jsx';
+import LanguageToggle from './components/LanguageToggle.jsx';
 import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
@@ -20,10 +22,24 @@ function NewTransaction() {
   return <TransactionForm key={params.get('type') || 'EXPENSE'} />;
 }
 
+function NotFound() {
+  const { t } = useTranslation();
+  return (
+    <main>
+      <h1>{t('notFound.title')}</h1>
+      <Link to="/">{t('notFound.back')}</Link>
+    </main>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        {/* Language switch on every page, logged in or not */}
+        <p>
+          <LanguageToggle />
+        </p>
         <Routes>
           <Route path="/" element={<GuestOnly><Home /></GuestOnly>} />
           <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
@@ -41,15 +57,7 @@ export default function App() {
             <Route path="/recap" element={<Recap />} />
             <Route path="/account" element={<Account />} />
           </Route>
-          <Route
-            path="*"
-            element={
-              <main>
-                <h1>Page introuvable</h1>
-                <Link to="/">Retour à l’accueil</Link>
-              </main>
-            }
-          />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

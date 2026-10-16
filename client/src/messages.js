@@ -1,21 +1,10 @@
-// French texts for API error codes (English comes with the translation step)
-const errorMessages = {
-  VALIDATION_ERROR: 'Certains champs ne sont pas valides.',
-  EMAIL_TAKEN: 'Un compte existe déjà avec cette adresse e-mail.',
-  INVALID_CREDENTIALS: 'Adresse e-mail ou mot de passe incorrect.',
-  TOO_MANY_ATTEMPTS: 'Trop de tentatives. Réessaie dans 15 minutes.',
-  INVALID_RECOVERY: 'Adresse e-mail ou code de récupération incorrect.',
-  INVALID_PASSWORD: 'Mot de passe incorrect.',
-  DAY_HAS_EXPENSES: 'Tu as déjà noté une dépense aujourd’hui.',
-  MONTH_NOT_FINISHED: 'Le récap est disponible une fois le mois terminé.',
-  UNAUTHENTICATED: 'Ta session a expiré. Reconnecte-toi.',
-  SERVER_ERROR: 'Une erreur est survenue. Réessaie plus tard.',
+import i18n from './i18n.js';
+
+// Text for an API error code, in the current language
+export const errorMessage = (error) => {
+  const key = `errors.${error?.code}`;
+  return i18n.exists(key) ? i18n.t(key) : i18n.t('errors.SERVER_ERROR');
 };
-
-export const errorMessage = (error) => errorMessages[error?.code] || errorMessages.SERVER_ERROR;
-
-export const PASSWORD_RULES =
-  '12 caractères minimum, avec au moins une minuscule, une majuscule, un chiffre et un symbole.';
 
 // Same rules as the API, checked before sending
 export const isStrongPassword = (value) =>

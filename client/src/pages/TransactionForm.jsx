@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
-import { categoryLabels, useCategories } from '../categories.js';
+import { useCategories } from '../categories.js';
 import { centsToInput, parseAmount, today } from '../format.js';
 import { errorMessage } from '../messages.js';
 
+// Translation key for each field the API can reject
 const fieldMessages = {
-  amountCents: 'Montant invalide.',
-  categoryId: 'Choisis une catégorie.',
-  note: 'Pour « Autre », précise la dépense dans la note.',
-  date: 'La date ne peut pas être dans le futur.',
+  amountCents: 'common.invalidAmount',
+  categoryId: 'common.chooseCategory',
+  note: 'transactionForm.noteMissing',
+  date: 'transactionForm.futureDate',
 };
 
 // Used both to add a transaction and to edit one (when the URL has an id)
 export default function TransactionForm() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const categories = useCategories();
@@ -28,8 +31,8 @@ export default function TransactionForm() {
   useEffect(() => {
     if (!id) return;
     api(`/transactions/${id}`)
-      .then(({ transaction: t }) =>
-        setForm({ type: t.type, amount: centsToInput(t.amountCents), categoryId: t.categoryId, date: t.date, note: t.note || '' }),
+      .then(({ transaction: tr }) =>
+        setForm({ type: tr.type, amount: centsToInput(tr.amountCents), categoryId: tr.categoryId, date: tr.date, note: tr.note || '' }),
       )
       .catch((err) => setError(errorMessage(err)))
       .finally(() => setLoading(false));
@@ -45,8 +48,8 @@ export default function TransactionForm() {
   const submit = async (event) => {
     event.preventDefault();
     const amountCents = parseAmount(form.amount);
-    if (!amountCents) return setError(fieldMessages.amountCents);
-    if (!form.categoryId) return setError(fieldMessages.categoryId);
+    if (!amountCents) return setError(t(fieldMessages.amountCents));
+    if (!form.categoryId) return setError(t(fieldMessages.categoryId));
     setSending(true);
     setError('');
     try {
@@ -54,34 +57,43 @@ export default function TransactionForm() {
       await api(id ? `/transactions/${id}` : '/transactions', { method: id ? 'PUT' : 'POST', body });
       navigate(`/transactions?month=${form.date.slice(0, 7)}`);
     } catch (err) {
-      setError(fieldMessages[err.fields?.[0]] || errorMessage(err));
+      const field = fieldMessages[err.fields?.[0]];
+      setError(field ? t(field) : errorMessage(err));
       setSending(false);
     }
   };
 
-  if (loading) return <p>Chargement…</p>;
+  if (loading) return <p>{t('common.loading')}</p>;
+
+  const title = id
+    ? t('transactionForm.editTitle')
+    : form.type === 'INCOME'
+      ? t('transactionForm.newIncome')
+      : t('transactionForm.newExpense');
 
   return (
     <main>
-      <h1>{id ? 'Modifier la transaction' : form.type === 'INCOME' ? 'Nouveau revenu' : 'Nouvelle dépense'}</h1>
+      <h1>{title}</h1>
       <form onSubmit={submit}>
         <fieldset>
-          <legend>Type</legend>
+          <legend>{t('common.type')}</legend>
           <label>
-            <input type="radio" name="type" checked={form.type === 'EXPENSE'} onChange={() => changeType('EXPENSE')} /> Dépense
+            <input type="radio" name="type" checked={form.type === 'EXPENSE'} onChange={() => changeType('EXPENSE')} />{' '}
+            {t('common.expense')}
           </label>{' '}
           <label>
-            <input type="radio" name="type" checked={form.type === 'INCOME'} onChange={() => changeType('INCOME')} /> Revenu
+            <input type="radio" name="type" checked={form.type === 'INCOME'} onChange={() => changeType('INCOME')} />{' '}
+            {t('common.income')}
           </label>
         </fieldset>
 
         <p>
-          <label htmlFor="amount">Montant (€)</label>
+          <label htmlFor="amount">{t('common.amount')}</label>
           <br />
           <input
             id="amount"
             inputMode="decimal"
-            placeholder="0,00"
+            placeholder={t('common.amountPlaceholder')}
             autoComplete="off"
             required
             value={form.amount}
@@ -90,7 +102,7 @@ export default function TransactionForm() {
         </p>
 
         <fieldset>
-          <legend>Catégorie</legend>
+          <legend>{t('common.category')}</legend>
           {choices.map((c) => (
             <label key={c.id}>
               <input
@@ -100,25 +112,25 @@ export default function TransactionForm() {
                 checked={form.categoryId === c.id}
                 onChange={() => update('categoryId', c.id)}
               />{' '}
-              {categoryLabels[c.id]}{' '}
+              {t(`categories.${c.id}`)}{' '}
             </label>
           ))}
         </fieldset>
 
         <p>
-          <label htmlFor="date">Date</label>
+          <label htmlFor="date">{t('transactionForm.date')}</label>
           <br />
           <input id="date" type="date" max={today()} required value={form.date} onChange={(e) => update('date', e.target.value)} />
         </p>
 
         <p>
-          <label htmlFor="note">{noteRequired ? 'Détail de la dépense (obligatoire)' : 'Note (facultatif)'}</label>
+          <label htmlFor="note">{noteRequired ? t('transactionForm.noteRequired') : t('transactionForm.noteOptional')}</label>
           <br />
           <input
             id="note"
             maxLength={200}
             required={noteRequired}
-            placeholder={noteRequired ? 'Ex. : coiffeur, cadeau' : 'Ex. : courses de la semaine'}
+            placeholder={noteRequired ? t('transactionForm.notePlaceholderRequired') : t('transactionForm.notePlaceholder')}
             value={form.note}
             onChange={(e) => update('note', e.target.value)}
           />
@@ -126,9 +138,9 @@ export default function TransactionForm() {
 
         {error && <p role="alert">{error}</p>}
         <button type="submit" disabled={sending}>
-          {sending ? 'Enregistrement…' : 'Enregistrer'}
+          {sending ? t('common.saving') : t('common.save')}
         </button>{' '}
-        <Link to="/transactions">Annuler</Link>
+        <Link to="/transactions">{t('common.cancel')}</Link>
       </form>
     </main>
   );
