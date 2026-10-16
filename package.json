@@ -1,0 +1,19 @@
+{
+  "name": "ecobud",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
+}

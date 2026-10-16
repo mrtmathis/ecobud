@@ -213,7 +213,11 @@ ecobud/
 │   │   ├── jobs/        # Rappels, alertes, récurrences, récap
 │   │   └── index.js
 │   └── package.json
+├── api/
+│   └── index.js     # Point d'entrée Vercel qui sert l'API Express
 ├── docs/            # Brief et wireframes
+├── package.json     # Workspaces client et server
+├── vercel.json      # Build du front et redirection de /api
 └── README.md
 ```
 
@@ -221,7 +225,7 @@ ecobud/
 
 ### Prérequis
 
-- [Node.js](https://nodejs.org/) 20 ou plus
+- [Node.js](https://nodejs.org/) 24
 - [PostgreSQL](https://www.postgresql.org/) 15 ou plus (installé localement ou hébergé)
 
 ### 1. Cloner le dépôt
@@ -231,16 +235,18 @@ git clone https://github.com/mrtmathis/ecobud.git
 cd ecobud
 ```
 
-### 2. Lancer l'API
+### 2. Installer et préparer la base
+
+Le dépôt utilise les **workspaces npm** : une seule installation depuis la racine suffit pour le front et l'API.
 
 ```bash
+npm install             # installe client et server, génère le client Prisma
 cd server
-npm install             # génère aussi le client Prisma
 cp .env.example .env    # puis renseigner les variables
 npx web-push generate-vapid-keys   # clés pour les notifications
 npm run db:migrate      # crée les tables
 npm run db:seed         # crée les catégories prédéfinies
-npm run dev
+cd ..
 ```
 
 Variables d'environnement (`server/.env`) :
@@ -254,15 +260,13 @@ VAPID_SUBJECT="mailto:contact@exemple.fr"
 PORT=4000
 ```
 
-### 3. Lancer le front-end
+### 3. Lancer l'application
 
 ```bash
-cd client
-npm install
-npm run dev
+npm run dev             # lance l'API (port 4000) et le front (port 5173)
 ```
 
-L'application est alors disponible sur `http://localhost:5173`.
+L'application est alors disponible sur `http://localhost:5173`. Les appels à `/api` sont relayés vers l'API par Vite.
 
 ## API
 
