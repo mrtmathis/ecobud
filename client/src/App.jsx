@@ -1,10 +1,12 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Link, Route, Routes, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Analytics } from '@vercel/analytics/react';
-import { AuthProvider, GuestOnly, RequireAuth } from './auth.jsx';
+import { AuthProvider, GuestOnly, RequireAuth, useAuth } from './auth.jsx';
 import AppLayout from './components/AppLayout.jsx';
 import GuestLayout from './components/GuestLayout.jsx';
+import Offline from './components/Offline.jsx';
+import PageError, { clearReloadFlag } from './components/PageError.jsx';
 import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
@@ -46,49 +48,65 @@ function NotFound() {
   );
 }
 
+// Opened without internet: a clear message instead of the login page
+function OfflineGate({ children }) {
+  const { offline } = useAuth();
+  return offline ? <Offline /> : children;
+}
+
 export default function App() {
+  // The app loaded fine: a missing file later on may trigger one reload again
+  useEffect(() => {
+    const timer = setTimeout(clearReloadFlag, 10_000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route element={<GuestLayout />}>
-              <Route path="/" element={<GuestOnly><Home /></GuestOnly>} />
-              <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
-              <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
-              <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
-              {/* Open to everyone, logged in or not */}
-              <Route path="/legal" element={<Legal />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-            <Route
-              path="/welcome"
-              element={
-                <RequireAuth>
-                  <div className="guest">
-                    <div className="guest-body wide">
-                      <Welcome />
-                    </div>
-                  </div>
-                </RequireAuth>
-              }
-            />
-            <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/transactions" element={<Transactions />} />
-              <Route path="/transactions/new" element={<NewTransaction />} />
-              <Route path="/transactions/:id/edit" element={<TransactionForm />} />
-              <Route path="/budget" element={<Budget />} />
-              <Route path="/recurrences" element={<Recurrences />} />
-              <Route path="/recurrences/new" element={<RecurrenceForm />} />
-              <Route path="/recurrences/:id/edit" element={<RecurrenceForm />} />
-              <Route path="/recap" element={<Recap />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/account/data" element={<DataReport />} />
-            </Route>
-          </Routes>
-        </Suspense>
+        <OfflineGate>
+          <PageError>
+            <Suspense fallback={<Loading />}>
+              <Routes>
+                <Route element={<GuestLayout />}>
+                  <Route path="/" element={<GuestOnly><Home /></GuestOnly>} />
+                  <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
+                  <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
+                  <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
+                  {/* Open to everyone, logged in or not */}
+                  <Route path="/legal" element={<Legal />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+                <Route
+                  path="/welcome"
+                  element={
+                    <RequireAuth>
+                      <div className="guest">
+                        <div className="guest-body wide">
+                          <Welcome />
+                        </div>
+                      </div>
+                    </RequireAuth>
+                  }
+                />
+                <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/transactions/new" element={<NewTransaction />} />
+                  <Route path="/transactions/:id/edit" element={<TransactionForm />} />
+                  <Route path="/budget" element={<Budget />} />
+                  <Route path="/recurrences" element={<Recurrences />} />
+                  <Route path="/recurrences/new" element={<RecurrenceForm />} />
+                  <Route path="/recurrences/:id/edit" element={<RecurrenceForm />} />
+                  <Route path="/recap" element={<Recap />} />
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/account/data" element={<DataReport />} />
+                </Route>
+              </Routes>
+            </Suspense>
+          </PageError>
+        </OfflineGate>
       </AuthProvider>
       {/* Anonymous visit counts, no cookie (see the privacy page) */}
       <Analytics />

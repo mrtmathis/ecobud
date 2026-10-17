@@ -137,6 +137,16 @@ export default {
     jsonHint: 'To import your data into another program:',
     jsonLink: 'technical version (JSON)',
   },
+  offline: {
+    title: 'No connection',
+    text: 'EcoBud needs internet to show your figures, which are kept safe on the server. The app will reopen by itself as soon as the connection is back.',
+  },
+  pageError: {
+    title: 'This page could not be shown',
+    offline: 'You seem to be offline. Connect to the internet and try again.',
+    update: 'A new version of EcoBud is probably available: try again to load it.',
+    retry: 'Try again',
+  },
   legal: {
     legalTitle: 'Legal notice',
     privacyTitle: 'Privacy',
@@ -162,6 +172,7 @@ export default {
     TOO_MANY_ATTEMPTS: 'Too many attempts. Try again in 15 minutes.',
     INVALID_RECOVERY: 'Wrong email address or recovery code.',
     INVALID_PASSWORD: 'Wrong password.',
+    OFFLINE: 'No internet connection. Try again once you are online.',
     LIMIT_REACHED: 'You have reached the maximum number of items for an account.',
     DAY_HAS_EXPENSES: 'You already logged an expense today.',
     MONTH_NOT_FINISHED: 'The recap is available once the month is over.',

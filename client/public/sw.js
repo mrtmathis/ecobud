@@ -1,8 +1,10 @@
 // Service worker: makes the app installable, keeps the interface usable offline and shows notifications
-const CACHE = 'ecobud-v4';
+// Both are filled in at build time (vite.config.js): one cache per version, holding every built script and style
+const CACHE = 'ecobud-dev';
+const PRECACHE = [];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(['/index.html', '/theme-boot.js'])));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(['/index.html', '/theme-boot.js', ...PRECACHE])));
   self.skipWaiting();
 });
 

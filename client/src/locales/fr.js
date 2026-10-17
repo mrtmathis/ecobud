@@ -137,6 +137,16 @@ export default {
     jsonHint: 'Pour importer tes données dans un autre logiciel :',
     jsonLink: 'version technique (JSON)',
   },
+  offline: {
+    title: 'Pas de connexion',
+    text: 'EcoBud a besoin d’internet pour afficher tes chiffres, qui sont gardés en sécurité sur le serveur. L’appli se rouvrira toute seule dès que la connexion reviendra.',
+  },
+  pageError: {
+    title: 'Cette page n’a pas pu s’afficher',
+    offline: 'Tu sembles hors ligne. Reconnecte-toi à internet puis réessaie.',
+    update: 'Une nouvelle version d’EcoBud est sans doute disponible : réessaie pour la charger.',
+    retry: 'Réessayer',
+  },
   legal: {
     legalTitle: 'Mentions légales',
     privacyTitle: 'Confidentialité',
@@ -162,6 +172,7 @@ export default {
     TOO_MANY_ATTEMPTS: 'Trop de tentatives. Réessaie dans 15 minutes.',
     INVALID_RECOVERY: 'Adresse e-mail ou code de récupération incorrect.',
     INVALID_PASSWORD: 'Mot de passe incorrect.',
+    OFFLINE: 'Pas de connexion internet. Réessaie quand tu seras connecté.',
     LIMIT_REACHED: 'Tu as atteint le nombre maximum d’éléments pour un compte.',
     DAY_HAS_EXPENSES: 'Tu as déjà noté une dépense aujourd’hui.',
     MONTH_NOT_FINISHED: 'Le récap est disponible une fois le mois terminé.',

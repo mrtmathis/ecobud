@@ -11,11 +11,16 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // True when the first check could not reach the server: the app then shows a "no connection" screen
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     api('/auth/me')
       .then((data) => setUser(data.user))
-      .catch(() => setUser(null))
+      .catch((err) => {
+        setUser(null);
+        setOffline(err.code === 'OFFLINE');
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -56,7 +61,7 @@ export function AuthProvider({ children }) {
   const signIn = (newUser) => setUser(newUser);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, signIn }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, loading, offline, login, logout, signIn }}>{children}</AuthContext.Provider>
   );
 }
 

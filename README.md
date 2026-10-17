@@ -165,7 +165,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | --- | --- |
 | Front-end | React (Vite), CSS avec variables (3 thèmes, mode sombre), graphiques SVG faits main, polices auto-hébergées (Fontsource) |
 | Traduction | react-i18next, API `Intl` du navigateur (dates et montants) |
-| PWA et notifications | service worker écrit à la main (`client/public/sw.js`), manifeste, Web Push (`web-push`), tâche planifiée cron-job.org (GitHub Actions en secours, à la main) |
+| PWA et notifications | service worker écrit à la main (`client/public/sw.js`) qui garde tous les fichiers de la version en cours (liste ajoutée à la construction), manifeste, écran « Pas de connexion » et rechargement automatique si une nouvelle version est en ligne, Web Push (`web-push`), tâche planifiée cron-job.org (GitHub Actions en secours, à la main) |
 | Back-end | Node.js, Express |
 | Base de données | PostgreSQL, Prisma (ORM) |
 | Authentification | JWT dans un cookie httpOnly, bcrypt |

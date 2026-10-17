@@ -9,11 +9,17 @@ export class ApiError extends Error {
 
 // Calls the API with JSON; the session cookie is sent automatically (same origin)
 export async function api(path, { method = 'GET', body } = {}) {
-  const res = await fetch(`/api${path}`, {
-    method,
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let res;
+  try {
+    res = await fetch(`/api${path}`, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    // No answer at all: no internet, or the server cannot be reached
+    throw new ApiError(0, 'OFFLINE');
+  }
   if (res.status === 204) return null;
 
   const data = await res.json().catch(() => ({}));

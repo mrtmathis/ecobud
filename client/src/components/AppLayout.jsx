@@ -5,6 +5,7 @@ import { useAuth } from '../auth.jsx';
 import Icon from './Icon.jsx';
 import LanguageToggle from './LanguageToggle.jsx';
 import Logo from './Logo.jsx';
+import PageError from './PageError.jsx';
 
 // Logo shared by the side menu and the visitor pages
 export function Brand({ to = '/' }) {
@@ -76,9 +77,11 @@ export default function AppLayout() {
 
       <div className="content">
         {/* The menu stays in place while a page is downloading */}
-        <Suspense fallback={null}>
-          <Outlet />
-        </Suspense>
+        <PageError>
+          <Suspense fallback={null}>
+            <Outlet />
+          </Suspense>
+        </PageError>
       </div>
 
       <nav className="tabbar" aria-label={t('nav.label')}>

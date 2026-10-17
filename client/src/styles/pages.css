@@ -951,3 +951,21 @@ button.danger {
   margin: 0;
   padding-left: 1.3em;
 }
+
+/* No connection screen and page that could not be shown */
+.offline {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 12px;
+  min-height: 70dvh;
+  max-width: 420px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.page-error {
+  display: grid;
+  gap: 12px;
+  max-width: 520px;
+}
