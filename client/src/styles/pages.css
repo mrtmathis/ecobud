@@ -819,3 +819,116 @@ button.danger {
 .guest-foot a {
   color: var(--muted);
 }
+
+/* "My data" page: tables that scroll sideways on phones */
+.report-head {
+  display: none;
+}
+
+.report-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.report-list dt {
+  font-weight: 700;
+}
+
+.report-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.report-table {
+  overflow-x: auto;
+}
+
+.report-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.report-table th,
+.report-table td {
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+.report-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.report-plain {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+/* Printing or saving as PDF: only the data, black on white, without menus or buttons */
+@media print {
+  .sidebar,
+  .tabbar,
+  .sheet,
+  .sheet-backdrop,
+  .no-print {
+    display: none !important;
+  }
+
+  html,
+  body,
+  .shell,
+  .content,
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  .report-head {
+    display: block;
+  }
+
+  .report section {
+    color: #000;
+    background: #fff;
+    border: 1px solid #999;
+    box-shadow: none;
+  }
+
+  .shell {
+    display: block !important;
+  }
+
+  .report-table tr,
+  .report section:not(:has(table)) {
+    break-inside: avoid;
+  }
+
+  .report h2 {
+    break-after: avoid;
+  }
+
+  .report h2,
+  .report-table th,
+  .report-table td {
+    color: #000;
+  }
+
+  .report-table {
+    overflow: visible;
+  }
+
+  .report-table th,
+  .report-table td {
+    white-space: normal;
+    border-bottom-color: #999;
+  }
+}

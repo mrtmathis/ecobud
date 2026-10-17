@@ -72,7 +72,7 @@ const content = {
       title: 'Tes droits',
       text: ['Tu peux exercer la plupart de tes droits directement dans l’application, sans rien demander à personne :'],
       list: [
-        'Accès et portabilité : Mon compte, « Télécharger mes données » (fichier avec tout ce qui est gardé sur toi).',
+        'Accès et portabilité : Mon compte, « Voir et télécharger mes données », pour lire tout ce qui est gardé sur toi et l’enregistrer en PDF (ou en fichier JSON pour un autre logiciel).',
         'Rectification : modifie tes dépenses, budgets, récurrences et réglages à tout moment.',
         'Effacement : Mon compte, « Supprimer mon compte », qui efface tout immédiatement.',
         'Opposition et limitation : désactive les notifications, les rappels ou les alertes dans Mon compte.',
@@ -158,7 +158,7 @@ const content = {
       title: 'Your rights',
       text: ['You can use most of your rights directly in the app, without asking anyone:'],
       list: [
-        'Access and portability: My account, “Download my data” (a file with everything kept about you).',
+        'Access and portability: My account, “See and download my data”, to read everything kept about you and save it as a PDF (or as a JSON file for another program).',
         'Correction: edit your expenses, budgets, recurring items and settings at any time.',
         'Erasure: My account, “Delete my account”, which erases everything at once.',
         'Objection and restriction: turn off notifications, reminders or alerts in My account.',

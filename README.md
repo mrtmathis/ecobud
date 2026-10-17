@@ -131,7 +131,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Tutoriel à la première connexion en 5 étapes (thème, revenus réguliers, dépenses fixes, budget, rappels et installation), chaque étape pouvant être passée, et à revoir depuis Mon compte
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
 - [x] Suppression du compte et de toutes ses données depuis Mon compte, avec confirmation par mot de passe
-- [x] Téléchargement de toutes ses données dans un fichier JSON (droit à la portabilité)
+- [x] Page « Mes données » : tout ce qui est gardé sur l'utilisateur, lisible et enregistrable en PDF (impression du navigateur), avec une version JSON pour un autre logiciel (droit d'accès et à la portabilité)
 - [x] Pages Mentions légales et Confidentialité (RGPD : données collectées, stockage à Francfort, durée de conservation, droits), liées en bas des pages publiques, à l'inscription et dans Mon compte
 - [x] Statistiques de visite anonymes sans cookie (Vercel Web Analytics), donc sans bannière de consentement
 - [x] Suppression automatique des comptes inutilisés pendant 90 jours, avec une notification 7 jours avant

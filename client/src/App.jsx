@@ -20,6 +20,7 @@ const Account = lazy(() => import('./pages/Account.jsx'));
 const Recurrences = lazy(() => import('./pages/Recurrences.jsx'));
 const RecurrenceForm = lazy(() => import('./pages/RecurrenceForm.jsx'));
 const Recap = lazy(() => import('./pages/Recap.jsx'));
+const DataReport = lazy(() => import('./pages/DataReport.jsx'));
 const Legal = lazy(() => import('./pages/Legal.jsx'));
 const Privacy = lazy(() => import('./pages/Privacy.jsx'));
 
@@ -84,6 +85,7 @@ export default function App() {
               <Route path="/recurrences/:id/edit" element={<RecurrenceForm />} />
               <Route path="/recap" element={<Recap />} />
               <Route path="/account" element={<Account />} />
+              <Route path="/account/data" element={<DataReport />} />
             </Route>
           </Routes>
         </Suspense>
