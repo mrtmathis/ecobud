@@ -311,8 +311,12 @@ textarea {
 }
 
 /* Bigger text after a double tap (see zoom.js) */
-html.large-text {
-  font-size: 125%;
+html[data-text-size='150'] {
+  font-size: 150%;
+}
+
+html[data-text-size='200'] {
+  font-size: 200%;
 }
 
 .zoom-toast {

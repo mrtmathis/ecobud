@@ -629,9 +629,16 @@
   gap: 8px;
   margin: 0;
   max-width: 420px;
-  width: 100%;
+  /* A little narrower than the screen so the tilted corners stay inside it */
+  width: 92%;
   justify-self: center;
   transform: rotate(-2deg);
+}
+
+/* Decorative example: with very big text on a small phone it is clipped rather than widening the page */
+.landing-demo > div {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .landing-demo figcaption {
@@ -794,6 +801,8 @@ button.danger {
 /* Legal notice and privacy pages: readable line length */
 .legal {
   max-width: 72ch;
+  /* Long addresses (GitHub, CNIL) break instead of going off the screen */
+  overflow-wrap: anywhere;
 }
 
 .legal ul {

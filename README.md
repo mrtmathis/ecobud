@@ -82,7 +82,9 @@ Pour rester rapide sur un réseau mobile : chaque page n'est téléchargée qu'�
 | Moins de 900 px | Téléphone, tablette en portrait | Barre en bas avec bouton « + » central et menu « Plus » |
 | 900 px et plus | Tablette en paysage, ordinateur | Menu latéral complet |
 
-L'interface est testée à partir de 320 px de large, et toutes les zones cliquables font au moins 44 px. Le zoom à deux doigts est désactivé pour que l'application garde toujours sa taille. À la place, un double appui sur une zone vide agrandit tout le texte de 25 % (la page se réorganise, rien ne dépasse) et un second double appui revient à la normale. Les textes sont grands et contrastés, et la fonction Zoom d'accessibilité du téléphone (iPhone et Android) reste disponible pour les personnes qui en ont besoin. Les champs font au moins 16 px pour que Safari ne zoome pas tout seul pendant la saisie.
+L'interface est testée à partir de 320 px de large, et toutes les zones cliquables font au moins 44 px. Le zoom à deux doigts est désactivé pour que l'application garde toujours sa taille. À la place, un double appui sur une zone vide agrandit tout le texte à 150 %, un deuxième à 200 % (l'objectif fixé par les règles d'accessibilité WCAG), et un troisième revient à la normale ; la page se réorganise et rien ne dépasse de l'écran, vérifié sur toutes les pages à 320 et 390 px. Les textes sont grands et contrastés, et la fonction Zoom d'accessibilité du téléphone (iPhone et Android) reste disponible pour les personnes qui en ont besoin. Les champs font au moins 16 px pour que Safari ne zoome pas tout seul pendant la saisie.
+
+**Audit d'accessibilité** : axe-core (règles WCAG 2.1 A et AA) sur toutes les pages, dans les 3 thèmes en clair et en sombre, ne signale aucune erreur. Il garde un seul avertissement, voulu : le zoom à deux doigts coupé, remplacé par l'agrandissement du texte jusqu'à 200 % décrit ci-dessus.
 
 > Projet étudiant individuel réalisé dans le cadre d'un cours de développement web.
 

@@ -1,6 +1,6 @@
 import i18n from './i18n.js';
 
-// A double tap on an empty spot or on text makes everything 25 % bigger; another double tap goes back
+// A double tap on an empty spot or on text makes the text bigger: 150 %, then 200 % (the WCAG goal), then back to normal
 const DOUBLE_TAP_MS = 300;
 const MAX_MOVE_PX = 30;
 const INTERACTIVE = 'a, button, input, select, textarea, label, summary, [role="button"]';
@@ -22,11 +22,15 @@ function showToast(text) {
   toastTimer = setTimeout(() => (toast.hidden = true), 2000);
 }
 
-function toggle() {
+const SIZES = ['100', '150', '200'];
+
+function nextSize() {
   const root = document.documentElement;
-  const on = !root.classList.contains('large-text');
-  root.classList.toggle('large-text', on);
-  showToast(i18n.t(on ? 'zoom.on' : 'zoom.off'));
+  const current = SIZES.indexOf(root.dataset.textSize || '100');
+  const size = SIZES[(current + 1) % SIZES.length];
+  if (size === '100') delete root.dataset.textSize;
+  else root.dataset.textSize = size;
+  showToast(i18n.t(`zoom.size${size}`));
 }
 
 document.addEventListener(
@@ -47,7 +51,7 @@ document.addEventListener(
 
     if (close) {
       lastTap = null;
-      toggle();
+      nextSize();
     } else {
       lastTap = { time: now, x: touch.clientX, y: touch.clientY };
     }

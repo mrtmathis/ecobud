@@ -82,7 +82,11 @@ export default {
     welcomeIntro: 'Le contenu reste le même, seul le look change. Tu pourras en changer quand tu veux dans Mon compte.',
     start: 'C’est parti',
   },
-  zoom: { on: 'Texte agrandi · double appui pour revenir', off: 'Taille normale' },
+  zoom: {
+    size150: 'Texte à 150 % · double appui pour agrandir encore',
+    size200: 'Texte à 200 % · double appui pour revenir',
+    size100: 'Taille normale',
+  },
   notFound: { title: 'Page introuvable', back: 'Retour à l’accueil' },
   report: {
     title: 'Mes données EcoBud',

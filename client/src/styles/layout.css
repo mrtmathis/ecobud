@@ -286,6 +286,8 @@
 
 .guest-head {
   display: flex;
+  /* With big text the language button goes under the logo instead of off the screen */
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 12px;

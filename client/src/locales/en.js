@@ -82,7 +82,11 @@ export default {
     welcomeIntro: 'The content stays the same, only the look changes. You can switch any time in My account.',
     start: 'Let’s go',
   },
-  zoom: { on: 'Bigger text · double tap to go back', off: 'Normal size' },
+  zoom: {
+    size150: 'Text at 150% · double tap for bigger',
+    size200: 'Text at 200% · double tap to go back',
+    size100: 'Normal size',
+  },
   notFound: { title: 'Page not found', back: 'Back to home' },
   report: {
     title: 'My EcoBud data',
