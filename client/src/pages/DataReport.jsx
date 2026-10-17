@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { formatCents, locale } from '../format.js';
 import { errorMessage } from '../messages.js';
+import { isAndroid, isIos } from '../pwa.js';
 import Icon from '../components/Icon.jsx';
 
 const euros = (amount) => formatCents(Math.round(amount * 100));
@@ -49,7 +50,17 @@ export default function DataReport() {
           </button>
           <Link to="/account">{t('report.back')}</Link>
         </div>
-        <p className="empty">{t('report.pdfHint')}</p>
+        <div className="pdf-help">
+          <p>
+            <strong>{t('report.pdfWarning')}</strong>
+          </p>
+          {/* Only the steps of the device in use, the print windows differ a lot */}
+          <ol>
+            {t(`report.pdfSteps.${isIos() ? 'ios' : isAndroid() ? 'android' : 'computer'}`, { returnObjects: true }).map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </div>
       </div>
 
       <header className="report-head">

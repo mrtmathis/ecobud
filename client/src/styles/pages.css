@@ -932,3 +932,22 @@ button.danger {
     border-bottom-color: #999;
   }
 }
+
+/* Steps to save the data page as a PDF file */
+.pdf-help {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: max(var(--border), 1px) solid var(--line);
+  border-radius: var(--radius);
+}
+
+.pdf-help p {
+  margin: 0 0 8px;
+}
+
+.pdf-help ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 1.3em;
+}

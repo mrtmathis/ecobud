@@ -88,7 +88,24 @@ export default {
     title: 'My EcoBud data',
     intro: 'Here is everything EcoBud keeps about you. Nothing else is stored.',
     savePdf: 'Save as PDF',
-    pdfHint: 'In the window that opens, pick “Save as PDF” as the printer.',
+    pdfWarning: 'No printer needed: you create a PDF file on your device.',
+    pdfSteps: {
+      computer: [
+        'Click “Save as PDF” above.',
+        'In the window that opens, on the “Destination” (or “Printer”) line, pick “Save as PDF” (or “Microsoft Print to PDF”), not the name of your printer.',
+        'Click “Save”, then choose where to put the file.',
+      ],
+      ios: [
+        'Tap “Save as PDF” above.',
+        'In the “Options” window, leave “Printer” alone: tap the share icon (square with an arrow) at the top.',
+        'Pick “Save to Files”. The PDF will be in the Files app.',
+      ],
+      android: [
+        'Tap “Save as PDF” above.',
+        'At the top of the screen, tap the printer list and pick “Save as PDF”.',
+        'Tap the round “PDF” button, then “Save”. The file will be in your Downloads.',
+      ],
+    },
     back: 'Back to My account',
     exportedAt: 'Document created on {{date}}',
     account: 'Account',

@@ -88,7 +88,24 @@ export default {
     title: 'Mes données EcoBud',
     intro: 'Voici tout ce qu’EcoBud garde sur toi. Rien d’autre n’est conservé.',
     savePdf: 'Enregistrer en PDF',
-    pdfHint: 'Dans la fenêtre qui s’ouvre, choisis « Enregistrer au format PDF » comme imprimante.',
+    pdfWarning: 'Pas besoin d’imprimante : tu crées un fichier PDF sur ton appareil.',
+    pdfSteps: {
+      computer: [
+        'Clique sur « Enregistrer en PDF » ci-dessus.',
+        'Dans la fenêtre qui s’ouvre, à la ligne « Destination » (ou « Imprimante »), choisis « Enregistrer au format PDF » (ou « Microsoft Print to PDF »), et pas le nom de ton imprimante.',
+        'Clique sur « Enregistrer », puis choisis où ranger le fichier.',
+      ],
+      ios: [
+        'Touche « Enregistrer en PDF » ci-dessus.',
+        'Dans la fenêtre « Options », ne touche pas à « Imprimante » : touche l’icône de partage (carré avec une flèche) en haut.',
+        'Choisis « Enregistrer dans Fichiers ». Le PDF sera dans l’application Fichiers.',
+      ],
+      android: [
+        'Touche « Enregistrer en PDF » ci-dessus.',
+        'En haut de l’écran, touche la liste des imprimantes et choisis « Enregistrer au format PDF ».',
+        'Touche le bouton rond « PDF », puis « Enregistrer ». Le fichier sera dans tes Téléchargements.',
+      ],
+    },
     back: 'Retour à Mon compte',
     exportedAt: 'Document créé le {{date}}',
     account: 'Compte',
