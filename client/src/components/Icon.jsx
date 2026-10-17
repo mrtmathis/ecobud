@@ -32,6 +32,9 @@ const paths = {
     </>
   ),
   income: <path d="M12 4v12M6 10l6 6 6-6M5 20h14" />,
+  flame: <path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.2 1-3.6 2.2-4.8.4 1.6 1.3 2.6 2.3 2.8C11 8.5 11 5.5 12 3z" />,
+  trendDown: <path d="M3 7l6 6 4-4 8 8M21 11v6h-6" />,
+  trendUp: <path d="M3 17l6-6 4 4 8-8M21 13V7h-6" />,
   download: <path d="M12 3v12M7 10l5 5 5-5M4 21h16" />,
   close: <path d="M18 6 6 18M6 6l12 12" />,
   check: <path d="m5 12 5 5 9-10" />,

@@ -339,6 +339,11 @@ export default {
     over: 'Budget dépassé de {{amount}}. Essaie de limiter les dépenses jusqu’à la fin du mois.',
     warning: 'Attention : tu as utilisé {{percent}} % de ton budget. Il te reste {{remaining}}.',
     noBudget: 'Tu n’as pas encore fixé de budget.',
+    compare_less: '{{amount}} de moins qu’en {{month}} à la même date',
+    compare_more: '{{amount}} de plus qu’en {{month}} à la même date',
+    compare_same: 'Autant qu’en {{month}} à la même date',
+    streak_one: '1 jour noté, reviens demain pour lancer ta série',
+    streak_other: '{{count}} jours notés d’affilée',
     budgetHint:
       'Ton budget, c’est ce que tu t’autorises à dépenser dans le mois. Tes revenus, c’est l’argent qui rentre. Le budget sert à suivre ce qu’il te reste.',
     setBudget: 'Fixer mon budget du mois',

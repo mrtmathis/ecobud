@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { categoryColor } from '../categories.js';
-import { dayParts, formatCents, formatDay, formatMonth, formatShortDay, inDays } from '../format.js';
+import { dayParts, formatCents, formatDay, formatMonth, formatShortDay, inDays, locale } from '../format.js';
 import { errorMessage } from '../messages.js';
 import BudgetHero from '../components/BudgetHero.jsx';
 import DonutChart from '../components/DonutChart.jsx';
@@ -75,6 +75,7 @@ export default function Dashboard() {
         {data.alertLevel === 80 && (
           <p role="alert">{t('dashboard.warning', { percent: data.percentUsed, remaining: formatCents(data.remainingCents) })}</p>
         )}
+        {data.previous && <Comparison spentCents={data.spentCents} previous={data.previous} />}
       </div>
 
       <section className="today-card" aria-labelledby="today-title">
@@ -99,6 +100,11 @@ export default function Dashboard() {
               {t('dashboard.nothingSpent')}
             </button>
           </div>
+        )}
+        {data.streak > 0 && (
+          <p className="streak">
+            <Icon name="flame" size={18} /> {t('dashboard.streak', { count: data.streak })}
+          </p>
         )}
         <p className="today-income">
           <Link to="/transactions/new?type=INCOME">{t('dashboard.addIncomeLong')}</Link>
@@ -195,5 +201,19 @@ export default function Dashboard() {
         )}
       </section>
     </main>
+  );
+}
+
+// Spent so far this month against the same day of last month
+function Comparison({ spentCents, previous }) {
+  const { t } = useTranslation();
+  const diff = spentCents - previous.spentCents;
+  const month = new Date(`${previous.month}-15T12:00:00`).toLocaleDateString(locale(), { month: 'long' });
+  const key = diff < 0 ? 'less' : diff > 0 ? 'more' : 'same';
+  return (
+    <p className={`comparison is-${key}`}>
+      <Icon name={diff > 0 ? 'trendUp' : 'trendDown'} size={18} />
+      {t(`dashboard.compare_${key}`, { amount: formatCents(Math.abs(diff)), month })}
+    </p>
   );
 }

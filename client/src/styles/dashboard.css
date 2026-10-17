@@ -772,3 +772,36 @@
 .hero-jar[data-level='100'] .bubble {
   display: none;
 }
+
+/* Spending compared with last month, under the signature piece */
+.comparison {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.comparison.is-less {
+  color: var(--success);
+}
+
+.comparison.is-more {
+  color: var(--warning);
+}
+
+/* Days noted in a row, in the "Today" card */
+.streak {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.streak svg {
+  color: var(--warning);
+}

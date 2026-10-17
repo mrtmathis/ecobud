@@ -142,6 +142,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Dépenses et revenus récurrents, mensuels ou annuels, ajoutés automatiquement le jour du prélèvement
 - [x] Abonnements : période d'essai gratuite et rappel avant prélèvement réglable
 - [x] Prochains prélèvements des 30 jours sur le tableau de bord
+- [x] Comparaison avec le mois précédent à la même date, sous la pièce signature
+- [x] Série de jours notés d'affilée (une dépense ou « Rien dépensé » compte), affichée sans aucune notification
 - [x] Tableau de bord : reste à dépenser, alertes à 80 % et 100 %, répartition par catégorie, dernières transactions (graphiques à l'étape design)
 - [x] Historique filtrable (mois, type, catégorie, recherche dans la note)
 - [x] Application installable (PWA)
@@ -345,7 +347,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `DELETE` | `/api/recurrences/:id` | Arrêter une récurrence (les montants déjà ajoutés restent) |
 | `GET` | `/api/budgets?month=YYYY-MM` | Budget du mois (sinon celui du dernier mois qui en a un), revenus prévus du mois et part déjà prise par les dépenses récurrentes |
 | `PUT` | `/api/budgets` | Définir ou modifier le budget d'un mois |
-| `GET` | `/api/dashboard?month=YYYY-MM` | Tableau de bord : budget, dépensé, reste, pourcentage, niveau d'alerte, répartition, 5 dernières transactions |
+| `GET` | `/api/dashboard?month=YYYY-MM` | Tableau de bord : budget, dépensé, reste, pourcentage, niveau d'alerte, répartition, 5 dernières transactions, comparaison avec le mois précédent, série de jours notés |
 | `GET` | `/api/recap?month=YYYY-MM` | Récap d'un mois terminé (par défaut le mois dernier) : économisé ou dépassé, 3 catégories qui ont le plus pesé |
 | `PUT` | `/api/recap/:month/answer` | Réponse à « Mets-les de côté » : `DONE` ou `REMIND_LATER` |
 | `GET` | `/api/settings` | Lire les réglages des notifications |

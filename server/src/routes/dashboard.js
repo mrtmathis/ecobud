@@ -12,6 +12,41 @@ router.use(requireAuth);
 
 const querySchema = z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional() });
 const UPCOMING_DAYS = 30;
+// The streak looks back at most this far
+const STREAK_LIMIT = 366;
+
+const shiftDay = (day, days) => fromDbDate(new Date(toDbDate(day).getTime() + days * 86_400_000));
+
+// Spending of the previous month from its 1st to the same day number, for a fair comparison
+async function previousMonthSoFar(userId, month, now) {
+  const last = previousMonth(month);
+  const { start, end } = monthRange(last);
+  const daysInLast = Math.round((end - start) / 86_400_000);
+  const sameDay = Math.min(Number(now.slice(8)), daysInLast);
+  const until = toDbDate(`${last}-${String(sameDay).padStart(2, '0')}`);
+  const spent = await prisma.transaction.aggregate({
+    where: { userId, type: 'EXPENSE', date: { gte: start, lte: until } },
+    _sum: { amountCents: true },
+  });
+  return { month: last, spentCents: spent._sum.amountCents ?? 0 };
+}
+
+// Days in a row with an expense noted or "nothing spent"; today counts once filled, and does not break the run before
+async function streakDays(userId, now) {
+  const since = toDbDate(shiftDay(now, -STREAK_LIMIT));
+  const [expenseDays, checks] = await Promise.all([
+    prisma.transaction.findMany({ where: { userId, type: 'EXPENSE', date: { gte: since } }, select: { date: true }, distinct: ['date'] }),
+    prisma.dayCheck.findMany({ where: { userId, date: { gte: since } }, select: { date: true } }),
+  ]);
+  const filled = new Set([...expenseDays, ...checks].map((d) => fromDbDate(d.date)));
+  let day = filled.has(now) ? now : shiftDay(now, -1);
+  let count = 0;
+  while (filled.has(day) && count < STREAK_LIMIT) {
+    count++;
+    day = shiftDay(day, -1);
+  }
+  return count;
+}
 
 // Everything the dashboard shows for one month, computed in a single request
 router.get('/', async (req, res) => {
@@ -50,6 +85,12 @@ router.get('/', async (req, res) => {
     Boolean(lastBudget) &&
     (!lastAnswer || (lastAnswer.status === 'REMIND_LATER' && fromDbDate(lastAnswer.remindDate) <= now));
 
+  // Comparison and streak only make sense for the month in progress
+  const isCurrent = month === currentMonth(req.user.timezone);
+  const [previous, streak] = isCurrent
+    ? await Promise.all([previousMonthSoFar(req.user.id, month, now), streakDays(req.user.id, now)])
+    : [null, 0];
+
   const total = (type) => totals.find((t) => t.type === type)?._sum.amountCents ?? 0;
   const spentCents = total('EXPENSE');
   const budgetCents = budget?.amountCents ?? null;
@@ -73,6 +114,9 @@ router.get('/', async (req, res) => {
     })),
     today: { date: now, expenseCount: todayExpenses, nothingSpent: Boolean(todayCheck) },
     recapMonth: recapWaiting ? lastMonth : null,
+    // Spent so far compared with the same day of last month (absent when last month has no expense)
+    previous: previous?.spentCents ? previous : null,
+    streak,
     // Debits of the next 30 days, so the user can cancel a subscription in time
     upcoming: upcoming.map((r) => ({
       id: r.id,

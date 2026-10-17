@@ -336,6 +336,11 @@ export default {
     over: 'Budget exceeded by {{amount}}. Try to limit spending until the end of the month.',
     warning: 'Careful: you have used {{percent}}% of your budget. You have {{remaining}} left.',
     noBudget: 'You have not set a budget yet.',
+    compare_less: '{{amount}} less than in {{month}} on the same day',
+    compare_more: '{{amount}} more than in {{month}} on the same day',
+    compare_same: 'The same as in {{month}} on the same day',
+    streak_one: '1 day noted, come back tomorrow to start your streak',
+    streak_other: '{{count}} days noted in a row',
     budgetHint:
       'Your budget is what you allow yourself to spend in the month. Your income is the money coming in. The budget lets you follow what you have left.',
     setBudget: 'Set my monthly budget',
