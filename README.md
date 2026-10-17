@@ -219,9 +219,17 @@ La sécurité est traitée dès la première ligne de code :
 | Failles dans les dépendances | `npm audit` à chaque ajout, Dependabot |
 | Panne ou surcharge | En-têtes Helmet, erreurs sans détail technique, sauvegardes Neon |
 | En-têtes des pages | Les pages du site reçoivent aussi leurs en-têtes depuis `vercel.json` : CSP, `nosniff`, `Referrer-Policy`, `Permissions-Policy` (caméra, micro, position et paiement coupés), `Cross-Origin-Opener-Policy` ; HTTPS imposé par Vercel (HSTS) |
+| Serveur utilisé pour appeler d'autres sites (SSRF) | Les adresses de notification ne sont acceptées que chez les vrais services (Google, Apple, Mozilla, Microsoft) |
+| Base remplie par un script | Plafonds par compte : 20 000 transactions, 200 récurrences, 10 appareils ; comptes inactifs effacés après 90 jours |
 | Données personnelles (RGPD) | Données dans l'UE, page Mes données (PDF ou JSON), suppression du compte et de toutes ses données, suppression automatique après 90 jours sans visite, pages Confidentialité et Mentions légales |
 
 L'API ne renvoie jamais de message technique : seulement des codes comme `NOT_FOUND` ou `INVALID_JSON`, que le front traduit.
+
+**Limites connues, assumées :**
+
+- L'inscription indique qu'une adresse est déjà utilisée : on peut donc tester si une adresse a un compte. C'est limité par le nombre d'essais, et l'appli n'envoie pas d'e-mail qui permettrait de faire autrement.
+- « Se déconnecter » efface la session de l'appareil utilisé. Une session volée resterait valable jusqu'à 30 jours, mais changer son mot de passe coupe toutes les sessions.
+- Le nombre d'essais de connexion est compté dans la mémoire de chaque copie du serveur. Sur Vercel, plusieurs copies peuvent tourner en même temps, donc la limite est un peu moins stricte qu'annoncé ; les mots de passe longs et le hachage bcrypt rendent quand même une attaque par force brute irréaliste.
 
 ## Mise en ligne
 

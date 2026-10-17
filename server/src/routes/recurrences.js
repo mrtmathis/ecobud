@@ -8,6 +8,9 @@ import { applyDueRecurrences } from '../lib/recurrences.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 
 const router = Router();
+
+// Far more than a student needs; it only stops a script from filling the database
+const MAX_RECURRENCES = 200;
 router.use(requireAuth);
 
 const recurrenceSchema = z.object({
@@ -91,6 +94,9 @@ router.post('/', async (req, res) => {
   const data = validate(recurrenceSchema, req.body);
   const now = today(req.user.timezone);
   await checkRecurrence(data, now);
+  if ((await prisma.recurrence.count({ where: { userId: req.user.id } })) >= MAX_RECURRENCES) {
+    throw new HttpError(409, 'LIMIT_REACHED');
+  }
   const recurrence = await prisma.recurrence.create({ data: { ...toDb(data), userId: req.user.id } });
   res.status(201).json({ recurrence: toJson(recurrence, now) });
 });

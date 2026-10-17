@@ -4,7 +4,7 @@ import { prisma } from '../db.js';
 import { HttpError } from '../lib/errors.js';
 import { validate } from '../lib/validation.js';
 import { notificationText } from '../lib/notificationTexts.js';
-import { pushEnabled, sendToUser } from '../lib/push.js';
+import { isPushEndpoint, pushEnabled, sendToUser } from '../lib/push.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 
 const router = Router();
@@ -27,7 +27,7 @@ router.use(requireAuth);
 
 const endpointSchema = z.url().max(1000).startsWith('https://');
 const subscriptionSchema = z.object({
-  endpoint: endpointSchema,
+  endpoint: endpointSchema.refine(isPushEndpoint),
   keys: z.object({ p256dh: z.string().min(1).max(200), auth: z.string().min(1).max(100) }),
 });
 

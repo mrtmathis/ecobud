@@ -162,6 +162,7 @@ export default {
     TOO_MANY_ATTEMPTS: 'Trop de tentatives. Réessaie dans 15 minutes.',
     INVALID_RECOVERY: 'Adresse e-mail ou code de récupération incorrect.',
     INVALID_PASSWORD: 'Mot de passe incorrect.',
+    LIMIT_REACHED: 'Tu as atteint le nombre maximum d’éléments pour un compte.',
     DAY_HAS_EXPENSES: 'Tu as déjà noté une dépense aujourd’hui.',
     MONTH_NOT_FINISHED: 'Le récap est disponible une fois le mois terminé.',
     PUSH_DISABLED: 'Les notifications ne sont pas encore disponibles sur le serveur.',

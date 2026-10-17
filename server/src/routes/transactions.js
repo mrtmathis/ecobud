@@ -12,6 +12,8 @@ const router = Router();
 router.use(requireAuth);
 
 const MAX_CENTS = 10_000_000; // 100 000 €
+// Far above real use (about 50 years of daily expenses), it only stops a script from filling the database
+const MAX_TRANSACTIONS = 20_000;
 const daySchema = z.iso.date();
 const monthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 const idSchema = z.uuid();
@@ -120,6 +122,9 @@ async function alertIfOverBudget(user, data) {
 router.post('/', async (req, res) => {
   const data = validate(transactionSchema, req.body);
   await checkTransaction(data);
+  if ((await prisma.transaction.count({ where: { userId: req.user.id } })) >= MAX_TRANSACTIONS) {
+    throw new HttpError(409, 'LIMIT_REACHED');
+  }
   const transaction = await prisma.transaction.create({
     data: { ...data, date: toDbDate(data.date), userId: req.user.id },
   });

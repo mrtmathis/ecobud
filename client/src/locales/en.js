@@ -162,6 +162,7 @@ export default {
     TOO_MANY_ATTEMPTS: 'Too many attempts. Try again in 15 minutes.',
     INVALID_RECOVERY: 'Wrong email address or recovery code.',
     INVALID_PASSWORD: 'Wrong password.',
+    LIMIT_REACHED: 'You have reached the maximum number of items for an account.',
     DAY_HAS_EXPENSES: 'You already logged an expense today.',
     MONTH_NOT_FINISHED: 'The recap is available once the month is over.',
     PUSH_DISABLED: 'Notifications are not available on the server yet.',
