@@ -84,6 +84,11 @@ export default {
   },
   zoom: { on: 'Texte agrandi · double appui pour revenir', off: 'Taille normale' },
   notFound: { title: 'Page introuvable', back: 'Retour à l’accueil' },
+  legal: {
+    legalTitle: 'Mentions légales',
+    privacyTitle: 'Confidentialité',
+    updated: 'Dernière mise à jour : 17 octobre 2026',
+  },
   nav: {
     label: 'Navigation principale',
     dashboard: 'Tableau de bord',
@@ -159,6 +164,7 @@ export default {
       'Note tes dépenses en quelques secondes, fixe ton budget du mois et vois ce qu’il te reste. Aucune donnée bancaire demandée.',
   },
   auth: {
+    privacyNotice: 'En créant un compte, tu acceptes que tes données soient utilisées comme décrit ici :',
     email: 'Adresse e-mail',
     password: 'Mot de passe',
     login: 'Se connecter',
@@ -217,6 +223,9 @@ export default {
     guideTitle: 'Guide de démarrage',
     guideHint: 'Revois les étapes du début : thème, revenus réguliers, dépenses fixes, budget et rappels.',
     guideReplay: 'Revoir le tutoriel',
+    dataTitle: 'Mes données',
+    dataHint: 'Récupère tout ce qu’EcoBud garde sur toi dans un fichier (compte, dépenses, revenus, budgets, récurrences, réglages).',
+    dataDownload: 'Télécharger mes données',
     sessionTitle: 'Déconnexion',
     deleteTitle: 'Supprimer mon compte',
     deleteWarning:

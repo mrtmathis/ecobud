@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Link, Route, Routes, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider, GuestOnly, RequireAuth } from './auth.jsx';
 import AppLayout from './components/AppLayout.jsx';
 import GuestLayout from './components/GuestLayout.jsx';
@@ -19,6 +20,8 @@ const Account = lazy(() => import('./pages/Account.jsx'));
 const Recurrences = lazy(() => import('./pages/Recurrences.jsx'));
 const RecurrenceForm = lazy(() => import('./pages/RecurrenceForm.jsx'));
 const Recap = lazy(() => import('./pages/Recap.jsx'));
+const Legal = lazy(() => import('./pages/Legal.jsx'));
+const Privacy = lazy(() => import('./pages/Privacy.jsx'));
 
 // A new form when switching between "add an expense" and "add an income" in the menu
 function NewTransaction() {
@@ -53,6 +56,9 @@ export default function App() {
               <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
               <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
               <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
+              {/* Open to everyone, logged in or not */}
+              <Route path="/legal" element={<Legal />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="*" element={<NotFound />} />
             </Route>
             <Route
@@ -82,6 +88,8 @@ export default function App() {
           </Routes>
         </Suspense>
       </AuthProvider>
+      {/* Anonymous visit counts, no cookie (see the privacy page) */}
+      <Analytics />
     </BrowserRouter>
   );
 }

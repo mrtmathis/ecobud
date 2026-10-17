@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { errorMessage } from '../messages.js';
 import DeleteAccount from '../components/DeleteAccount.jsx';
+import MyData from '../components/MyData.jsx';
 import Icon from '../components/Icon.jsx';
 import AppearanceSettings from '../components/AppearanceSettings.jsx';
 import InstallApp from '../components/InstallApp.jsx';
@@ -102,6 +103,8 @@ export default function Account() {
         </form>
         {error && <p role="alert">{error}</p>}
       </section>
+
+      <MyData />
 
       <section aria-labelledby="guide-section">
         <h2 id="guide-section">{t('account.guideTitle')}</h2>

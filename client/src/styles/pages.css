@@ -789,3 +789,33 @@ button.danger {
   background: var(--surface);
   border-radius: var(--radius);
 }
+
+/* Legal notice and privacy pages: readable line length */
+.legal {
+  max-width: 72ch;
+}
+
+.legal ul {
+  display: grid;
+  gap: 8px;
+  padding-left: 1.2em;
+}
+
+.legal-links {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Legal links at the bottom of the visitor pages */
+.guest-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  padding: 24px 16px 32px;
+  font-size: 0.9rem;
+}
+
+.guest-foot a {
+  color: var(--muted);
+}

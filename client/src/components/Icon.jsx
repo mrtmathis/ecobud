@@ -32,6 +32,7 @@ const paths = {
     </>
   ),
   income: <path d="M12 4v12M6 10l6 6 6-6M5 20h14" />,
+  download: <path d="M12 3v12M7 10l5 5 5-5M4 21h16" />,
   close: <path d="M18 6 6 18M6 6l12 12" />,
   check: <path d="m5 12 5 5 9-10" />,
   edit: <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />,

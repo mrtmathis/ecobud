@@ -131,6 +131,9 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Tutoriel à la première connexion en 5 étapes (thème, revenus réguliers, dépenses fixes, budget, rappels et installation), chaque étape pouvant être passée, et à revoir depuis Mon compte
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
 - [x] Suppression du compte et de toutes ses données depuis Mon compte, avec confirmation par mot de passe
+- [x] Téléchargement de toutes ses données dans un fichier JSON (droit à la portabilité)
+- [x] Pages Mentions légales et Confidentialité (RGPD : données collectées, stockage à Francfort, durée de conservation, droits), liées en bas des pages publiques, à l'inscription et dans Mon compte
+- [x] Statistiques de visite anonymes sans cookie (Vercel Web Analytics), donc sans bannière de consentement
 - [x] Suppression automatique des comptes inutilisés pendant 90 jours, avec une notification 7 jours avant
 - [x] Différence budget et revenus expliquée, budget proposé à partir des revenus prévus du mois (les récurrences déjà engagées sont indiquées, sans être retirées deux fois)
 - [x] Après l'ajout d'un revenu, proposition de le rendre récurrent (formulaire déjà rempli)
@@ -339,6 +342,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |
 | `PUT` | `/api/settings/theme` | Changer le thème (`ticket`, `bocal`, `pop`) et le mode (`auto`, `light`, `dark`) |
+| `GET` | `/api/account/export` | Télécharger toutes ses données (fichier JSON, sans mot de passe ni secret) |
 | `DELETE` | `/api/account` | Supprimer son compte et toutes ses données (mot de passe demandé) |
 | `PUT` | `/api/settings/onboarding` | Marquer le tutoriel comme terminé, ou le relancer depuis Mon compte |
 | `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |

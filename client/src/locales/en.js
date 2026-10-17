@@ -84,6 +84,11 @@ export default {
   },
   zoom: { on: 'Bigger text · double tap to go back', off: 'Normal size' },
   notFound: { title: 'Page not found', back: 'Back to home' },
+  legal: {
+    legalTitle: 'Legal notice',
+    privacyTitle: 'Privacy',
+    updated: 'Last updated: 17 October 2026',
+  },
   nav: {
     label: 'Main navigation',
     dashboard: 'Dashboard',
@@ -158,6 +163,7 @@ export default {
       'Log your expenses in a few seconds, set your monthly budget and see what you have left. No bank details needed.',
   },
   auth: {
+    privacyNotice: 'By creating an account, you agree that your data is used as described here:',
     email: 'Email address',
     password: 'Password',
     login: 'Log in',
@@ -216,6 +222,9 @@ export default {
     guideTitle: 'Getting started guide',
     guideHint: 'Go through the first steps again: theme, regular income, fixed expenses, budget and reminders.',
     guideReplay: 'Replay the tutorial',
+    dataTitle: 'My data',
+    dataHint: 'Get everything EcoBud keeps about you in a file (account, expenses, income, budgets, recurring items, settings).',
+    dataDownload: 'Download my data',
     sessionTitle: 'Log out',
     deleteTitle: 'Delete my account',
     deleteWarning:

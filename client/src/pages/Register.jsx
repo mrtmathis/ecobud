@@ -77,6 +77,9 @@ export default function Register() {
           <br />
           <small id="password-rules">{t('password.rules')}</small>
         </p>
+        <p className="legal-links">
+          {t('auth.privacyNotice')} <Link to="/privacy">{t('legal.privacyTitle')}</Link>
+        </p>
         {error && <p role="alert">{error}</p>}
         <button type="submit" disabled={sending}>
           {sending ? t('auth.creating') : t('auth.createMine')}
