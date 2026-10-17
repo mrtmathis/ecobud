@@ -723,3 +723,39 @@
     grid-column: 1 / -1;
   }
 }
+
+/* First-login guide: step counter, skip link and progress bar */
+.onboarding {
+  display: grid;
+  gap: 18px;
+}
+
+.onboarding-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.onboarding-count {
+  margin: 0;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.onboarding-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.onboarding-bar i {
+  height: 6px;
+  background: var(--line);
+  border-radius: 99px;
+}
+
+.onboarding-bar i.is-done {
+  background: var(--accent);
+}

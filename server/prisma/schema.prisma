@@ -43,6 +43,8 @@ model User {
   appearance        Appearance @default(auto)
   // False until the user has picked a theme, so the choice is offered once after signing in
   themeChosen       Boolean    @default(false)
+  // False until the first-login guide is finished or skipped; it can be replayed from My account
+  onboardingDone    Boolean    @default(false)
   // Reminder time is local to the user's time zone (HH:MM)
   timezone          String     @default("Europe/Paris")
   reminderOn        Boolean    @default(true)

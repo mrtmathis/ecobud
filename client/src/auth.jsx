@@ -69,8 +69,8 @@ export function RequireAuth({ children }) {
   const { pathname } = useLocation();
   if (loading) return <p>{t('common.loading')}</p>;
   if (!user) return <Navigate to="/login" replace />;
-  // The theme choice is offered once, at the first sign in
-  if (!user.themeChosen && pathname !== '/welcome') return <Navigate to="/welcome" replace />;
+  // The first-login guide (theme, income, fixed expenses, budget, reminders) runs until finished or skipped
+  if (!user.onboardingDone && pathname !== '/welcome') return <Navigate to="/welcome" replace />;
   return children;
 }
 

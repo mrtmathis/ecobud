@@ -52,7 +52,7 @@ export const normalizeRecoveryCode = (code) => code.toUpperCase().replace(/[^A-Z
 
 // Only these fields ever leave the API
 export function publicUser(user) {
-  const { id, name, email, language, timezone, skin, appearance, themeChosen, createdAt } = user;
+  const { id, name, email, language, timezone, skin, appearance, themeChosen, onboardingDone, createdAt } = user;
   const hasRecoveryCode = Boolean(user.recoveryCodeHash);
-  return { id, name, email, language, timezone, skin, appearance, themeChosen, createdAt, hasRecoveryCode };
+  return { id, name, email, language, timezone, skin, appearance, themeChosen, onboardingDone, createdAt, hasRecoveryCode };
 }

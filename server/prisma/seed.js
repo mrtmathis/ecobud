@@ -9,7 +9,7 @@ const categories = [
   { id: 'outings', type: 'EXPENSE', icon: 'party-popper', color: '#D9783B' },
   { id: 'health', type: 'EXPENSE', icon: 'heart-pulse', color: '#C0474B' },
   { id: 'studies', type: 'EXPENSE', icon: 'graduation-cap', color: '#4C8C4A' },
-  { id: 'subscriptions', type: 'EXPENSE', icon: 'repeat', color: '#B0892F' },
+  { id: 'subscriptions', type: 'EXPENSE', icon: 'repeat', color: '#B0892F', requiresNote: true },
   { id: 'other', type: 'EXPENSE', icon: 'circle-help', color: '#6B7280', requiresNote: true },
   { id: 'salary', type: 'INCOME', icon: 'briefcase', color: '#3BA55C' },
   { id: 'family', type: 'INCOME', icon: 'users', color: '#3BA55C' },

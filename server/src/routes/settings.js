@@ -73,6 +73,13 @@ router.put('/theme', async (req, res) => {
   res.json({ user: publicUser(user) });
 });
 
+// First-login guide finished or skipped (true), or asked again from My account (false)
+router.put('/onboarding', async (req, res) => {
+  const { done } = validate(z.object({ done: z.boolean() }), req.body);
+  const user = await prisma.user.update({ where: { id: req.user.id }, data: { onboardingDone: done } });
+  res.json({ user: publicUser(user) });
+});
+
 // Account language, also used for notifications
 router.put('/language', async (req, res) => {
   const { language } = validate(z.object({ language: z.enum(['fr', 'en']) }), req.body);

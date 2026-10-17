@@ -127,7 +127,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Trois thèmes au choix et mode sombre, proposés à la première connexion
 - [ ] Responsive : téléphone, tablette et ordinateur
 - [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
-- [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
+- [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire et « Abonnements » avec le nom de l'abonnement obligatoire
+- [x] Tutoriel à la première connexion en 5 étapes (thème, revenus réguliers, dépenses fixes, budget, rappels et installation), chaque étape pouvant être passée, et à revoir depuis Mon compte
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
 - [x] Différence budget et revenus expliquée, budget proposé à partir des revenus prévus du mois (les récurrences déjà engagées sont indiquées, sans être retirées deux fois)
 - [x] Après l'ajout d'un revenu, proposition de le rendre récurrent (formulaire déjà rempli)
@@ -336,6 +337,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |
 | `PUT` | `/api/settings/theme` | Changer le thème (`ticket`, `bocal`, `pop`) et le mode (`auto`, `light`, `dark`) |
+| `PUT` | `/api/settings/onboarding` | Marquer le tutoriel comme terminé, ou le relancer depuis Mon compte |
 | `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |
 | `PUT` | `/api/settings/timezone` | Mettre à jour le fuseau horaire (envoyé automatiquement par le navigateur) |
 | `GET` | `/api/push/key` | Clé publique dont le navigateur a besoin pour s'abonner |

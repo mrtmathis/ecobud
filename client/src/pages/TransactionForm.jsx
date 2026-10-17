@@ -44,6 +44,8 @@ export default function TransactionForm() {
   const choices = categories.filter((c) => c.type === form.type);
   const selected = categories.find((c) => c.id === form.categoryId);
   const noteRequired = Boolean(selected?.requiresNote);
+  // Subscriptions ask for the service name rather than a free detail
+  const noteContext = form.categoryId === 'subscriptions' ? 'subscription' : undefined;
   const now = today();
   const quickDays = [
     { day: now, label: t('common.todayLabel') },
@@ -66,7 +68,7 @@ export default function TransactionForm() {
       navigate(`/transactions?month=${form.date.slice(0, 7)}`);
     } catch (err) {
       const field = fieldMessages[err.fields?.[0]];
-      setError(field ? t(field) : errorMessage(err));
+      setError(field ? t(field, { context: noteContext }) : errorMessage(err));
       setSending(false);
     }
   };
@@ -172,12 +174,12 @@ export default function TransactionForm() {
           </div>
 
           <div className="field">
-            <label htmlFor="note">{noteRequired ? t('transactionForm.noteRequired') : t('transactionForm.noteOptional')}</label>
+            <label htmlFor="note">{noteRequired ? t('transactionForm.noteRequired', { context: noteContext }) : t('transactionForm.noteOptional')}</label>
             <input
               id="note"
               maxLength={200}
               required={noteRequired}
-              placeholder={noteRequired ? t('transactionForm.notePlaceholderRequired') : t('transactionForm.notePlaceholder')}
+              placeholder={noteRequired ? t('transactionForm.notePlaceholderRequired', { context: noteContext }) : t('transactionForm.notePlaceholder')}
               value={form.note}
               onChange={(e) => update('note', e.target.value)}
             />
