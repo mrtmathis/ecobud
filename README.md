@@ -130,6 +130,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire et « Abonnements » avec le nom de l'abonnement obligatoire
 - [x] Tutoriel à la première connexion en 5 étapes (thème, revenus réguliers, dépenses fixes, budget, rappels et installation), chaque étape pouvant être passée, et à revoir depuis Mon compte
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
+- [x] Suppression du compte et de toutes ses données depuis Mon compte, avec confirmation par mot de passe
+- [x] Suppression automatique des comptes inutilisés pendant 90 jours, avec une notification 7 jours avant
 - [x] Différence budget et revenus expliquée, budget proposé à partir des revenus prévus du mois (les récurrences déjà engagées sont indiquées, sans être retirées deux fois)
 - [x] Après l'ajout d'un revenu, proposition de le rendre récurrent (formulaire déjà rempli)
 - [x] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
@@ -182,7 +184,7 @@ Category (liste fixe)
 
 | Table | Champs principaux |
 | --- | --- |
-| `User` | id, nom, email, mot de passe haché, heure du rappel, jours du rappel, alertes activées, langue (`fr` ou `en`), thème et mode, date de création |
+| `User` | id, nom, email, mot de passe haché, heure du rappel, jours du rappel, alertes activées, langue (`fr` ou `en`), thème et mode, tutoriel terminé, dernière activité (suppression après 90 jours sans visite), date de création |
 | `Category` | id, clé de traduction, couleur, icône (liste fixe définie par le site, commune à tous) |
 | `Transaction` | id, montant, type (dépense / revenu), date, note (obligatoire pour « Autre »), category_id, user_id |
 | `Recurrence` | id, libellé, montant, type, fréquence (mensuelle ou annuelle), prochaine date, jour d'ancrage, fin d'essai, rappel (oui ou non, 1, 3 ou 7 jours), category_id, user_id |
@@ -337,6 +339,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `PUT` | `/api/settings/reminder` | Régler l'heure et les jours du rappel |
 | `PUT` | `/api/settings/alerts` | Activer ou désactiver les alertes de budget |
 | `PUT` | `/api/settings/theme` | Changer le thème (`ticket`, `bocal`, `pop`) et le mode (`auto`, `light`, `dark`) |
+| `DELETE` | `/api/account` | Supprimer son compte et toutes ses données (mot de passe demandé) |
 | `PUT` | `/api/settings/onboarding` | Marquer le tutoriel comme terminé, ou le relancer depuis Mon compte |
 | `PUT` | `/api/settings/language` | Changer la langue du compte (`fr` ou `en`) |
 | `PUT` | `/api/settings/timezone` | Mettre à jour le fuseau horaire (envoyé automatiquement par le navigateur) |
@@ -345,7 +348,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `DELETE` | `/api/push/subscribe` | Désactiver les notifications sur un appareil |
 | `POST` | `/api/push/test` | Envoyer une notification de test sur tous les appareils du compte |
 | `DELETE` | `/api/account` | Supprimer son compte et toutes ses données |
-| `POST` | `/api/jobs/run` | Lancer les tâches planifiées (réservé à cron-job.org et GitHub Actions, clé secrète) |
+| `POST` | `/api/jobs/run` | Lancer les tâches planifiées : notifications, puis suppression des comptes inutilisés depuis 90 jours (réservé à cron-job.org et GitHub Actions, clé secrète) |
 
 Toutes les routes sauf `/api/auth/*`, `/api/health`, `/api/push/key` et `/api/jobs/run` nécessitent d'être connecté (cookie de session).
 

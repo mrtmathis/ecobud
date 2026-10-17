@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { errorMessage } from '../messages.js';
+import DeleteAccount from '../components/DeleteAccount.jsx';
 import Icon from '../components/Icon.jsx';
 import AppearanceSettings from '../components/AppearanceSettings.jsx';
 import InstallApp from '../components/InstallApp.jsx';
@@ -123,6 +124,8 @@ export default function Account() {
           <Icon name="logout" size={18} /> {t('nav.logout')}
         </button>
       </section>
+
+      <DeleteAccount />
     </main>
   );
 }

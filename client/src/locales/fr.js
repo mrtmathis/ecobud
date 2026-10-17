@@ -218,6 +218,14 @@ export default {
     guideHint: 'Revois les étapes du début : thème, revenus réguliers, dépenses fixes, budget et rappels.',
     guideReplay: 'Revoir le tutoriel',
     sessionTitle: 'Déconnexion',
+    deleteTitle: 'Supprimer mon compte',
+    deleteWarning:
+      'Cette action est définitive. Ton compte et toutes tes données (dépenses, revenus, budgets, récurrences, réglages) seront effacés et ne pourront pas être récupérés.',
+    inactivityNote:
+      'Un compte inutilisé pendant 90 jours est supprimé automatiquement avec ses données. Si les notifications sont activées, tu es prévenu 7 jours avant.',
+    deleteConfirm: 'Confirme avec ton mot de passe',
+    deleteForever: 'Supprimer définitivement',
+    deleted: 'Ton compte et toutes tes données ont bien été supprimés.',
     sessionHint: 'Pense à te déconnecter si tu utilises un appareil partagé.',
     title: 'Mon compte',
     language: 'Langue',

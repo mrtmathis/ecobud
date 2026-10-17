@@ -49,6 +49,10 @@ const texts = {
       title: 'Rappel : mets tes économies de côté',
       body: `Tu voulais mettre ${money('fr', savedCents)} de côté pour ${monthName('fr', month)}.`,
     }),
+    inactivity: ({ days }) => ({
+      title: `Ton compte sera supprimé dans ${days} jour${days > 1 ? 's' : ''}`,
+      body: 'Sans visite d’ici là, ton compte et tes données seront effacés. Ouvre EcoBud pour le garder.',
+    }),
   },
   en: {
     test: () => ({ title: 'EcoBud', body: 'Notifications work on this device.' }),
@@ -87,6 +91,10 @@ const texts = {
     recapReminder: ({ month, savedCents }) => ({
       title: 'Reminder: put your savings aside',
       body: `You wanted to put ${money('en', savedCents)} aside for ${monthName('en', month)}.`,
+    }),
+    inactivity: ({ days }) => ({
+      title: `Your account will be deleted in ${days} day${days > 1 ? 's' : ''}`,
+      body: 'Without a visit by then, your account and data will be erased. Open EcoBud to keep it.',
     }),
   },
 };

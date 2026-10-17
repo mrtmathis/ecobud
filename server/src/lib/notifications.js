@@ -5,6 +5,7 @@ import { notificationText } from './notificationTexts.js';
 import { sendToUser } from './push.js';
 import { buildRecap } from './recap.js';
 import { applyDueRecurrences } from './recurrences.js';
+import { deleteInactiveAccounts, warnInactiveAccounts } from './inactivity.js';
 
 // Other notifications wait until this local time, so nobody is woken up
 const MORNING = '10:00';
@@ -147,8 +148,11 @@ export async function recapNotifications(user, day, time) {
 
 // Run every 15 minutes: sends whatever is due for each user who has a device (the steps above are exported for tests)
 export async function runJobs() {
+  // Accounts unused for 90 days go first, then those close to it are warned
+  const deleted = await deleteInactiveAccounts();
+  const warned = await warnInactiveAccounts();
   const users = await prisma.user.findMany({ where: { pushSubscriptions: { some: {} } } });
-  const summary = { users: users.length, sent: 0, errors: 0 };
+  const summary = { users: users.length, sent: warned, errors: 0, deleted };
 
   for (const user of users) {
     try {

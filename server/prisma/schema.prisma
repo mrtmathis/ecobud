@@ -32,33 +32,37 @@ enum TransactionType {
 }
 
 model User {
-  id                String     @id @default(uuid())
-  name              String
-  email             String     @unique
-  passwordHash      String
+  id                 String     @id @default(uuid())
+  name               String
+  email              String     @unique
+  passwordHash       String
   // Hash of the recovery code shown once to the user; empty for accounts created before it existed
-  recoveryCodeHash  String?
-  language          Language   @default(fr)
-  skin              Skin       @default(ticket)
-  appearance        Appearance @default(auto)
+  recoveryCodeHash   String?
+  language           Language   @default(fr)
+  skin               Skin       @default(ticket)
+  appearance         Appearance @default(auto)
   // False until the user has picked a theme, so the choice is offered once after signing in
-  themeChosen       Boolean    @default(false)
+  themeChosen        Boolean    @default(false)
   // False until the first-login guide is finished or skipped; it can be replayed from My account
-  onboardingDone    Boolean    @default(false)
+  onboardingDone     Boolean    @default(false)
+  // Last visit while logged in (updated at most every 12 hours); accounts unused for 90 days are deleted
+  lastActiveAt       DateTime   @default(now())
+  // Set when the "account deleted soon" notification is sent, cleared on the next visit
+  inactivityWarnedAt DateTime?
   // Reminder time is local to the user's time zone (HH:MM)
-  timezone          String     @default("Europe/Paris")
-  reminderOn        Boolean    @default(true)
-  reminderTime      String     @default("21:00")
+  timezone           String     @default("Europe/Paris")
+  reminderOn         Boolean    @default(true)
+  reminderTime       String     @default("21:00")
   // ISO weekdays: 1 = Monday ... 7 = Sunday
-  reminderDays      Int[]      @default([1, 2, 3, 4, 5, 6, 7])
-  alertsOn          Boolean    @default(true)
+  reminderDays       Int[]      @default([1, 2, 3, 4, 5, 6, 7])
+  alertsOn           Boolean    @default(true)
   // Last day the daily reminder went out, so it is sent once a day at most
-  lastReminderDate  DateTime?  @db.Date
+  lastReminderDate   DateTime?  @db.Date
   // Last month whose recap was announced by notification, "YYYY-MM"
-  recapNotifiedFor  String?
+  recapNotifiedFor   String?
   // Sessions issued before this date are rejected (set on password change)
-  passwordChangedAt DateTime   @default(now())
-  createdAt         DateTime   @default(now())
+  passwordChangedAt  DateTime   @default(now())
+  createdAt          DateTime   @default(now())
 
   transactions      Transaction[]
   recurrences       Recurrence[]

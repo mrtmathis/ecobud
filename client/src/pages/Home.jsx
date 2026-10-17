@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { thisMonth } from '../format.js';
 import BudgetHero from '../components/BudgetHero.jsx';
@@ -15,6 +15,8 @@ const sample = {
 
 export default function Home() {
   const { t } = useTranslation();
+  // Set after the account was deleted from My account
+  const deleted = new URLSearchParams(useLocation().search).has('deleted');
   const skin = document.documentElement.dataset.skin || 'ticket';
   const features = [
     { icon: 'plus', text: t('home.featureAdd') },
@@ -24,6 +26,11 @@ export default function Home() {
 
   return (
     <main className="landing">
+      {deleted && (
+        <p role="status" className="landing-notice">
+          {t('account.deleted')}
+        </p>
+      )}
       <div className="landing-text">
         <h1>{t('home.tagline')}</h1>
         <p className="landing-pitch">{t('home.pitch')}</p>

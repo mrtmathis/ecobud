@@ -217,6 +217,14 @@ export default {
     guideHint: 'Go through the first steps again: theme, regular income, fixed expenses, budget and reminders.',
     guideReplay: 'Replay the tutorial',
     sessionTitle: 'Log out',
+    deleteTitle: 'Delete my account',
+    deleteWarning:
+      'This cannot be undone. Your account and all your data (expenses, income, budgets, recurring items, settings) will be erased and cannot be recovered.',
+    inactivityNote:
+      'An account unused for 90 days is deleted automatically with its data. If notifications are on, you are warned 7 days before.',
+    deleteConfirm: 'Confirm with your password',
+    deleteForever: 'Delete for good',
+    deleted: 'Your account and all your data have been deleted.',
     sessionHint: 'Remember to log out if you use a shared device.',
     title: 'My account',
     language: 'Language',
