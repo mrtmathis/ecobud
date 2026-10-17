@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { categoryColor, useCategories } from '../categories.js';
-import { centsToInput, parseAmount, shiftDay, today } from '../format.js';
+import { centsToInput, formatCents, nextMonthDay, parseAmount, shiftDay, today } from '../format.js';
 import { errorMessage } from '../messages.js';
 
 // Translation key for each field the API can reject
@@ -27,6 +27,8 @@ export default function TransactionForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(Boolean(id));
   const [sending, setSending] = useState(false);
+  // A new income just saved: offer to make it recurring before leaving
+  const [savedIncome, setSavedIncome] = useState(null);
 
   useEffect(() => {
     if (!id) return;
@@ -60,6 +62,7 @@ export default function TransactionForm() {
     try {
       const body = { type: form.type, amountCents, categoryId: form.categoryId, date: form.date, note: form.note };
       await api(id ? `/transactions/${id}` : '/transactions', { method: id ? 'PUT' : 'POST', body });
+      if (!id && form.type === 'INCOME') return setSavedIncome({ ...body, label: form.note || t(`categories.${form.categoryId}`) });
       navigate(`/transactions?month=${form.date.slice(0, 7)}`);
     } catch (err) {
       const field = fieldMessages[err.fields?.[0]];
@@ -69,6 +72,33 @@ export default function TransactionForm() {
   };
 
   if (loading) return <p>{t('common.loading')}</p>;
+
+  if (savedIncome) {
+    const recurring = new URLSearchParams({
+      type: 'INCOME',
+      label: savedIncome.label,
+      amount: centsToInput(savedIncome.amountCents),
+      category: savedIncome.categoryId,
+      nextDate: nextMonthDay(savedIncome.date),
+    });
+    return (
+      <main>
+        <div className="page-head">
+          <h1>{t('transactionForm.incomeSaved', { amount: formatCents(savedIncome.amountCents) })}</h1>
+        </div>
+        <section aria-labelledby="recurring-title" className="recurring-offer">
+          <h2 id="recurring-title">{t('transactionForm.recurringQuestion')}</h2>
+          <p>{t('transactionForm.recurringHint')}</p>
+          <div className="form-actions">
+            <Link to={`/recurrences/new?${recurring}`} className="btn">
+              {t('transactionForm.makeRecurring')}
+            </Link>
+            <Link to={`/transactions?month=${savedIncome.date.slice(0, 7)}`}>{t('transactionForm.notRecurring')}</Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   const title = id
     ? t('transactionForm.editTitle')

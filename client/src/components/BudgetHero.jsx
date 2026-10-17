@@ -13,6 +13,7 @@ export default function BudgetHero({ data, skin }) {
       <section className="hero hero-empty card" aria-labelledby="hero-title">
         <h2 id="hero-title">{t('dashboard.remainingTitle')}</h2>
         <p>{t('dashboard.noBudget')}</p>
+        <p className="empty">{t('dashboard.budgetHint')}</p>
         <Link to="/budget" className="btn">
           {t('dashboard.setBudget')}
         </Link>

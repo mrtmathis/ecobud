@@ -222,6 +222,8 @@ export default {
     over: 'Budget exceeded by {{amount}}. Try to limit spending until the end of the month.',
     warning: 'Careful: you have used {{percent}}% of your budget. You have {{remaining}} left.',
     noBudget: 'You have not set a budget yet.',
+    budgetHint:
+      'Your budget is what you allow yourself to spend in the month. Your income is the money coming in. The budget lets you follow what you have left.',
     setBudget: 'Set my monthly budget',
     monthIncome: 'Income this month: {{amount}}',
     editBudget: 'Edit the budget',
@@ -254,6 +256,11 @@ export default {
     editTitle: 'Edit transaction',
     newIncome: 'New income',
     newExpense: 'New expense',
+    incomeSaved: '{{amount}} income saved',
+    recurringQuestion: 'Does this income come back every month?',
+    recurringHint: 'Salary, family support, regular transfer… Make it recurring: it will be added by itself every month and counted in your expected income.',
+    makeRecurring: 'Make it recurring',
+    notRecurring: 'No, it was a one off',
     date: 'Date',
     noteRequired: 'Expense details (required)',
     noteOptional: 'Note (optional)',
@@ -272,6 +279,14 @@ export default {
     carriesOver: 'This amount also applies to the following months until you change it.',
     inheritedShort: 'Carried over from {{from}}.',
     saved: '{{month}} budget saved: {{amount}}.',
+    intro:
+      'Your budget is what you allow yourself to spend in the month, rent and subscriptions included. It is not the same as your income, but you can use your income as a starting point.',
+    planTitle: 'Your income this month',
+    planIncome: 'Expected this month: {{amount}}.',
+    useIncome: 'Use this amount',
+    planRecurring:
+      'Including {{amount}} already set aside for your recurring items (rent, subscriptions…), counted in your spending on the day they are taken.',
+    planNoIncome: 'No income this month yet. Add it and we will suggest a budget.',
   },
   recurrences: {
     title: 'Recurring items',
@@ -299,6 +314,7 @@ export default {
     isTrial: 'This is a free trial',
     trialEnd: 'Trial end (date of the first debit)',
     nextDate: 'Next debit date',
+    nextIncomeDate: 'Next payment date',
     nextDateInvalid: 'The date must be today or within the next 12 months.',
     reminderTitle: 'Reminder before the debit',
     remindMe: 'Remind me so I can cancel in time',

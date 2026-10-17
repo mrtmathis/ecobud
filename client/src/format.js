@@ -62,3 +62,11 @@ export function shiftDay(day, days) {
   const date = new Date(y, m - 1, d + days);
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
+
+// Same day one month later, kept inside short months (31 January -> 28 February)
+export function nextMonthDay(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  const last = new Date(y, m + 1, 0).getDate();
+  const date = new Date(y, m, Math.min(d, last));
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { categoryColor, useCategories } from '../categories.js';
@@ -20,13 +20,15 @@ export default function RecurrenceForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const categories = useCategories();
+  // A saved income can open this form already filled in (type, label, amount, category, next date)
+  const [params] = useSearchParams();
   const [form, setForm] = useState({
-    label: '',
-    type: 'EXPENSE',
-    amount: '',
-    categoryId: '',
+    label: params.get('label') || '',
+    type: params.get('type') === 'INCOME' ? 'INCOME' : 'EXPENSE',
+    amount: params.get('amount') || '',
+    categoryId: params.get('category') || '',
     frequency: 'MONTHLY',
-    nextDate: '',
+    nextDate: params.get('nextDate') || '',
     isTrial: false,
     remindOn: false,
     remindDaysBefore: 3,
@@ -157,7 +159,7 @@ export default function RecurrenceForm() {
             </fieldset>
           </div>
           <div className="field">
-            <label htmlFor="nextDate">{form.isTrial ? t('recurrenceForm.trialEnd') : t('recurrenceForm.nextDate')}</label>
+            <label htmlFor="nextDate">{form.isTrial ? t('recurrenceForm.trialEnd') : t(isExpense ? 'recurrenceForm.nextDate' : 'recurrenceForm.nextIncomeDate')}</label>
             <input id="nextDate" type="date" min={today()} required value={form.nextDate} onChange={(e) => update('nextDate', e.target.value)} />
           </div>
         </div>

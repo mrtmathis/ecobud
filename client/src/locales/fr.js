@@ -225,6 +225,8 @@ export default {
     over: 'Budget dépassé de {{amount}}. Essaie de limiter les dépenses jusqu’à la fin du mois.',
     warning: 'Attention : tu as utilisé {{percent}} % de ton budget. Il te reste {{remaining}}.',
     noBudget: 'Tu n’as pas encore fixé de budget.',
+    budgetHint:
+      'Ton budget, c’est ce que tu t’autorises à dépenser dans le mois. Tes revenus, c’est l’argent qui rentre. Le budget sert à suivre ce qu’il te reste.',
     setBudget: 'Fixer mon budget du mois',
     monthIncome: 'Revenus du mois : {{amount}}',
     editBudget: 'Modifier le budget',
@@ -257,6 +259,11 @@ export default {
     editTitle: 'Modifier la transaction',
     newIncome: 'Nouveau revenu',
     newExpense: 'Nouvelle dépense',
+    incomeSaved: 'Revenu de {{amount}} enregistré',
+    recurringQuestion: 'Ce revenu revient chaque mois ?',
+    recurringHint: 'Salaire, aide de la famille, virement régulier… Rends-le récurrent : il sera ajouté tout seul chaque mois et compté dans tes revenus prévus.',
+    makeRecurring: 'Le rendre récurrent',
+    notRecurring: 'Non, c’était ponctuel',
     date: 'Date',
     noteRequired: 'Détail de la dépense (obligatoire)',
     noteOptional: 'Note (facultatif)',
@@ -275,6 +282,14 @@ export default {
     carriesOver: 'Ce montant s’applique aussi aux mois suivants, tant que tu ne le changes pas.',
     inheritedShort: 'Repris du budget de {{from}}.',
     saved: 'Budget de {{month}} enregistré : {{amount}}.',
+    intro:
+      'Le budget, c’est ce que tu t’autorises à dépenser dans le mois, loyer et abonnements compris. Ce n’est pas la même chose que tes revenus, mais tu peux t’en servir comme base.',
+    planTitle: 'Tes revenus du mois',
+    planIncome: 'Prévu ce mois-ci : {{amount}}.',
+    useIncome: 'Utiliser ce montant',
+    planRecurring:
+      'Dont {{amount}} déjà prévus pour tes récurrences (loyer, abonnements…), qui seront comptés dans tes dépenses le jour du prélèvement.',
+    planNoIncome: 'Aucun revenu ce mois-ci pour l’instant. Ajoute-les pour qu’on te propose un budget.',
   },
   recurrences: {
     title: 'Récurrences',
@@ -302,6 +317,7 @@ export default {
     isTrial: 'C’est une période d’essai gratuite',
     trialEnd: 'Fin de l’essai (date du premier prélèvement)',
     nextDate: 'Date du prochain prélèvement',
+    nextIncomeDate: 'Date du prochain versement',
     nextDateInvalid: 'La date doit être aujourd’hui ou dans les 12 prochains mois.',
     reminderTitle: 'Rappel avant le prélèvement',
     remindMe: 'Me prévenir pour pouvoir résilier à temps',

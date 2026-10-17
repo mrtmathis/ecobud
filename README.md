@@ -129,6 +129,8 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
 - [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
+- [x] Différence budget et revenus expliquée, budget proposé à partir des revenus prévus du mois (les récurrences déjà engagées sont indiquées, sans être retirées deux fois)
+- [x] Après l'ajout d'un revenu, proposition de le rendre récurrent (formulaire déjà rempli)
 - [x] Alertes de budget par notification : à 80 % du budget, puis en cas de dépassement
 - [x] Récap de fin de mois : montant économisé, suggestion de le mettre de côté (« C'est fait » ou « Me le rappeler demain »), 3 catégories qui ont le plus pesé
 - [x] Dépenses et revenus récurrents, mensuels ou annuels, ajoutés automatiquement le jour du prélèvement
@@ -325,7 +327,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `PUT` | `/api/recurrences/:id` | Modifier une récurrence |
 | `PATCH` | `/api/recurrences/:id/reminder` | Activer ou désactiver le rappel |
 | `DELETE` | `/api/recurrences/:id` | Arrêter une récurrence (les montants déjà ajoutés restent) |
-| `GET` | `/api/budgets?month=YYYY-MM` | Budget du mois (sinon celui du dernier mois qui en a un) |
+| `GET` | `/api/budgets?month=YYYY-MM` | Budget du mois (sinon celui du dernier mois qui en a un), revenus prévus du mois et part déjà prise par les dépenses récurrentes |
 | `PUT` | `/api/budgets` | Définir ou modifier le budget d'un mois |
 | `GET` | `/api/dashboard?month=YYYY-MM` | Tableau de bord : budget, dépensé, reste, pourcentage, niveau d'alerte, répartition, 5 dernières transactions |
 | `GET` | `/api/recap?month=YYYY-MM` | Récap d'un mois terminé (par défaut le mois dernier) : économisé ou dépassé, 3 catégories qui ont le plus pesé |

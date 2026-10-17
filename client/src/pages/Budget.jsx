@@ -18,6 +18,7 @@ export default function Budget() {
           <label htmlFor="month">{t('common.month')}</label>
           <input id="month" type="month" value={month} onChange={(e) => e.target.value && setParams({ month: e.target.value })} />
         </div>
+        <p>{t('budget.intro')}</p>
       </div>
       {/* The key gives each month a fresh form */}
       <MonthBudget key={month} month={month} />
@@ -31,6 +32,7 @@ export default function Budget() {
 function MonthBudget({ month }) {
   const { t } = useTranslation();
   const [budget, setBudget] = useState(undefined);
+  const [plan, setPlan] = useState(null);
   const [amount, setAmount] = useState('');
   const [saved, setSaved] = useState(null);
   const [error, setError] = useState('');
@@ -39,6 +41,7 @@ function MonthBudget({ month }) {
     api(`/budgets?month=${month}`)
       .then((data) => {
         setBudget(data.budget);
+        setPlan(data.plan);
         setAmount(data.budget ? centsToInput(data.budget.amountCents) : '');
       })
       .catch((err) => setError(errorMessage(err)));
@@ -75,6 +78,29 @@ function MonthBudget({ month }) {
           </>
         )}
       </section>
+
+      {plan && (
+        <section aria-labelledby="plan-title" className="budget-plan">
+          <h2 id="plan-title">{t('budget.planTitle')}</h2>
+          {plan.incomeCents > 0 ? (
+            <>
+              <p>
+                {t('budget.planIncome', { amount: formatCents(plan.incomeCents) })}{' '}
+                <button type="button" onClick={() => setAmount(centsToInput(plan.incomeCents))}>
+                  {t('budget.useIncome')}
+                </button>
+              </p>
+              {plan.recurringExpenseCents > 0 && (
+                <p className="empty">{t('budget.planRecurring', { amount: formatCents(plan.recurringExpenseCents) })}</p>
+              )}
+            </>
+          ) : (
+            <p className="empty">
+              {t('budget.planNoIncome')} <Link to="/transactions/new?type=INCOME">{t('common.addIncome')}</Link>
+            </p>
+          )}
+        </section>
+      )}
 
       <form onSubmit={submit} className="form-grid">
         <div className="field">
