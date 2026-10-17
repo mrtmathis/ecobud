@@ -1,8 +1,8 @@
 // Service worker: makes the app installable, keeps the interface usable offline and shows notifications
-const CACHE = 'ecobud-v3';
+const CACHE = 'ecobud-v4';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.add('/index.html')));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(['/index.html', '/theme-boot.js'])));
   self.skipWaiting();
 });
 
@@ -35,6 +35,12 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => caches.match('/index.html')),
     );
+    return;
+  }
+
+  // Theme script of the page: network first too, the saved copy when offline
+  if (url.pathname === '/theme-boot.js') {
+    event.respondWith(fetch(request).catch(() => caches.match('/theme-boot.js')));
     return;
   }
 

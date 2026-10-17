@@ -209,7 +209,8 @@ La sécurité est traitée dès la première ligne de code :
 | Comptes devinables | Même réponse pour un e-mail inconnu et un mauvais mot de passe, ou un mauvais code de récupération |
 | Code de récupération deviné ou volé | 16 caractères aléatoires (80 bits), haché avec bcrypt, à usage unique, essais limités ; en générer un nouveau depuis le compte demande le mot de passe |
 | Requêtes venant d'un autre site (CSRF) | Cookie `SameSite=Lax` et refus des requêtes dont l'origine n'est pas le site |
-| Vol de session (XSS) | JWT dans un cookie `httpOnly`, `Secure`, `SameSite` ; React échappe tout le contenu affiché |
+| Vol de session (XSS) | JWT dans un cookie `httpOnly`, `Secure`, `SameSite` ; React échappe tout le contenu affiché ; politique de sécurité du contenu (CSP) qui n'autorise que les scripts du site, aucun script écrit dans la page |
+| Site affiché dans une autre page (clickjacking) | `frame-ancestors 'none'` et `X-Frame-Options: DENY` |
 | Accès aux données d'un autre utilisateur | Chaque requête en base est filtrée par l'utilisateur connecté |
 | Injection SQL | Requêtes paramétrées par Prisma, aucun SQL écrit à la main |
 | Données invalides ou piégées | Validation de chaque entrée avec Zod, corps de requête limité à 10 ko |
@@ -217,7 +218,8 @@ La sécurité est traitée dès la première ligne de code :
 | Fuite de secrets | Clés dans les variables d'environnement, `.env` exclu de Git |
 | Failles dans les dépendances | `npm audit` à chaque ajout, Dependabot |
 | Panne ou surcharge | En-têtes Helmet, erreurs sans détail technique, sauvegardes Neon |
-| Données personnelles (RGPD) | Suppression du compte et de toutes ses données |
+| En-têtes des pages | Les pages du site reçoivent aussi leurs en-têtes depuis `vercel.json` : CSP, `nosniff`, `Referrer-Policy`, `Permissions-Policy` (caméra, micro, position et paiement coupés), `Cross-Origin-Opener-Policy` ; HTTPS imposé par Vercel (HSTS) |
+| Données personnelles (RGPD) | Données dans l'UE, page Mes données (PDF ou JSON), suppression du compte et de toutes ses données, suppression automatique après 90 jours sans visite, pages Confidentialité et Mentions légales |
 
 L'API ne renvoie jamais de message technique : seulement des codes comme `NOT_FOUND` ou `INVALID_JSON`, que le front traduit.
 

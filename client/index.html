@@ -9,14 +9,8 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#e3e7f0" />
-    <!-- Applies the last theme before the page is drawn, so it never flashes in the wrong colors -->
-    <script>
-      try {
-        var theme = JSON.parse(localStorage.getItem("ecobud_theme")) || {};
-        document.documentElement.dataset.skin = theme.skin || "ticket";
-        document.documentElement.dataset.mode = theme.appearance || "auto";
-      } catch (e) {}
-    </script>
+    <!-- Applies the last theme before the first paint; a separate file so the security policy can forbid inline scripts -->
+    <script src="/theme-boot.js"></script>
     <!-- iPhone: icon and full screen mode once added to the home screen -->
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="mobile-web-app-capable" content="yes" />
