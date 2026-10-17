@@ -11,7 +11,7 @@ const sameSecret = (given, expected) => {
   return crypto.timingSafeEqual(hash(given), hash(expected));
 };
 
-// Called every 15 minutes by GitHub Actions with the JOBS_SECRET key
+// Called every 15 minutes by cron-job.org (or by hand from GitHub Actions) with the JOBS_SECRET key
 router.post('/run', async (req, res) => {
   const secret = process.env.JOBS_SECRET;
   const given = (req.get('authorization') || '').replace(/^Bearer /, '');

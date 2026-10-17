@@ -157,7 +157,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 | --- | --- |
 | Front-end | React (Vite), CSS avec variables (3 thèmes, mode sombre), graphiques SVG faits main, polices auto-hébergées (Fontsource) |
 | Traduction | react-i18next, API `Intl` du navigateur (dates et montants) |
-| PWA et notifications | service worker écrit à la main (`client/public/sw.js`), manifeste, Web Push (`web-push`), tâche planifiée GitHub Actions |
+| PWA et notifications | service worker écrit à la main (`client/public/sw.js`), manifeste, Web Push (`web-push`), tâche planifiée cron-job.org (GitHub Actions en secours, à la main) |
 | Back-end | Node.js, Express |
 | Base de données | PostgreSQL, Prisma (ORM) |
 | Authentification | JWT dans un cookie httpOnly, bcrypt |
@@ -215,7 +215,7 @@ L'API ne renvoie jamais de message technique : seulement des codes comme `NOT_FO
 
 ## Mise en ligne
 
-L'application est déployée sur **Vercel** : le front et l'API sur le même domaine, ce qui permet des cookies `SameSite` stricts. La base PostgreSQL est hébergée chez **Neon**. Comme Vercel ne garde pas de serveur allumé en permanence, les rappels, alertes et récaps sont déclenchés toutes les 15 minutes par **GitHub Actions**, via une route protégée par une clé secrète.
+L'application est déployée sur **Vercel** : le front et l'API sur le même domaine, ce qui permet des cookies `SameSite` stricts. La base PostgreSQL est hébergée chez **Neon**. Comme Vercel ne garde pas de serveur allumé en permanence, les rappels, alertes et récaps sont déclenchés toutes les 15 minutes par **cron-job.org**, via une route protégée par une clé secrète. Un workflow **GitHub Actions** permet aussi de les lancer à la main. Il n'est plus programmé, car GitHub ne garantit pas l'heure de ses tâches planifiées (des passages espacés d'environ 4 heures ont été constatés).
 
 ## Structure du projet
 
@@ -341,7 +341,7 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `DELETE` | `/api/push/subscribe` | Désactiver les notifications sur un appareil |
 | `POST` | `/api/push/test` | Envoyer une notification de test sur tous les appareils du compte |
 | `DELETE` | `/api/account` | Supprimer son compte et toutes ses données |
-| `POST` | `/api/jobs/run` | Lancer les tâches planifiées (réservé à GitHub Actions, clé secrète) |
+| `POST` | `/api/jobs/run` | Lancer les tâches planifiées (réservé à cron-job.org et GitHub Actions, clé secrète) |
 
 Toutes les routes sauf `/api/auth/*`, `/api/health`, `/api/push/key` et `/api/jobs/run` nécessitent d'être connecté (cookie de session).
 

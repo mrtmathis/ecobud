@@ -1,11 +1,8 @@
-# Every 15 minutes, asks the API to send the notifications that are due
+# Asks the API to send the notifications that are due; cron-job.org calls it every 15 minutes
+# GitHub delays its scheduled runs by hours, so this one only runs by hand from the Actions tab
 name: Notifications
 
 on:
-  schedule:
-    # Off the round minutes, when GitHub is busiest and may drop scheduled runs
-    - cron: '7,22,37,52 * * * *'
-  # Lets you run it by hand from the Actions tab
   workflow_dispatch:
 
 permissions: {}
