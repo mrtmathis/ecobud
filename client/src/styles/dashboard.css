@@ -783,11 +783,12 @@
   font-weight: 600;
 }
 
-.comparison.is-less {
+/* The text keeps the normal color for contrast, only the icon carries the meaning */
+.comparison.is-less svg {
   color: var(--success);
 }
 
-.comparison.is-more {
+.comparison.is-more svg {
   color: var(--warning);
 }
 

@@ -107,7 +107,7 @@ export default function DataReport() {
         {data.transactions.length === 0 ? (
           <p className="empty">{t('report.none')}</p>
         ) : (
-          <div className="report-table">
+          <div className="report-table" tabIndex={0} role="region" aria-label={t('report.scrollTable')}>
             <table>
               <thead>
                 <tr>
@@ -141,7 +141,7 @@ export default function DataReport() {
         {data.recurrences.length === 0 ? (
           <p className="empty">{t('report.none')}</p>
         ) : (
-          <div className="report-table">
+          <div className="report-table" tabIndex={0} role="region" aria-label={t('report.scrollTable')}>
             <table>
               <thead>
                 <tr>

@@ -136,6 +136,7 @@ export default {
     devices_other: '{{count}} devices registered for notifications',
     jsonHint: 'To import your data into another program:',
     jsonLink: 'technical version (JSON)',
+    scrollTable: 'Table, scrolls sideways',
   },
   offline: {
     title: 'No connection',

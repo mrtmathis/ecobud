@@ -136,6 +136,7 @@ export default {
     devices_other: '{{count}} appareils inscrits aux notifications',
     jsonHint: 'Pour importer tes données dans un autre logiciel :',
     jsonLink: 'version technique (JSON)',
+    scrollTable: 'Tableau, défilable sur le côté',
   },
   offline: {
     title: 'Pas de connexion',

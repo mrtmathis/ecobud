@@ -774,7 +774,8 @@
 }
 
 button.danger {
-  color: #fff;
+  /* Light text on the dark red of light themes, dark text on the pale red of dark themes */
+  color: var(--surface);
   background: var(--danger);
   border-color: var(--danger);
 }
