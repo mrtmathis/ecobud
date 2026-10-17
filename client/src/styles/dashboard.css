@@ -211,7 +211,7 @@
 @keyframes stamp {
   from {
     opacity: 0;
-    transform: rotate(-10deg) scale(2.2);
+    transform: rotate(-10deg) scale(1.25);
   }
 }
 
