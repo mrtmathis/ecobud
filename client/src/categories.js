@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
 import { api } from './api.js';
+import { useAuth } from './auth.jsx';
 
-// Category list, loaded once and shared between pages; labels come from the translations
-let cache = null;
+// Category list in the user's order of use, loaded once per account and shared between pages;
+// it stays the same during a visit so the tiles never move under the finger
+let cache = { userId: null, list: null };
 export function useCategories() {
-  const [categories, setCategories] = useState(cache || []);
+  const { user } = useAuth();
+  const userId = user?.id;
+  const [categories, setCategories] = useState(cache.userId === userId && cache.list ? cache.list : []);
   useEffect(() => {
-    if (cache) return;
-    api('/categories').then((data) => {
-      cache = data.categories;
-      setCategories(cache);
-    });
-  }, []);
+    if (!userId || (cache.userId === userId && cache.list)) return;
+    api('/categories')
+      .then((data) => {
+        cache = { userId, list: data.categories };
+        setCategories(data.categories);
+      })
+      .catch(() => {});
+  }, [userId]);
   return categories;
 }
 

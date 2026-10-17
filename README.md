@@ -127,7 +127,7 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 - [x] Trois thèmes au choix et mode sombre, proposés à la première connexion
 - [ ] Responsive : téléphone, tablette et ordinateur
 - [x] Ajout, modification et suppression de dépenses et de revenus (salaire, aide de la famille, virement reçu, autre)
-- [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire et « Abonnements » avec le nom de l'abonnement obligatoire
+- [x] Catégories prédéfinies par le site, dont « Autre » avec détail obligatoire et « Abonnements » avec le nom de l'abonnement obligatoire, classées par ordre d'utilisation (90 derniers jours), « Autre » toujours en dernier
 - [x] Tutoriel à la première connexion en 5 étapes (thème, revenus réguliers, dépenses fixes, budget, rappels et installation), chaque étape pouvant être passée, et à revoir depuis Mon compte
 - [x] Budget mensuel global (reconduit automatiquement les mois suivants)
 - [x] Suppression du compte et de toutes ses données depuis Mon compte, avec confirmation par mot de passe
