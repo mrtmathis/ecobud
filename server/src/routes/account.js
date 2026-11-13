@@ -65,7 +65,8 @@ router.get('/export', requireAuth, async (req, res) => {
       freeTrialUntil: r.trialUntil && fromDbDate(r.trialUntil),
       reminder: r.remindOn ? r.remindDaysBefore : null,
     })),
-    budgets: budgets.map((b) => ({ month: b.month, amount: euros(b.amountCents) })),
+    // A category limit of 0 means it was removed from that month on
+    budgets: budgets.map((b) => ({ month: b.month, category: b.categoryId, amount: euros(b.amountCents) })),
     recapAnswers: recapAnswers.map((a) => ({ month: a.month, status: a.status })),
     nothingSpentDays: dayChecks.map((d) => fromDbDate(d.date)),
     notificationDevices: devices.map((d) => ({ addedAt: d.createdAt })),

@@ -160,11 +160,11 @@ Sans lien avec la banque, les chiffres ne sont justes que si l'utilisateur pense
 
 ### Bonus
 
-- [ ] Budget par catégorie avec alerte à 80 %
-- [ ] Série de jours suivis
+- [x] Budget par catégorie : des limites ajoutées au besoin sur la page Budget (reprises les mois suivants), une carte « Mes limites » sur le tableau de bord, et une alerte à 80 % puis en cas de dépassement
+- [x] Série de jours suivis, sans notification
 - [ ] Récap hebdomadaire par e-mail
 - [ ] Scan de ticket
-- [ ] Statistiques mois par mois
+- [x] Statistiques : comparaison avec le mois précédent à la même date
 - [ ] Export CSV
 
 ## Stack technique

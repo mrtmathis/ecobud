@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../db.js';
 import { validate } from '../lib/validation.js';
 import { currentMonth, daysBetween, fromDbDate, monthRange, previousMonth, toDbDate, today } from '../lib/dates.js';
-import { alertLevel, findMonthBudget } from '../lib/budget.js';
+import { alertLevel, findCategoryLimits, findMonthBudget } from '../lib/budget.js';
 import { applyDueRecurrences } from '../lib/recurrences.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 
@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
   const horizon = new Date(toDbDate(now).getTime() + UPCOMING_DAYS * 86_400_000);
 
   const lastMonth = previousMonth(currentMonth(req.user.timezone));
-  const [budget, totals, byCategory, latest, upcoming, todayExpenses, todayCheck, lastBudget, lastAnswer] = await Promise.all([
+  const [budget, totals, byCategory, latest, upcoming, todayExpenses, todayCheck, lastBudget, lastAnswer, limits] = await Promise.all([
     findMonthBudget(req.user.id, month),
     prisma.transaction.groupBy({ by: ['type'], where, _sum: { amountCents: true } }),
     prisma.transaction.groupBy({
@@ -77,6 +77,7 @@ router.get('/', async (req, res) => {
     prisma.dayCheck.findUnique({ where: { userId_date: { userId: req.user.id, date: toDbDate(now) } } }),
     findMonthBudget(req.user.id, lastMonth),
     prisma.recapAnswer.findUnique({ where: { userId_month: { userId: req.user.id, month: lastMonth } } }),
+    findCategoryLimits(req.user.id, month),
   ]);
 
   // The last month recap is offered during the first 10 days, until answered (or until the reminder date)
@@ -94,6 +95,7 @@ router.get('/', async (req, res) => {
   const total = (type) => totals.find((t) => t.type === type)?._sum.amountCents ?? 0;
   const spentCents = total('EXPENSE');
   const budgetCents = budget?.amountCents ?? null;
+  const spentIn = (categoryId) => byCategory.find((c) => c.categoryId === categoryId)?._sum.amountCents ?? 0;
 
   res.json({
     month,
@@ -104,6 +106,15 @@ router.get('/', async (req, res) => {
     percentUsed: budgetCents ? Math.round((spentCents / budgetCents) * 100) : null,
     alertLevel: alertLevel(spentCents, budgetCents),
     byCategory: byCategory.map((c) => ({ categoryId: c.categoryId, amountCents: c._sum.amountCents })),
+    // Category limits, the closest to being reached first
+    limits: limits
+      .map((l) => ({
+        categoryId: l.categoryId,
+        amountCents: l.amountCents,
+        spentCents: spentIn(l.categoryId),
+        alertLevel: alertLevel(spentIn(l.categoryId), l.amountCents),
+      }))
+      .sort((a, b) => b.spentCents / b.amountCents - a.spentCents / a.amountCents),
     latest: latest.map((t) => ({
       id: t.id,
       type: t.type,

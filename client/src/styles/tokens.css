@@ -17,9 +17,9 @@
   --on-accent: #ffe24a;
   --highlight: #ffe24a;
   --on-highlight: #23264a;
-  --danger: #d23b55;
-  --warning: #b86e00;
-  --success: #2f8a5b;
+  --danger: #b8263f;
+  --warning: #945800;
+  --success: #257349;
   --c1: #23264a;
   --c2: #5a5fd6;
   --c3: #d23b55;
@@ -78,8 +78,8 @@
   --on-accent: #ffffff;
   --highlight: #ffb84d;
   --on-highlight: #4a2c00;
-  --danger: #c8443b;
-  --warning: #b86a00;
+  --danger: #b23a32;
+  --warning: #965700;
   --success: #187a66;
   --water: #1fa58a;
   --water-light: #6fd6b8;
@@ -142,8 +142,8 @@
   --highlight: #c6f34b;
   --on-highlight: #121212;
   --danger: #c9244a;
-  --warning: #b86a00;
-  --success: #1d8a4e;
+  --warning: #965700;
+  --success: #187642;
   --lilac: #b9a2ff;
   --pink: #ff8fc7;
   --sky: #8fd3ff;

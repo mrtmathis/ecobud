@@ -113,6 +113,8 @@ export default function Dashboard() {
         </p>
       </section>
 
+      {data.limits.length > 0 && <Limits limits={data.limits} />}
+
       <section className="split-card" aria-labelledby="split-title">
         <h2 id="split-title">{t('dashboard.splitTitle')}</h2>
         {data.byCategory.length === 0 ? (
@@ -201,6 +203,46 @@ export default function Dashboard() {
         )}
       </section>
     </main>
+  );
+}
+
+// One bar per category limit; the state is always written out, the color only repeats it
+function Limits({ limits }) {
+  const { t } = useTranslation();
+  return (
+    <section className="limits-card" aria-labelledby="limits-title">
+      <div className="card-head">
+        <h2 id="limits-title">{t('dashboard.limitsTitle')}</h2>
+        <Link to="/budget#limits">{t('dashboard.manageLimits')}</Link>
+      </div>
+      <ul className="limit-list">
+        {limits.map((l) => {
+          const percent = Math.round((l.spentCents / l.amountCents) * 100);
+          const state = l.alertLevel === 100 ? 'over' : l.alertLevel === 80 ? 'near' : 'ok';
+          return (
+            <li key={l.categoryId} className={`limit is-${state}`}>
+              <div className="limit-line">
+                <span className="limit-name">
+                  <i style={{ background: categoryColor(l.categoryId) }} aria-hidden="true" />
+                  {t(`categories.${l.categoryId}`)}
+                </span>
+                <span className="tnum">
+                  {t('dashboard.limitAmounts', { spent: formatCents(l.spentCents), limit: formatCents(l.amountCents) })}
+                </span>
+              </div>
+              <div className="limit-bar" aria-hidden="true">
+                <span style={{ width: `${Math.min(percent, 100)}%` }} />
+              </div>
+              <small className="limit-state">
+                {state === 'over'
+                  ? t('dashboard.limitOver', { amount: formatCents(l.spentCents - l.amountCents) })
+                  : t(`dashboard.limit_${state}`, { percent, amount: formatCents(l.amountCents - l.spentCents) })}
+              </small>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 

@@ -177,9 +177,10 @@ export default function DataReport() {
         ) : (
           <ul className="report-plain">
             {data.budgets.map((b) => (
-              <li key={b.month}>
-                {new Date(`${b.month}-15T12:00:00`).toLocaleDateString(locale(), { month: 'long', year: 'numeric' })} :{' '}
-                {euros(b.amount)}
+              <li key={`${b.month}-${b.category}`}>
+                {new Date(`${b.month}-15T12:00:00`).toLocaleDateString(locale(), { month: 'long', year: 'numeric' })}
+                {b.category && ` · ${t(`categories.${b.category}`)}`} :{' '}
+                {b.category && !b.amount ? t('report.limitRemoved') : euros(b.amount)}
               </li>
             ))}
           </ul>

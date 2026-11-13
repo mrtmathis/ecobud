@@ -647,6 +647,25 @@
   text-align: center;
 }
 
+/* Category limits on the budget page */
+.limits {
+  display: grid;
+  gap: 12px;
+}
+
+.limits > p {
+  margin: 0;
+}
+
+.limits > button {
+  justify-self: start;
+}
+
+.limits-warning {
+  color: var(--warning);
+  font-weight: 700;
+}
+
 /* Promo video under the hero, spanning both columns */
 .landing-video {
   grid-column: 1 / -1;

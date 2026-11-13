@@ -58,6 +58,7 @@
       'notices notices'
       'hero today'
       'hero upcoming'
+      'limits upcoming'
       'split latest';
     column-gap: 20px;
   }
@@ -78,6 +79,9 @@
   }
   .split-card {
     grid-area: split;
+  }
+  .limits-card {
+    grid-area: limits;
   }
   .latest-card {
     grid-area: latest;
@@ -623,6 +627,83 @@
   font-size: 12px;
   font-weight: 800;
   fill: var(--text);
+}
+
+/* ---------- Category limits ---------- */
+
+.limit-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.limit {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.limit-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.limit-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.limit-name i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+[data-skin='ticket'] .limit-name i {
+  border-radius: 2px;
+}
+
+.limit-bar {
+  height: 10px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+
+.limit-bar span {
+  display: block;
+  height: 100%;
+  background: var(--success);
+  border-radius: inherit;
+}
+
+.limit.is-near .limit-bar span {
+  background: var(--warning);
+}
+
+.limit.is-over .limit-bar span {
+  background: var(--danger);
+}
+
+.limit-state {
+  color: var(--muted);
+}
+
+.limit.is-near .limit-state {
+  color: var(--warning);
+  font-weight: 700;
+}
+
+.limit.is-over .limit-state {
+  color: var(--danger);
+  font-weight: 700;
 }
 
 .legend {

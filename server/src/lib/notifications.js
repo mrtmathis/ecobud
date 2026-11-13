@@ -1,5 +1,5 @@
 import { prisma } from '../db.js';
-import { alertLevel, findMonthBudget } from './budget.js';
+import { alertLevel, findCategoryLimits, findMonthBudget, spentByCategory } from './budget.js';
 import { currentMonth, daysBetween, fromDbDate, monthRange, previousMonth, toDbDate, today } from './dates.js';
 import { notificationText } from './notificationTexts.js';
 import { sendToUser } from './push.js';
@@ -21,40 +21,60 @@ const send = (user, key, params, extra) => sendToUser(user.id, { ...notification
 
 const hasDevice = async (userId) => (await prisma.pushSubscription.count({ where: { userId } })) > 0;
 
-// 80 % then 100 % alert of the current month, each sent once; runs after each expense and in the job
-export async function checkBudgetAlerts(user) {
-  if (!user.alertsOn || !(await hasDevice(user.id))) return 0;
-  const month = currentMonth(user.timezone);
-  const budget = await findMonthBudget(user.id, month);
-  if (!budget) return 0;
-
-  const { start, end } = monthRange(month);
-  const spent = await prisma.transaction.aggregate({
-    where: { userId: user.id, type: 'EXPENSE', date: { gte: start, lt: end } },
-    _sum: { amountCents: true },
-  });
-  const spentCents = spent._sum.amountCents ?? 0;
+// Level reached by a budget row this month, or null when its alert was already sent
+async function newAlertLevel(budget, month, spentCents) {
   const level = alertLevel(spentCents, budget.amountCents);
-  if (!level) return 0;
-
+  if (!level) return null;
   // The unique row is the lock: only the first request to create it sends the alert
   try {
     await prisma.budgetAlert.create({ data: { budgetId: budget.id, month, threshold: level } });
   } catch (err) {
-    if (err.code === 'P2002') return 0;
+    if (err.code === 'P2002') return null;
     throw err;
   }
   // Going straight past 100 % also counts as the 80 % alert
   if (level === 100) {
     await prisma.budgetAlert.createMany({ data: [{ budgetId: budget.id, month, threshold: 80 }], skipDuplicates: true });
   }
+  return level;
+}
 
-  const params = {
-    percent: Math.round((spentCents / budget.amountCents) * 100),
-    remainingCents: budget.amountCents - spentCents,
-    overCents: spentCents - budget.amountCents,
-  };
-  return send(user, level === 100 ? 'budgetOver' : 'budget80', params, { url: '/dashboard', tag: 'budget' });
+const alertParams = (budget, spentCents) => ({
+  percent: Math.round((spentCents / budget.amountCents) * 100),
+  spentCents,
+  limitCents: budget.amountCents,
+  remainingCents: budget.amountCents - spentCents,
+  overCents: spentCents - budget.amountCents,
+});
+
+// 80 % then 100 % alerts of the month budget and of each category limit, each sent once; runs after each expense and in the job
+export async function checkBudgetAlerts(user) {
+  if (!user.alertsOn || !(await hasDevice(user.id))) return 0;
+  const month = currentMonth(user.timezone);
+  const { start, end } = monthRange(month);
+  const [budget, limits, spent] = await Promise.all([
+    findMonthBudget(user.id, month),
+    findCategoryLimits(user.id, month),
+    spentByCategory(user.id, start, end),
+  ]);
+  let sent = 0;
+
+  if (budget) {
+    const spentCents = Object.values(spent).reduce((total, cents) => total + cents, 0);
+    const level = await newAlertLevel(budget, month, spentCents);
+    if (level) {
+      sent += await send(user, level === 100 ? 'budgetOver' : 'budget80', alertParams(budget, spentCents), { url: '/dashboard', tag: 'budget' });
+    }
+  }
+  for (const limit of limits) {
+    const spentCents = spent[limit.categoryId] ?? 0;
+    const level = await newAlertLevel(limit, month, spentCents);
+    if (!level) continue;
+    const params = { ...alertParams(limit, spentCents), categoryId: limit.categoryId };
+    // One tag per category so a category alert does not replace another one on the phone
+    sent += await send(user, level === 100 ? 'limitOver' : 'limit80', params, { url: '/dashboard', tag: `limit-${limit.categoryId}` });
+  }
+  return sent;
 }
 
 // Evening reminder, skipped when the day already has an expense or "nothing spent"

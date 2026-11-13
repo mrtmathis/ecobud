@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { centsToInput, formatCents, formatMonth, parseAmount, thisMonth } from '../format.js';
 import { errorMessage } from '../messages.js';
+import CategoryLimits from '../components/CategoryLimits.jsx';
 
 export default function Budget() {
   const { t } = useTranslation();
@@ -127,6 +128,8 @@ function MonthBudget({ month }) {
         {saved && <p role="status">{t('budget.saved', { month: formatMonth(month), amount: formatCents(saved) })}</p>}
         {error && <p role="alert">{error}</p>}
       </form>
+
+      <CategoryLimits month={month} budgetCents={budget?.amountCents} />
     </>
   );
 }

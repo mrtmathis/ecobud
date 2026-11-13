@@ -10,6 +10,13 @@ const monthName = (language, month) => {
   return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString(locales[language], { month: 'long', timeZone: 'UTC' });
 };
 
+// Expense category names, for the category limit alerts
+const categories = {
+  fr: { groceries: 'Courses', rent: 'Loyer', transport: 'Transport', outings: 'Sorties', health: 'Santé', studies: 'Études', subscriptions: 'Abonnements', other: 'Autre' },
+  en: { groceries: 'Groceries', rent: 'Rent', transport: 'Transport', outings: 'Going out', health: 'Health', studies: 'Studies', subscriptions: 'Subscriptions', other: 'Other' },
+};
+const category = (language, id) => categories[language][id] || id;
+
 const texts = {
   fr: {
     test: () => ({ title: 'EcoBud', body: 'Les notifications fonctionnent sur cet appareil.' }),
@@ -29,6 +36,14 @@ const texts = {
     budgetOver: ({ overCents }) => ({
       title: 'Budget dépassé',
       body: `Tu as dépassé ton budget du mois de ${money('fr', overCents)}. Essaie de limiter les dépenses jusqu’à la fin du mois.`,
+    }),
+    limit80: ({ categoryId, percent, spentCents, limitCents }) => ({
+      title: `${category('fr', categoryId)} : ${percent} % de ta limite`,
+      body: `${money('fr', spentCents)} dépensés sur ${money('fr', limitCents)} ce mois-ci.`,
+    }),
+    limitOver: ({ categoryId, overCents }) => ({
+      title: `${category('fr', categoryId)} : limite dépassée`,
+      body: `Tu as dépassé ta limite de ${money('fr', overCents)} ce mois-ci.`,
     }),
     debitSoon: ({ label, amountCents, days }) => ({
       title: `${label} : prélèvement ${days === 1 ? 'demain' : `dans ${days} jours`}`,
@@ -72,6 +87,14 @@ const texts = {
     budgetOver: ({ overCents }) => ({
       title: 'Budget exceeded',
       body: `You went over your monthly budget by ${money('en', overCents)}. Try to limit spending until the end of the month.`,
+    }),
+    limit80: ({ categoryId, percent, spentCents, limitCents }) => ({
+      title: `${category('en', categoryId)}: ${percent}% of your limit`,
+      body: `${money('en', spentCents)} spent out of ${money('en', limitCents)} this month.`,
+    }),
+    limitOver: ({ categoryId, overCents }) => ({
+      title: `${category('en', categoryId)}: limit exceeded`,
+      body: `You went over your limit by ${money('en', overCents)} this month.`,
     }),
     debitSoon: ({ label, amountCents, days }) => ({
       title: `${label}: debit ${days === 1 ? 'tomorrow' : `in ${days} days`}`,
