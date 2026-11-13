@@ -88,6 +88,7 @@ export default {
     size100: 'Normal size',
   },
   notFound: { title: 'Page not found', back: 'Back to home' },
+  seo: { homeTitle: 'EcoBud · Easy budgeting for students' },
   report: {
     title: 'My EcoBud data',
     intro: 'Here is everything EcoBud keeps about you. Nothing else is stored.',

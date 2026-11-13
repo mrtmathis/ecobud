@@ -1,0 +1,13 @@
+# Search engines may index the public pages; the logged-in area only shows personal data
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /welcome
+Disallow: /dashboard
+Disallow: /transactions
+Disallow: /budget
+Disallow: /recurrences
+Disallow: /recap
+Disallow: /account
+
+Sitemap: https://ecobud-app.vercel.app/sitemap.xml

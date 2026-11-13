@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter, Link, Route, Routes, useSearchParams } from 'react-router';
+import { BrowserRouter, Link, Route, Routes, useLocation, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider, GuestOnly, RequireAuth, useAuth } from './auth.jsx';
@@ -48,6 +48,24 @@ function NotFound() {
   );
 }
 
+// Each public page gets its own tab and search result title; the logged-in area keeps the app name
+function PageTitle() {
+  const { t, i18n } = useTranslation();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const titles = {
+      '/': t('seo.homeTitle'),
+      '/login': `${t('auth.login')} · EcoBud`,
+      '/register': `${t('auth.register')} · EcoBud`,
+      '/forgot-password': `${t('forgot.title')} · EcoBud`,
+      '/privacy': `${t('legal.privacyTitle')} · EcoBud`,
+      '/legal': `${t('legal.legalTitle')} · EcoBud`,
+    };
+    document.title = titles[pathname] || 'EcoBud';
+  }, [pathname, t, i18n.language]);
+  return null;
+}
+
 // Opened without internet: a clear message instead of the login page
 function OfflineGate({ children }) {
   const { offline } = useAuth();
@@ -63,6 +81,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <PageTitle />
       <AuthProvider>
         <OfflineGate>
           <PageError>

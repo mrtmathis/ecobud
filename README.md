@@ -55,6 +55,8 @@ L'application est disponible **en français et en anglais**. Elle est **responsi
 
 La page d'accueil des visiteurs présente l'appli avec une **vidéo de 30 secondes** en boucle, sans son. Elle existe en 12 versions (3 thèmes, 2 langues, format large ou vertical pour les téléphones) : le visiteur voit celle de son thème et de sa langue, et une seule est téléchargée. Elle ne se charge qu'en arrivant près d'elle, se met en pause hors de l'écran, a un bouton pause, et ne démarre pas seule si le téléphone demande de limiter les animations.
 
+**Référencement** : les pages publiques (accueil, inscription, connexion, confidentialité, mentions légales) ont chacune leur titre, dans la langue choisie, et sont listées dans `sitemap.xml`. `robots.txt` demande aux moteurs de recherche de ne pas visiter l'espace connecté. Un lien partagé (messagerie, réseaux sociaux) s'affiche avec une image d'aperçu, un titre et une description.
+
 ### Langues
 
 La langue suit celle du navigateur au premier lancement, puis se change à tout moment avec le bouton « English / Français » présent en haut de chaque page (aussi dans « Mon compte »). Un appui bascule toute l'interface : textes, catégories, messages d'erreur, dates et montants (`1 234,56 €` en français, `€1,234.56` en anglais). Le choix est retenu sur l'appareil et, une fois connecté, enregistré sur le compte : il est retrouvé sur tous les appareils et servira aussi pour les notifications.

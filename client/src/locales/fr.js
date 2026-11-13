@@ -88,6 +88,7 @@ export default {
     size100: 'Taille normale',
   },
   notFound: { title: 'Page introuvable', back: 'Retour à l’accueil' },
+  seo: { homeTitle: 'EcoBud · Gérer son budget étudiant facilement' },
   report: {
     title: 'Mes données EcoBud',
     intro: 'Voici tout ce qu’EcoBud garde sur toi. Rien d’autre n’est conservé.',
