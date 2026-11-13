@@ -102,14 +102,16 @@ export async function syncDueConnections() {
       OR: [{ lastSyncAt: null }, { lastSyncAt: { lt: new Date(Date.now() - BACKGROUND_EVERY) } }],
     },
   });
-  let imported = 0;
+  // Users who got new operations, so the job can tell them
+  const updated = [];
   for (const connection of connections) {
     try {
-      imported += await syncConnection(connection);
+      const created = await syncConnection(connection);
+      if (created > 0) updated.push({ userId: connection.userId, created });
     } catch (err) {
       // The message holds only the HTTP status, never bank data
       console.error('Bank sync failed for a connection:', err.message);
     }
   }
-  return imported;
+  return updated;
 }

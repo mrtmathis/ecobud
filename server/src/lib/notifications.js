@@ -101,6 +101,15 @@ export async function dailyReminder(user, day, time) {
   return send(user, 'reminder', {}, { url: '/transactions/new', tag: 'reminder', day });
 }
 
+// New bank operations just read in the background; never at night, and off with the evening reminder
+const QUIET_FROM = '22:00';
+export async function newBankOperations(user, time) {
+  if (!user.reminderOn || time < '08:00' || time >= QUIET_FROM) return 0;
+  const pending = await prisma.bankImport.count({ where: { userId: user.id, status: 'PENDING' } });
+  if (pending === 0) return 0;
+  return send(user, 'bankReview', { count: pending }, { url: '/bank', tag: 'bank' });
+}
+
 // Warning a few days before a subscription debit or the end of a free trial
 export async function debitReminders(user, day, time) {
   if (time < MORNING) return 0;
@@ -177,9 +186,14 @@ export async function runJobs() {
   const deleted = await deleteInactiveAccounts();
   const warned = await warnInactiveAccounts();
   // Linked banks are read in the background every 6 hours, before the evening reminder counts what is waiting
-  const imported = bankEnabled() ? await syncDueConnections() : 0;
+  const updated = bankEnabled() ? await syncDueConnections() : [];
   const users = await prisma.user.findMany({ where: { pushSubscriptions: { some: {} } } });
+  const imported = updated.reduce((total, u) => total + u.created, 0);
   const summary = { users: users.length, sent: warned, errors: 0, deleted, imported };
+  for (const { userId } of updated) {
+    const user = users.find((u) => u.id === userId);
+    if (user) summary.sent += await newBankOperations(user, localTime(user.timezone)).catch(() => 0);
+  }
 
   for (const user of users) {
     try {
