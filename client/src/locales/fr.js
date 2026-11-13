@@ -111,6 +111,7 @@ export default {
     disconnectConfirm: 'Déconnecter ta banque ? L’accès est coupé chez ta banque et les opérations en attente sont effacées. Celles déjà ajoutées restent dans ton historique.',
     reviewTitle: 'Opérations à vérifier',
     reviewIntro: 'Ces opérations viennent de ta banque. Ajoute-les à ton historique avec la bonne catégorie, ou ignore-les (virement entre tes comptes, dépense déjà notée…).',
+    duplicateHint: 'Une même dépense peut apparaître deux fois si ta banque change sa date entre le paiement et l’encaissement : garde-en une et ignore l’autre.',
     unavailable: 'La connexion bancaire n’est pas disponible pour ton compte.',
     notConnected: 'Aucune banque connectée.',
     goToAccount: 'Aller dans Mon compte',

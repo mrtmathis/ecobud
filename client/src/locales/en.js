@@ -111,6 +111,7 @@ export default {
     disconnectConfirm: 'Disconnect your bank? Access is closed at your bank and pending operations are erased. Those already added stay in your history.',
     reviewTitle: 'Operations to review',
     reviewIntro: 'These operations come from your bank. Add them to your history with the right category, or ignore them (transfer between your accounts, expense already noted…).',
+    duplicateHint: 'The same expense may show up twice if your bank changes its date between payment and booking: keep one and ignore the other.',
     unavailable: 'The bank connection is not available for your account.',
     notConnected: 'No bank connected.',
     goToAccount: 'Go to My account',

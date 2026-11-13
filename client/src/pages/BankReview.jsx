@@ -77,6 +77,7 @@ export default function BankReview() {
       <div className="page-head">
         <h1>{t('bank.reviewTitle')}</h1>
         <p>{t('bank.reviewIntro')}</p>
+        <p className="empty">{t('bank.duplicateHint')}</p>
       </div>
 
       {result && (
