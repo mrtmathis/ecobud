@@ -228,6 +228,10 @@ export default {
     featureReminder: 'An evening reminder so you never forget',
     featureRecap: 'A monthly recap to put money aside',
     sample: 'Sample dashboard',
+    videoTitle: 'Discover EcoBud in 30 seconds',
+    videoCaption: 'A tour of the app: the dashboard, an expense added in 3 taps, the reminders and the 3 themes.',
+    videoPlay: 'Play the video',
+    videoPause: 'Pause the video',
     tagline: 'Your student budget, made simple.',
     pitch:
       'Log your expenses in a few seconds, set your monthly budget and see what you have left. No bank details needed.',

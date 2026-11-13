@@ -229,6 +229,10 @@ export default {
     featureReminder: 'Un rappel le soir pour ne rien oublier',
     featureRecap: 'Un récap chaque mois pour mettre de côté',
     sample: 'Exemple de tableau de bord',
+    videoTitle: 'Découvre EcoBud en 30 secondes',
+    videoCaption: 'Visite de l’appli : le tableau de bord, une dépense ajoutée en 3 touches, les rappels et les 3 thèmes.',
+    videoPlay: 'Lire la vidéo',
+    videoPause: 'Mettre la vidéo en pause',
     tagline: 'Ton budget étudiant, sans prise de tête.',
     pitch:
       'Note tes dépenses en quelques secondes, fixe ton budget du mois et vois ce qu’il te reste. Aucune donnée bancaire demandée.',

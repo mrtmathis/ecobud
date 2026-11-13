@@ -647,6 +647,71 @@
   text-align: center;
 }
 
+/* Promo video under the hero, spanning both columns */
+.landing-video {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  margin-top: 32px;
+  text-align: center;
+}
+
+.landing-video h2 {
+  font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+}
+
+.video-frame {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0;
+}
+
+.video-frame.portrait {
+  max-width: 420px;
+}
+
+.video-frame video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--surface);
+  border: var(--border) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.video-frame.portrait video {
+  aspect-ratio: 4 / 5;
+}
+
+.video-frame figcaption {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.video-box {
+  position: relative;
+}
+
+.video-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: #fff;
+  background: rgb(0 0 0 / 55%);
+  border: none;
+  border-radius: 50%;
+}
+
 /* ---------- Visitor forms (login, signup, forgotten password) ---------- */
 
 .guest-body main > form p {

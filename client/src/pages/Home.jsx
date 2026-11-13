@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { thisMonth } from '../format.js';
 import BudgetHero from '../components/BudgetHero.jsx';
 import Icon from '../components/Icon.jsx';
+import PromoVideo from '../components/PromoVideo.jsx';
 
 // Sample month shown on the landing page, drawn in the current theme
 const sample = {
@@ -59,6 +60,7 @@ export default function Home() {
         </div>
         <figcaption>{t('home.sample')}</figcaption>
       </figure>
+      <PromoVideo />
     </main>
   );
 }
