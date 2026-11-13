@@ -61,7 +61,11 @@ router.use(onlyAllowed);
 router.get('/banks', async (req, res) => {
   try {
     const data = await listBanks('FR');
-    res.json({ banks: data.aspsps.map((b) => ({ name: b.name, country: b.country })) });
+    // Alphabetical order as a French reader expects it (accents and case ignored)
+    const banks = data.aspsps
+      .map((b) => ({ name: b.name, country: b.country }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+    res.json({ banks });
   } catch (err) {
     throw bankError(err);
   }
