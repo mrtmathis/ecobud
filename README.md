@@ -98,7 +98,23 @@ EcoBud n'envoie aucun e-mail. À l'inscription, l'utilisateur reçoit **une seul
 
 ## Données et confidentialité
 
-EcoBud **ne se connecte à aucune banque** et ne demande **aucune donnée bancaire** (ni identifiants, ni IBAN, ni numéro de carte).
+EcoBud ne demande **jamais d'identifiants bancaires**, ni IBAN ni numéro de carte.
+
+### Connexion à la banque (open banking)
+
+Une banque peut être reliée depuis **Mon compte**, en **lecture seule**, par l'open banking (directive européenne DSP2) avec [Enable Banking](https://enablebanking.com/docs/). C'est un établissement agréé en Finlande.
+
+1. L'utilisateur choisit sa banque et s'identifie **sur le site ou l'appli de sa banque** : EcoBud ne voit jamais ses identifiants.
+2. Il donne son accord pour **180 jours** au plus. La banque le renvoie vers EcoBud, qui lit les opérations **depuis le 1er du mois**.
+3. Les opérations arrivent dans **« Opérations à vérifier »** avec une catégorie proposée à partir du libellé (Carrefour → Courses, SNCF → Transport…). L'utilisateur **ajoute** chacune à son historique ou l'**ignore** (virement entre ses comptes, dépense déjà notée).
+4. La banque est relue à chaque ouverture du tableau de bord, et toutes les 6 heures par la tâche planifiée (les banques limitent à environ 4 lectures par jour sans l'utilisateur). Le rappel du soir devient « X opérations à vérifier ».
+5. **Déconnecter ma banque** ferme l'accès chez la banque et efface la connexion et les opérations en attente. Supprimer le compte fait de même.
+
+**Données gardées, le minimum :** pour chaque opération en attente, le montant, la date, le sens, la catégorie proposée et un libellé court (60 caractères au plus, numéros de carte et références coupés). Une fois l'opération traitée, il ne reste qu'une **empreinte HMAC**, pour ne pas la proposer deux fois. **Jamais gardés :** IBAN, nom du titulaire, solde, coordonnées des personnes payées ou payeuses. Les identifiants de connexion Enable Banking sont **chiffrés** dans la base (AES-256-GCM), avec une clé qui n'existe que dans les variables d'environnement.
+
+**Accès limité :** sans contrat avec Enable Banking, leurs conditions autorisent seulement l'usage personnel, sur les comptes reliés par le développeur, gratuitement. La fonctionnalité n'apparaît donc que pour les adresses listées dans `BANK_ALLOWED_EMAILS`. Pour tous les autres comptes, l'appli reste à saisie manuelle. L'ouvrir à tous demanderait un contrat avec Enable Banking, sans changer le code.
+
+### Saisie manuelle
 
 C'est l'utilisateur qui saisit lui-même ses montants, dans des **catégories définies par le site** (courses, loyer, transport, sorties, santé, études, abonnements). Si aucune ne convient, il choisit **« Autre »** et précise la dépense dans un champ de détail obligatoire. Le compte ne stocke que :
 
@@ -204,6 +220,8 @@ Category (liste fixe)
 | `DayCheck` | id, date, user_id (journée validée « rien dépensé ») |
 | `RecapAnswer` | id, mois, réponse (fait ou me le rappeler), date du rappel, user_id |
 | `BudgetAlert` | id, seuil (80 ou 100 %), date d'envoi, budget_id (évite d'envoyer deux fois la même alerte) |
+| `BankConnection` | id, nom de la banque, identifiants de session et de comptes Enable Banking (chiffrés), fin de l'accord, début de l'import, dernière lecture, user_id (une par utilisateur) |
+| `BankImport` | id, empreinte HMAC de l'opération, statut (à vérifier, ajoutée, ignorée), montant, sens, date, libellé court et catégorie proposée (effacés une fois traitée), user_id |
 
 Les montants sont stockés **en centimes** (nombres entiers) pour éviter les erreurs d'arrondi. Le schéma complet est dans [server/prisma/schema.prisma](server/prisma/schema.prisma), et `npm run db:studio` ouvre une interface pour parcourir les données.
 
@@ -229,6 +247,7 @@ La sécurité est traitée dès la première ligne de code :
 | En-têtes des pages | Les pages du site reçoivent aussi leurs en-têtes depuis `vercel.json` : CSP, `nosniff`, `Referrer-Policy`, `Permissions-Policy` (caméra, micro, position et paiement coupés), `Cross-Origin-Opener-Policy` ; HTTPS imposé par Vercel (HSTS) |
 | Serveur utilisé pour appeler d'autres sites (SSRF) | Les adresses de notification ne sont acceptées que chez les vrais services (Google, Apple, Mozilla, Microsoft) |
 | Base remplie par un script | Plafonds par compte : 20 000 transactions, 200 récurrences, 10 appareils ; comptes inactifs effacés après 90 jours |
+| Connexion bancaire | Lecture seule (aucun paiement possible), identification sur le site de la banque, jetons Enable Banking signés en RS256 avec une clé privée hors du code, identifiants de connexion chiffrés en AES-256-GCM, retour de la banque lié à l'utilisateur par un jeton signé valable 15 minutes, aucune réponse de la banque écrite dans les journaux, fonctionnalité réservée aux comptes listés |
 | Données personnelles (RGPD) | Données dans l'UE, page Mes données (PDF ou JSON), suppression du compte et de toutes ses données, suppression automatique après 90 jours sans visite, pages Confidentialité et Mentions légales |
 
 L'API ne renvoie jamais de message technique : seulement des codes comme `NOT_FOUND` ou `INVALID_JSON`, que le front traduit.
@@ -370,7 +389,16 @@ L'application est alors disponible sur `http://localhost:5173`. Les appels à `/
 | `DELETE` | `/api/push/subscribe` | Désactiver les notifications sur un appareil |
 | `POST` | `/api/push/test` | Envoyer une notification de test sur tous les appareils du compte |
 | `DELETE` | `/api/account` | Supprimer son compte et toutes ses données |
-| `POST` | `/api/jobs/run` | Lancer les tâches planifiées : notifications, puis suppression des comptes inutilisés depuis 90 jours (réservé à cron-job.org et GitHub Actions, clé secrète) |
+| `POST` | `/api/jobs/run` | Lancer les tâches planifiées : suppression des comptes inutilisés depuis 90 jours, lecture des banques reliées (toutes les 6 heures), puis notifications (réservé à cron-job.org et GitHub Actions, clé secrète) |
+| `GET` | `/api/bank` | État de la connexion bancaire et nombre d'opérations à vérifier (`available: false` si la fonctionnalité n'est pas ouverte au compte) |
+| `GET` | `/api/bank/banks` | Banques françaises proposées |
+| `POST` | `/api/bank/connect` | Démarrer l'accord avec une banque ; renvoie l'adresse de la banque |
+| `GET` | `/api/bank/callback` | Retour de la banque : enregistre la connexion, lit les opérations du mois, renvoie vers `/bank` |
+| `POST` | `/api/bank/sync` | Relire la banque maintenant (l'utilisateur est présent) |
+| `GET` | `/api/bank/imports` | Opérations à vérifier |
+| `POST` | `/api/bank/imports/:id/accept` | Ajouter une opération à l'historique avec une catégorie |
+| `POST` | `/api/bank/imports/:id/ignore` | Ignorer une opération |
+| `DELETE` | `/api/bank` | Déconnecter la banque (accès fermé chez la banque, opérations en attente effacées) |
 
 Toutes les routes sauf `/api/auth/*`, `/api/health`, `/api/push/key` et `/api/jobs/run` nécessitent d'être connecté (cookie de session).
 

@@ -1,6 +1,7 @@
 import { prisma } from '../db.js';
 import { notificationText } from './notificationTexts.js';
 import { sendToUser } from './push.js';
+import { closeBankConnection } from './bankSync.js';
 
 const DAY = 86_400_000;
 // Accounts unused for this long are deleted with all their data
@@ -12,7 +13,11 @@ const daysAgo = (now, days) => new Date(now.getTime() - days * DAY);
 
 // Deletes the accounts nobody used for 90 days; their data goes with them (cascade)
 export async function deleteInactiveAccounts(now = new Date()) {
-  const { count } = await prisma.user.deleteMany({ where: { lastActiveAt: { lt: daysAgo(now, INACTIVE_DAYS) } } });
+  const where = { lastActiveAt: { lt: daysAgo(now, INACTIVE_DAYS) } };
+  // Bank consents of those accounts are closed at the bank first
+  const linked = await prisma.bankConnection.findMany({ where: { user: where }, select: { userId: true } });
+  for (const { userId } of linked) await closeBankConnection(userId);
+  const { count } = await prisma.user.deleteMany({ where });
   return count;
 }
 

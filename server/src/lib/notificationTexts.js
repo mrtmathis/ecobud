@@ -37,6 +37,10 @@ const texts = {
       title: 'Budget dépassé',
       body: `Tu as dépassé ton budget du mois de ${money('fr', overCents)}. Essaie de limiter les dépenses jusqu’à la fin du mois.`,
     }),
+    bankReview: ({ count }) => ({
+      title: 'Tes opérations bancaires',
+      body: `${count} opération${count > 1 ? 's' : ''} de ta banque ${count > 1 ? 'attendent' : 'attend'} ta vérification. Ça prend quelques secondes.`,
+    }),
     limit80: ({ categoryId, percent, spentCents, limitCents }) => ({
       title: `${category('fr', categoryId)} : ${percent} % de ta limite`,
       body: `${money('fr', spentCents)} dépensés sur ${money('fr', limitCents)} ce mois-ci.`,
@@ -87,6 +91,10 @@ const texts = {
     budgetOver: ({ overCents }) => ({
       title: 'Budget exceeded',
       body: `You went over your monthly budget by ${money('en', overCents)}. Try to limit spending until the end of the month.`,
+    }),
+    bankReview: ({ count }) => ({
+      title: 'Your bank operations',
+      body: `${count} operation${count > 1 ? 's' : ''} from your bank ${count > 1 ? 'are' : 'is'} waiting for your review. It takes a few seconds.`,
     }),
     limit80: ({ categoryId, percent, spentCents, limitCents }) => ({
       title: `${category('en', categoryId)}: ${percent}% of your limit`,

@@ -8,6 +8,7 @@ import DeleteAccount from '../components/DeleteAccount.jsx';
 import MyData from '../components/MyData.jsx';
 import Icon from '../components/Icon.jsx';
 import AppearanceSettings from '../components/AppearanceSettings.jsx';
+import BankSettings from '../components/BankSettings.jsx';
 import InstallApp from '../components/InstallApp.jsx';
 import LanguageToggle from '../components/LanguageToggle.jsx';
 import NotificationSettings from '../components/NotificationSettings.jsx';
@@ -85,6 +86,8 @@ export default function Account() {
       <InstallApp />
 
       <NotificationSettings />
+
+      <BankSettings />
 
       <section aria-labelledby="recovery-section">
         <h2 id="recovery-section">{t('account.recoveryTitle')}</h2>

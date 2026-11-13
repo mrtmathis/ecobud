@@ -25,6 +25,7 @@ const Recap = lazy(() => import('./pages/Recap.jsx'));
 const DataReport = lazy(() => import('./pages/DataReport.jsx'));
 const Legal = lazy(() => import('./pages/Legal.jsx'));
 const Privacy = lazy(() => import('./pages/Privacy.jsx'));
+const BankReview = lazy(() => import('./pages/BankReview.jsx'));
 
 // A new form when switching between "add an expense" and "add an income" in the menu
 function NewTransaction() {
@@ -121,6 +122,7 @@ export default function App() {
                   <Route path="/recap" element={<Recap />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/account/data" element={<DataReport />} />
+                  <Route path="/bank" element={<BankReview />} />
                 </Route>
               </Routes>
             </Suspense>

@@ -13,6 +13,7 @@ import settingsRoutes from './routes/settings.js';
 import accountRoutes from './routes/account.js';
 import pushRoutes from './routes/push.js';
 import jobRoutes from './routes/jobs.js';
+import bankRoutes from './routes/bank.js';
 import { sameOriginOnly } from './middlewares/security.js';
 
 const app = express();
@@ -45,6 +46,7 @@ app.use('/api/account', accountRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/push', pushRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/bank', bankRoutes);
 
 // Errors are codes, not sentences: the front end translates them
 app.use('/api', (req, res) => {

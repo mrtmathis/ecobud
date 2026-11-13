@@ -1063,3 +1063,59 @@ button.danger {
   gap: 12px;
   max-width: 520px;
 }
+
+/* ---------- Bank link and review ---------- */
+
+.bank-points {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.bank-points li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.bank-points svg {
+  flex: none;
+  color: var(--success);
+}
+
+.review-list {
+  margin-top: 12px;
+}
+
+.review-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+}
+
+.review-item .row-main strong {
+  overflow-wrap: anywhere;
+}
+
+/* Category, add and ignore on their own line under the operation */
+.review-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.review-actions select {
+  flex: 1 1 140px;
+  min-width: 0;
+}

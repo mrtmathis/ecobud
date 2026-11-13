@@ -16,10 +16,21 @@ export default function Dashboard() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
+  // Bank operations waiting for review; opening the app reads the bank first (the user is present)
+  const [bank, setBank] = useState(null);
+
   useEffect(() => {
     api('/dashboard')
       .then(setData)
       .catch((err) => setError(errorMessage(err)));
+    api('/bank')
+      .then(async (info) => {
+        if (!info.available || !info.connection) return;
+        if (info.connection.expired) return setBank({ expired: true, pending: info.pending });
+        const sync = await api('/bank/sync', { method: 'POST' }).catch(() => info);
+        setBank({ expired: false, pending: sync.pending });
+      })
+      .catch(() => {});
   }, []);
 
   // "Nothing spent today" on or off, then the dashboard is refreshed
@@ -51,8 +62,18 @@ export default function Dashboard() {
         </p>
       </header>
 
-      {(!user.hasRecoveryCode || data.recapMonth) && (
+      {(!user.hasRecoveryCode || data.recapMonth || bank?.pending > 0 || bank?.expired) && (
         <div className="dash-notices">
+          {bank?.pending > 0 && (
+            <p role="status">
+              {t('bank.toReview', { count: bank.pending })} <Link to="/bank">{t('bank.reviewLink')}</Link>
+            </p>
+          )}
+          {bank?.expired && (
+            <p role="alert">
+              {t('bank.expired')} <Link to="/account">{t('bank.goToAccount')}</Link>
+            </p>
+          )}
           {!user.hasRecoveryCode && (
             <p role="alert">
               {t('dashboard.noRecoveryCode')} <Link to="/account">{t('dashboard.createRecoveryCode')}</Link>

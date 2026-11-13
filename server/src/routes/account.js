@@ -5,6 +5,7 @@ import { HttpError } from '../lib/errors.js';
 import { validate } from '../lib/validation.js';
 import { checkPassword, clearSessionCookie } from '../lib/auth.js';
 import { fromDbDate } from '../lib/dates.js';
+import { closeBankConnection } from '../lib/bankSync.js';
 import { requireAuth } from '../middlewares/requireAuth.js';
 import { authLimiter } from '../middlewares/security.js';
 
@@ -15,6 +16,7 @@ router.delete('/', authLimiter, requireAuth, async (req, res) => {
   const { password } = validate(z.object({ password: z.string().min(1).max(128) }), req.body);
   if (!(await checkPassword(password, req.user.passwordHash))) throw new HttpError(401, 'INVALID_PASSWORD');
 
+  await closeBankConnection(req.user.id);
   await prisma.user.delete({ where: { id: req.user.id } });
   clearSessionCookie(res);
   res.status(204).end();
@@ -25,13 +27,15 @@ const euros = (cents) => cents / 100;
 // Every piece of data kept about the user, as a JSON file (right to data portability); secrets are left out
 router.get('/export', requireAuth, async (req, res) => {
   const userId = req.user.id;
-  const [transactions, recurrences, budgets, recapAnswers, dayChecks, devices] = await Promise.all([
+  const [transactions, recurrences, budgets, recapAnswers, dayChecks, devices, bank, bankImports] = await Promise.all([
     prisma.transaction.findMany({ where: { userId }, orderBy: { date: 'asc' } }),
     prisma.recurrence.findMany({ where: { userId }, orderBy: { createdAt: 'asc' } }),
     prisma.budget.findMany({ where: { userId }, orderBy: { month: 'asc' } }),
     prisma.recapAnswer.findMany({ where: { userId }, orderBy: { month: 'asc' } }),
     prisma.dayCheck.findMany({ where: { userId }, orderBy: { date: 'asc' } }),
     prisma.pushSubscription.findMany({ where: { userId }, select: { createdAt: true } }),
+    prisma.bankConnection.findUnique({ where: { userId } }),
+    prisma.bankImport.findMany({ where: { userId, status: 'PENDING' }, orderBy: { date: 'asc' } }),
   ]);
   const u = req.user;
 
@@ -70,6 +74,9 @@ router.get('/export', requireAuth, async (req, res) => {
     recapAnswers: recapAnswers.map((a) => ({ month: a.month, status: a.status })),
     nothingSpentDays: dayChecks.map((d) => fromDbDate(d.date)),
     notificationDevices: devices.map((d) => ({ addedAt: d.createdAt })),
+    // Encrypted connection ids are technical and useless outside EcoBud: they are left out like the password
+    bankConnection: bank && { bank: bank.bankName, connectedAt: bank.createdAt, validUntil: bank.validUntil, importFrom: fromDbDate(bank.importFrom) },
+    bankOperationsToReview: bankImports.map((i) => ({ date: fromDbDate(i.date), type: i.type, amount: euros(i.amountCents), label: i.label })),
   });
 });
 

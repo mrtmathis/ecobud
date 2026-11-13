@@ -187,6 +187,16 @@ export default function DataReport() {
         )}
       </section>
 
+      {data.bankConnection && (
+        <section>
+          <h2>{t('report.bank')}</h2>
+          <ul className="report-plain">
+            <li>{t('report.bankLinked', { bank: data.bankConnection.bank, date: new Date(data.bankConnection.validUntil).toLocaleDateString(locale()) })}</li>
+            <li>{t('report.bankPending', { count: data.bankOperationsToReview.length })}</li>
+          </ul>
+        </section>
+      )}
+
       <section>
         <h2>{t('report.other')}</h2>
         <ul className="report-plain">

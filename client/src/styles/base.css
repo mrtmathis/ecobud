@@ -336,3 +336,16 @@ html[data-text-size='200'] {
   transform: translateX(-50%);
   animation: fade-in 0.2s ease both;
 }
+
+/* Read by screen readers, not shown on screen */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

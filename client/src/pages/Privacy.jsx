@@ -9,7 +9,7 @@ const content = {
     {
       title: 'En bref',
       text: [
-        'EcoBud ne demande aucune donnée bancaire, n’affiche aucune publicité, ne revend rien et n’utilise aucun traceur publicitaire. Tes données servent uniquement à faire fonctionner l’application.',
+        'EcoBud ne demande jamais tes identifiants bancaires, n’affiche aucune publicité, ne revend rien et n’utilise aucun traceur publicitaire. La connexion à ta banque est facultative et en lecture seule. Tes données servent uniquement à faire fonctionner l’application.',
       ],
     },
     {
@@ -37,6 +37,18 @@ const content = {
       title: 'Pourquoi',
       text: [
         'Ces données servent à te fournir le service que tu demandes en créant un compte : calculer ton budget, afficher ton historique, t’envoyer les rappels et alertes que tu as choisis (base légale : exécution du service, article 6.1.b du RGPD). Les informations que tu saisis n’ont pas besoin d’être exactes : elles ne sont vérifiées ni utilisées par personne d’autre que toi.',
+      ],
+    },
+    {
+      title: 'Connexion à ta banque (facultative)',
+      text: [
+        'Si tu relies ta banque depuis Mon compte, EcoBud lit tes opérations en lecture seule par Enable Banking, un établissement agréé pour l’accès aux comptes (directive européenne DSP2), basé en Finlande et contrôlé par l’autorité financière finlandaise. Tu t’identifies sur le site de ta banque : EcoBud ne voit jamais tes identifiants et ne peut faire aucun paiement. Base légale : ton consentement, donné à ta banque pour 180 jours au plus et retirable à tout moment.',
+      ],
+      list: [
+        'Gardé : pour chaque opération, le montant, la date, dépense ou revenu, la catégorie proposée et un libellé court (60 caractères au plus), le temps que tu la vérifies. Une fois ajoutée ou ignorée, seule une empreinte chiffrée reste pour ne pas la proposer deux fois ; ce que tu ajoutes devient une dépense ou un revenu comme les autres.',
+        'Gardé aussi : le nom de ta banque, la date de fin de ton accord et des identifiants techniques de connexion, chiffrés dans la base.',
+        'Jamais gardé : ton IBAN, le nom du titulaire, ton solde, les coordonnées des personnes que tu paies ou qui te paient.',
+        'Arrêt : « Déconnecter ma banque » dans Mon compte coupe l’accès chez ta banque et efface la connexion et les opérations en attente. Supprimer ton compte fait de même.',
       ],
     },
     {
@@ -96,7 +108,7 @@ const content = {
     {
       title: 'In short',
       text: [
-        'EcoBud never asks for bank details, shows no ads, sells nothing and uses no advertising trackers. Your data is only used to run the app.',
+        'EcoBud never asks for your bank credentials, shows no ads, sells nothing and uses no advertising trackers. Linking your bank is optional and read only. Your data is only used to run the app.',
       ],
     },
     {
@@ -123,6 +135,18 @@ const content = {
       title: 'Why',
       text: [
         'This data is used to provide the service you ask for when you create an account: working out your budget, showing your history, sending the reminders and alerts you chose (legal basis: performance of the service, GDPR article 6.1.b). What you type does not need to be accurate: nobody but you checks or uses it.',
+      ],
+    },
+    {
+      title: 'Linking your bank (optional)',
+      text: [
+        'If you link your bank from My account, EcoBud reads your operations, read only, through Enable Banking, an institution licensed for account access (EU PSD2 directive), based in Finland and supervised by the Finnish financial authority. You log in on your bank’s own site: EcoBud never sees your credentials and cannot make any payment. Legal basis: your consent, given to your bank for 180 days at most and which you can withdraw at any time.',
+      ],
+      list: [
+        'Kept: for each operation, the amount, date, expense or income, suggested category and a short label (60 characters at most), until you review it. Once added or ignored, only an encrypted fingerprint stays so it is not offered twice; what you add becomes an expense or income like any other.',
+        'Also kept: your bank’s name, the end date of your consent and technical connection ids, encrypted in the database.',
+        'Never kept: your IBAN, the account holder’s name, your balance, the details of people you pay or who pay you.',
+        'Stopping: “Disconnect my bank” in My account closes access at your bank and erases the connection and pending operations. Deleting your account does the same.',
       ],
     },
     {

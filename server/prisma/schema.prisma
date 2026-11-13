@@ -70,6 +70,55 @@ model User {
   pushSubscriptions PushSubscription[]
   dayChecks         DayCheck[]
   recapAnswers      RecapAnswer[]
+  bankConnection    BankConnection?
+  bankImports       BankImport[]
+}
+
+// Read-only link to the user's bank through Enable Banking; ids are encrypted, no IBAN, holder name or balance is kept
+model BankConnection {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  // Shown to the user, e.g. "BNP Paribas"
+  bankName    String
+  // Enable Banking session id and account uids, encrypted with BANK_ENCRYPTION_KEY
+  sessionEnc  String
+  accountsEnc String
+  // End of the consent given at the bank (180 days for most banks)
+  validUntil  DateTime
+  // Operations are read from this day on (1st of the month of connection)
+  importFrom  DateTime  @db.Date
+  lastSyncAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum ImportStatus {
+  PENDING
+  ACCEPTED
+  IGNORED
+}
+
+// Bank operation waiting for the user's review; once accepted or ignored only its fingerprint stays, so it is not imported twice
+model BankImport {
+  id          String           @id @default(uuid())
+  userId      String
+  // HMAC of the account and the bank's own reference: recognizes the operation without revealing it
+  refHash     String
+  status      ImportStatus     @default(PENDING)
+  // Kept only while pending
+  amountCents Int?
+  type        TransactionType?
+  date        DateTime?        @db.Date
+  // Short label from the bank, e.g. "CARREFOUR CITY" (at most 60 characters)
+  label       String?
+  categoryId  String?
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, refHash])
+  @@index([userId, status])
 }
 
 enum RecapStatus {

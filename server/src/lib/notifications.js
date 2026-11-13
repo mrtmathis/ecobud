@@ -6,6 +6,8 @@ import { sendToUser } from './push.js';
 import { buildRecap } from './recap.js';
 import { applyDueRecurrences } from './recurrences.js';
 import { deleteInactiveAccounts, warnInactiveAccounts } from './inactivity.js';
+import { bankEnabled } from './enableBanking.js';
+import { syncDueConnections } from './bankSync.js';
 
 // Other notifications wait until this local time, so nobody is woken up
 const MORNING = '10:00';
@@ -88,10 +90,13 @@ export async function dailyReminder(user, day, time) {
   if (claimed.count === 0) return 0;
 
   const date = toDbDate(day);
-  const [expenses, check] = await Promise.all([
+  const [expenses, check, pending] = await Promise.all([
     prisma.transaction.count({ where: { userId: user.id, type: 'EXPENSE', date } }),
     prisma.dayCheck.findUnique({ where: { userId_date: { userId: user.id, date } } }),
+    prisma.bankImport.count({ where: { userId: user.id, status: 'PENDING' } }),
   ]);
+  // With a bank linked, the evening message asks to review its operations instead
+  if (pending > 0) return send(user, 'bankReview', { count: pending }, { url: '/bank', tag: 'reminder' });
   if (expenses > 0 || check) return 0;
   return send(user, 'reminder', {}, { url: '/transactions/new', tag: 'reminder', day });
 }
@@ -171,8 +176,10 @@ export async function runJobs() {
   // Accounts unused for 90 days go first, then those close to it are warned
   const deleted = await deleteInactiveAccounts();
   const warned = await warnInactiveAccounts();
+  // Linked banks are read in the background every 6 hours, before the evening reminder counts what is waiting
+  const imported = bankEnabled() ? await syncDueConnections() : 0;
   const users = await prisma.user.findMany({ where: { pushSubscriptions: { some: {} } } });
-  const summary = { users: users.length, sent: warned, errors: 0, deleted };
+  const summary = { users: users.length, sent: warned, errors: 0, deleted, imported };
 
   for (const user of users) {
     try {

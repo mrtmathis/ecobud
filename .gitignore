@@ -4,3 +4,6 @@ dist/
 build/
 .DS_Store
 *.log
+# Bank API private keys stay on this computer only
+server/secrets/
+*.pem
